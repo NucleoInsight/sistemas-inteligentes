@@ -193,37 +193,42 @@
 
         // 🔥 FUNÇÕES DE COPIA MAGNÉTICA DE TEXTO + LINKS DO SEU RESUMO
         window.copiarGatilho = (tipo, nome, linkFixo, valor, contato) => {
-            const numeroLimpo = contato.replace(/\D/g, "");
-            // Gera o link completo real do seu repositório do GitHub Pages
-            const linkCompleto = `https://nucleoinsight.github.io/sistemas-inteligentes/${linkFixo}`;
-            let copy = "";
+    const numeroLimpo = contato.replace(/\D/g, "");
+    
+    // Tratamento de Engenharia: se o linkFixo vier vazio, gera um slug baseado no nome do cliente
+    let caminhoFinal = linkFixo.trim();
+    if (!caminhoFinal) {
+        // Se esqueceres de preencher, ele tenta deduzir: "Academia Iron Feira" vira "academia-iron-feira.html"
+        caminhoFinal = `templates/${nome.toLowerCase().replace(/[^a-z0-9]/g, "-")}.html`;
+    }
 
-            if(tipo === 'preview') {
-                copy = `*🚀 SEU SISTEMA INTELIGENTE ESTÁ PRONTO PARA TESTE!*\n\n` +
-                       `Fala, *${nome}*! Beleza?\n\n` +
-                       `Conforme a gente combinou, eu já montei a estrutura inicial personalizada do seu sistema para você dar uma olhada e degustar na prática.\n\n` +
-                       `👉 *Acesse pelo link:* ${linkCompleto}\n\n` +
-                       `Dá uma olhada no visual e vê se ficou do jeito que você imaginou para economizar seu tempo. Ficando aprovado, eu finalizo os fluxos internos e travo a liberação oficial dele pra você.\n\n` +
-                       `_Consigo te entregar isso rodando completo até sexta se fecharmos o sinal hoje, porque a base já está pronta. Te interessa?_`;
-            } else {
-                copy = `*✅ ENTREGA DA INSTÂNCIA PREMIUM OPERACIONAL*\n\n` +
-                       `Fala, *${nome}*!\n\n` +
-                       `Tudo liberado! O seu sistema já está 100% ativo e configurado na nossa infraestrutura NoSQL.\n\n` +
-                       `👉 *Link Oficial de Acesso:* ${linkCompleto}\n\n` +
-                       `*💡 Instruções Importantes de Entrega:*\n` +
-                       `1. Abra o link no celular.\n` +
-                       `2. Se for Android, clique nos 3 pontinhos e selecione *[Instalar Aplicativo]*.\n` +
-                       `3. Se for iPhone, clique no botão de compartilhar e selecione *[Adicionar à Tela de Início]*.\n\n` +
-                       `O sistema vai rodar igual a um aplicativo nativo, sem ocupar memória. Qualquer dúvida, estou aqui!`;
-            }
+    const linkCompleto = `https://nucleoinsight.github.io/sistemas-inteligentes/${caminhoFinal}`;
+    let copy = "";
 
-            // Copia direto para a área de transferência do Windows/Celular automaticamente
-            navigator.clipboard.writeText(copy).then(() => {
-                alert(`Sucesso! Link + Copy de ${tipo === 'preview' ? 'PRÉVIA' : 'ENTREGA'} copiados. Cole direto no WhatsApp do cliente.`);
-                // Opcional: Já abre o WhatsApp do cara direto com o texto carregado
-                window.open(`https://api.whatsapp.com/send?phone=55${numeroLimpo}&text=${encodeURIComponent(copy)}`, "_blank");
-            });
-        };
+    if(tipo === 'preview') {
+        copy = `*🚀 SEU SISTEMA INTELIGENTE ESTÁ PRONTO PARA TESTE!*\n\n` +
+               `Fala, *${nome}*! Beleza?\n\n` +
+               `Conforme a gente combinou, eu já montei a estrutura inicial personalizada do seu sistema para você dar uma olhada e degustar na prática.\n\n` +
+               `👉 *Acesse pelo link:* ${linkCompleto}\n\n` +
+               `Dá uma olhada no visual e vê se ficou do jeito que você imaginou para economizar seu tempo. Ficando aprovado, eu finalizo os fluxos internos e travo a liberação oficial dele pra você.\n\n` +
+               `_Consigo te entregar isso rodando completo até sexta se fecharmos o sinal hoje, porque a base já está pronta. Te interessa?_`;
+    } else {
+        copy = `*✅ ENTREGA DA INSTÂNCIA PREMIUM OPERACIONAL*\n\n` +
+               `Fala, *${nome}*!\n\n` +
+               `Tudo liberado! O seu sistema já está 100% ativo e configurado na nossa infraestrutura NoSQL.\n\n` +
+               `👉 *Link Oficial de Acesso:* ${linkCompleto}\n\n` +
+               `*💡 Instruções Importantes de Entrega:*\n` +
+               `1. Abra o link no celular.\n` +
+               `2. Se for Android, clique nos 3 pontinhos e selecione *[Instalar Aplicativo]*.\n` +
+               `3. Se for iPhone, clique no botão de compartilhar e selecione *[Adicionar à Tela de Início]*.\n\n` +
+               `O sistema vai rodar igual a um aplicativo nativo, sem ocupar memória. Qualquer dúvida, estou aqui!`;
+    }
+
+    navigator.clipboard.writeText(copy).then(() => {
+        alert(`Sucesso! Link verificado [${caminhoFinal}]. Texto copiado para o cliente ${nome}.`);
+        window.open(`https://api.whatsapp.com/send?phone=55${numeroLimpo}&text=${encodeURIComponent(copy)}`, "_blank");
+    });
+};
 
         // 🟢 CADASTRAR OPERAÇÃO NO FIREBASE
         async function cadastrarCliente(nome, contato, mrr, diaVencimento, linkDemo, status) {
