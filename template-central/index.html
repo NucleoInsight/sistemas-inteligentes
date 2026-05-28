@@ -86,7 +86,8 @@
         const db = getFirestore(app);
 
         const urlParams = new URLSearchParams(window.location.search);
-        const clientId = urlParams.get('id');
+        // 🛠️ O "CORE" BUSCARÁ AS CONFIGURAÇÕES DIRETAMENTE DO BANCO NO FUTURO
+      // Agora, o template aguarda a carga da coleção "templates" do Firestore
 
       // 🛠️ O "CORE" BUSCARÁ AS CONFIGURAÇÕES DIRETAMENTE DO BANCO NO FUTURO
         // Agora, o template aguarda a carga da coleção "templates" do Firestore
