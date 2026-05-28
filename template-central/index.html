@@ -113,49 +113,22 @@
         }
 
         async function inicializarCentralDinamica() {
-            // 🔍 BUSCA CONFIGURAÇÃO OPERACIONAL NO FIRESTORE
-            if (clientId && clientId !== "undefined") {
-                try {
-                    const docRef = doc(db, "clients", clientId);
-                    const docSnap = await getDoc(docRef);
-                    
-                    if (docSnap.exists()) {
-                        const dadosBanco = docSnap.data();
-                        
-                        // Garante leitura inteligente independente de strings antigas ou maiúsculas
-                        let nichoChave = "prestador_servico"; 
-                        if (dadosBanco.templateNicho) {
-                            const stringBanco = dadosBanco.templateNicho.toLowerCase();
-                            if (stringBanco.includes("capoeira")) nichoChave = "capoeira";
-                            else if (stringBanco.includes("barber") || stringBanco.includes("estetica")) nichoChave = "estetica_barbearia";
-                            else if (stringBanco.includes("academia") || stringBanco.includes("fitness")) nichoChave = "fitness_personal";
-                        }
+            // Tenta buscar nicho via URL (gatilho rápido) ou ID de cliente
+            const nichoUrl = urlParams.get('nicho') || "padrao";
+            
+            // Busca o template no Firestore (Coleção "templates")
+            await buscarTemplateDoBanco(nichoUrl);
 
-                        const perfilDefinido = perfisNichos[nichoChave];
-                        
-                        configCliente.nome = dadosBanco.nome || configCliente.nome;
-                        configCliente.cor = dadosBanco.cor || perfilDefinido.cor;
-                        configCliente.logo = dadosBanco.logo || perfilDefinido.logo;
-                        configCliente.tituloForm = dadosBanco.tituloForm || perfilDefinido.titulo;
-                        configCliente.textoApresentacao = dadosBanco.textoApresentacao || perfilDefinido.apresentacao;
-                        configCliente.htmlCampos = perfilDefinido.campos;
-                    }
-                } catch (e) {
-                    console.error("Erro ao puxar customização do Firestore: ", e);
-                }
-            } 
-            // ⚡ SE FOR UMA URL DE GATILHO RÁPIDO PARA VENDAS (Ex: ?nicho=capoeira ou ?nicho=prestador)
-            else {
-                const nichoUrl = urlParams.get('nicho');
-                if (perfisNichos[nichoUrl]) {
-                    const perfil = perfisNichos[nichoUrl];
-                    configCliente.nome = nichoUrl === "capoeira" ? "Grupo Cordão de Ouro" : "Sua Empresa Aqui — Demonstração";
-                    configCliente.cor = perfil.cor;
-                    configCliente.logo = perfil.logo;
-                    configCliente.tituloForm = perfil.titulo;
-                    configCliente.textoApresentacao = perfil.apresentacao;
-                    configCliente.htmlCampos = perfil.campos;
-                }
+            // Fallback de segurança caso o nicho não exista no banco (Segurança de Escala)
+            if (!configCliente.nome || configCliente.nome === "Carregando...") {
+                configCliente = {
+                    nome: "Sistema em Configuração",
+                    logo: "https://cdn-icons-png.flaticon.com/512/190/190411.png",
+                    cor: "#6B7280",
+                    tituloForm: "Aguardando Template",
+                    textoApresentacao: "O template solicitado não foi encontrado na base de dados. Contate o administrador.",
+                    htmlCampos: "<p class='text-gray-500'>Aguardando carga...</p>"
+                };
             }
 
             // 🎨 INJEÇÃO DE VARIÁVEIS NO DOM (Renderização limpa e padronizada)
@@ -166,13 +139,12 @@
             
             const btnSubmit = document.getElementById("btn-submit-dinamico");
             btnSubmit.style.backgroundColor = configCliente.cor;
-            btnSubmit.style.color = configCliente.cor === "#FFD700" ? "#000000" : "#FFFFFF";
+            btnSubmit.style.color = "#FFFFFF";
 
             document.getElementById("titulo-formulario").innerText = configCliente.tituloForm;
             document.getElementById("texto-apresentacao").innerHTML = configCliente.textoApresentacao;
             document.getElementById("campos-formulario").innerHTML = configCliente.htmlCampos;
 
-            // Transição visual: oculta o loading e exibe a interface pronta
             document.getElementById("loading").classList.add("hidden");
             document.getElementById("interface-dinamica").classList.remove("hidden");
         }
