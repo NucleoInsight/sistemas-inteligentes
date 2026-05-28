@@ -47,11 +47,36 @@
             measurementId: "G-BJ28TJTEVD"
         };
 
-        // Inicializa o Firebase, Firestore e Analytics
+       import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const analytics = getAnalytics(app);
+        const auth = getAuth(app);
 
+        // Sistema de Barreira de Autenticação para proteção contra vazamento
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Usuário autenticado com sucesso -> Libera o Painel Alfa
+                document.getElementById("aba-alfa").classList.remove("blur-md", "pointer-events-none");
+                carregarClientes();
+            } else {
+                // Sem credenciais -> Aplica trava visual de segurança e pede login
+                document.getElementById("aba-alfa").classList.add("blur-md", "pointer-events-none");
+                const email = prompt("🔒 ACESSO RESTRITO - BORGES SOLUÇÕES INTELIGENTES\n\nInsira seu e-mail administrativo:");
+                const senha = prompt("Insira sua senha mestre:");
+                
+                if(email && senha) {
+                    signInWithEmailAndPassword(auth, email, senha)
+                        .catch(err => {
+                            alert("Credenciais Inválidas! Sistema de segurança travou a tela.");
+                            window.location.reload();
+                        });
+                } else {
+                    window.location.reload();
+                }
+            }
+        });
         // FUNÇÕES OPERACIONAIS DO PAINEL ALFA
 
         // 1. Instanciação Limpa de MVP (Apenas 1 Gravação Eficiente no Firestore)
