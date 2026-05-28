@@ -465,20 +465,23 @@
                     if (dados.status === "Demonstração") badgeClass = "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20";
                     if (dados.status === "Atrasado") badgeClass = "bg-red-500/10 text-red-400 border border-red-500/20";
                     
-                    listaClientes.innerHTML += `
+                   listaClientes.innerHTML += `
                         <tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition text-xs">
                             <td class="px-4 py-3.5 font-bold text-textoPrincipal">${dados.nome}</td>
                             <td class="px-4 py-3.5 text-textoSecundario text-[11px] max-w-[150px] truncate" title="${modulosTexto}">${modulosTexto}</td>
                             <td class="px-4 py-3.5 text-center font-mono text-textoSecundario">${diaVenc}</td>
                             <td class="px-4 py-3.5 text-right font-mono text-textoPrincipal">R$ ${valorMRR.toFixed(2)}</td>
                             <td class="px-4 py-3.5 text-center">
-                                <span class="px-2 py-0.5 text-[10px] font-medium rounded tracking-wide ${badgeClass}">
-                                    ${dados.status}
-                                </span>
+                                <select onchange="window.atualizarStatusFinanceiro('${id}', this.value)" class="bg-transparent border-none text-[11px] font-semibold rounded tracking-wide px-2 py-0.5 focus:outline-none cursor-pointer ${badgeClass}">
+                                    <option value="Ativo - Pago" ${dados.status === 'Ativo - Pago' ? 'selected' : ''} class="bg-[#171A21] text-green-400">Ativo - Pago</option>
+                                    <option value="Ativo - Pendente" ${dados.status === 'Ativo - Pendente' ? 'selected' : ''} class="bg-[#171A21] text-blue-400">Ativo - Pendente</option>
+                                    <option value="Demonstração" ${dados.status === 'Demonstração' ? 'selected' : ''} class="bg-[#171A21] text-yellow-400">Demonstração</option>
+                                    <option value="Atrasado" ${dados.status === 'Atrasado' ? 'selected' : ''} class="bg-[#171A21] text-red-400">Atrasado</option>
+                                </select>
                             </td>
                             <td class="px-4 py-3.5 text-center flex items-center justify-center gap-3">
                                 <button onclick="window.dispararWhatsApp('${dados.nome}', '${dados.contato}', '${dados.status}', ${valorMRR}, '${diaVenc}')" class="text-green-400 hover:text-green-300 transition font-semibold text-[11px]">💬 Notificar</button>
-                                <button onclick="if(confirm('Excluir sistema?')) { deleteDoc(doc(db, 'clients', '${id}')).then(()=>carregarClientes()) }" class="text-gray-500 hover:text-red-400 transition text-[11px]">Remover</button>
+                                <button onclick="if(confirm('Excluir sistema de vez?')) { window.removerInstancia('${id}') }" class="text-gray-500 hover:text-red-400 transition text-[11px]">Remover</button>
                             </td>
                         </tr>
                     `;
