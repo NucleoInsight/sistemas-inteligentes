@@ -417,14 +417,41 @@
             reader.readAsDataURL(file);
         };
 
-        // 🔍 RESGATAR TEMPLATE PARA EDIÇÃO
-        window.resgatarTemplate = async function() {
-            const idBusca = document.getElementById("tpl-id").value.trim().toLowerCase();
+       // 🔍 RESGATAR TEMPLATE PARA EDIÇÃO
+        window.resgatarTemplate = async function(idClicado) {
+            const idBusca = idClicado || document.getElementById("tpl-id").value.trim().toLowerCase();
+            
             if(!idBusca) {
-                alert("Digite o ID do template primeiro! (Ex: capoeira_cdo)");
+                alert("Digite o ID ou selecione um template!");
                 return;
             }
 
+            // Precisamos capturar o botão se ele for clicado manualmente
+            const btn = event?.currentTarget;
+            const textoOriginal = btn ? btn.innerHTML : "🔍";
+            if(btn) btn.innerHTML = "⏳";
+
+            try {
+                const snap = await getDoc(doc(db, "templates", idBusca));
+                if(snap.exists()) {
+                    const dados = snap.data();
+                    document.getElementById("tpl-id").value = idBusca; // Atualiza o campo com o ID correto
+                    document.getElementById("tpl-nome").value = dados.nome || "";
+                    document.getElementById("tpl-cor").value = dados.cor || "#FFD700";
+                    document.getElementById("tpl-logo").value = dados.logo || "";
+                    document.getElementById("tpl-apresentacao").value = dados.apresentacao || "";
+                    document.getElementById("tpl-campos").value = dados.campos || "";
+                    alert("✅ Template '" + idBusca + "' carregado com sucesso!");
+                } else {
+                    alert("❌ Template não encontrado no banco.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Erro ao buscar: " + err.message);
+            } finally {
+                if(btn) btn.innerHTML = textoOriginal;
+            }
+        };
             const btn = event.currentTarget;
             const textoOriginal = btn.innerHTML;
             btn.innerHTML = "⏳";
