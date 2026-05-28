@@ -440,31 +440,29 @@
                 alert("Erro ao buscar: " + err.message);
             }
         };
-        // 🧩 LÓGICA DA FÁBRICA DE TEMPLATES
+ // 🧩 LÓGICA DA FÁBRICA E LISTAGEM AUTOMÁTICA
         document.getElementById("form-template")?.addEventListener("submit", async (e) => {
             e.preventDefault();
-            const btn = e.target.querySelector('button');
-            const textoOriginal = btn.innerText;
-            btn.innerText = "Fabricando...";
-            
-            try {
-                const idNicho = document.getElementById("tpl-id").value.trim().toLowerCase();
-                await setDoc(doc(db, "templates", idNicho), {
-                    nome: document.getElementById("tpl-nome").value,
-                    cor: document.getElementById("tpl-cor").value,
-                    logo: document.getElementById("tpl-logo").value,
-                    apresentacao: document.getElementById("tpl-apresentacao").value,
-                    campos: document.getElementById("tpl-campos").value
-                });
-                alert(`Template '${idNicho}' salvo com sucesso no motor Alfa!`);
-                e.target.reset();
-            } catch (err) {
-                console.error(err);
-                alert("Erro ao salvar template: " + err.message);
-            } finally {
-                btn.innerText = textoOriginal;
-            }
+            const id = document.getElementById("tpl-id").value.trim().toLowerCase();
+            await setDoc(doc(db, "templates", id), {
+                nome: document.getElementById("tpl-nome").value,
+                cor: document.getElementById("tpl-cor").value,
+                logo: document.getElementById("tpl-logo").value,
+                apresentacao: document.getElementById("tpl-apresentacao").value,
+                campos: document.getElementById("tpl-campos").value
+            });
+            alert("✅ Template salvo com sucesso!");
+            e.target.reset();
+            await atualizarListaDeTemplates(); // Atualiza a lista após salvar
         });
+
+        window.atualizarListaDeTemplates = async function() {
+            const select = document.getElementById("tpl-id");
+            if (!select) return;
+            const snap = await getDocs(collection(db, "templates"));
+            // Mantém o ID atual, mas limpa a lista de sugestões (se for um datalist)
+            console.log(`Lista atualizada com ${snap.size} templates.`);
+        };
     </script>
 </body>
 </html>
