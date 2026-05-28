@@ -166,10 +166,9 @@
         </div>
     </main>
 
-    <script type="module">
+   <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, query, where, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAMYE7ZLM4jtoVnshqowLSaSL-mYCW1lhI",
@@ -182,145 +181,109 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const auth = getAuth(app);
+        const urlParams = new URLSearchParams(window.location.search);
 
-        onAuthStateChanged(auth, (user) => {
-            const telaLogin = document.getElementById("tela-login");
-            if (user) {
-                if(telaLogin) telaLogin.classList.add("opacity-0", "pointer-events-none");
-                carregarClientes();
-            } else {
-                if(telaLogin) telaLogin.classList.remove("opacity-0", "pointer-events-none");
-            }
-        });
+        let configCliente = { nome: "Painel Dinâmico", logo: "", cor: "#3B82F6", tituloForm: "Ficha Geral", textoApresentacao: "Aguardando carregamento da estrutura...", htmlCampos: "" };
 
-        document.getElementById("form-login-mestre")?.addEventListener("submit", (e) => {
-            e.preventDefault();
-            const btn = document.getElementById("btn-entrar-login");
-            signInWithEmailAndPassword(auth, document.getElementById("login-email").value.trim(), document.getElementById("login-senha").value)
-                .catch(err => { alert("Acesso Negado."); if(btn) btn.innerText = "Acessar Central"; });
-        });
-
-        window.sairDaCentral = () => { if(confirm("Sair?")) { signOut(auth).then(()=>window.location.reload()); } };
-
-        window.copiarGatilho = (tipo, nome, linkFixo, valor, contato) => {
-            const numeroLimpo = contato.replace(/\D/g, "");
-            let caminhoFinal = linkFixo.trim();
-            if (!caminhoFinal) {
-                caminhoFinal = `templates/${nome.toLowerCase().replace(/[^a-z0-9]/g, "-")}.html`;
-            }
-            const linkCompleto = `https://nucleoinsight.github.io/sistemas-inteligentes/${caminhoFinal}`;
-            let copy = "";
-
-            if(tipo === 'preview') {
-                copy = `*🚀 SEU SISTEMA INTELIGENTE ESTÁ PRONTO PARA TESTE!*\n\nFala, *${nome}*! Beleza?\n\nConforme a gente combinou, eu já montei a estrutura inicial personalizada do seu sistema para você dar uma olhada e degustar na prática.\n\n👉 *Acesse pelo link:* ${linkCompleto}\n\nDá uma olhada no visual e vê se ficou do jeito que você imaginou para economizar seu tempo. Ficando aprovado, eu finalizo os fluxos internos e travo a liberação oficial dele pra você.\n\n_Consigo te entregar isso rodando completo até sexta se fecharmos o sinal hoje, porque a base já está pronta. Te interessa?_`;
-            } else {
-                copy = `*✅ ENTREGA DA INSTÂNCIA PREMIUM OPERACIONAL*\n\nFala, *${nome}*!\n\nTudo liberado! O seu sistema já está 100% ativo e configurado na nossa infraestrutura NoSQL.\n\n👉 *Link Oficial de Acesso:* ${linkCompleto}\n\n*💡 Instruções Importantes de Entrega:*\n1. Abra o link no celular.\n2. Se for Android, clique nos 3 pontinhos e selecione *[Instalar Aplicativo]*.\n3. Se for iPhone, clique no botão de compartilhar e selecione *[Adicionar à Tela de Início]*.\n\nO sistema vai rodar igual a um aplicativo nativo, sem ocupar memória. Qualquer dúvida, estou aqui!`;
-            }
-
-            navigator.clipboard.writeText(copy).then(() => {
-                alert(`Texto copiado com sucesso para o cliente ${nome}! Agora é só colar no seu WhatsApp.`);
-            });
-        };
-
-        async function cadastrarCliente(nome, contato, mrr, diaVencimento, nicho, cor, status) {
+        async function buscarTemplateDoBanco(nichoId) {
             try {
-                const user = auth.currentUser;
-                if (!user) return;
-                const linkParametrizado = `index.html?nicho=${nicho}&cor=${encodeURIComponent(cor)}`;
-                await addDoc(collection(db, "clients"), {
-                    ownerId: user.uid,
-                    nome: nome,
-                    contato: contato,
-                    mrr: parseFloat(mrr || 0),
-                    diaVencimento: diaVencimento,
-                    nicho: nicho,
-                    cor: cor,
-                    linkDemo: linkParametrizado,
-                    status: status,
-                    dataCriacao: new Date().toISOString()
-                });
-                alert("Salvo com sucesso!");
-                carregarClientes();
-            } catch (e) { console.error(e); }
+                if(!nichoId) return;
+                const docRef = doc(db, "templates", nichoId);
+                const snap = await getDoc(docRef);
+                if (snap.exists()) {
+                    const data = snap.data();
+                    configCliente = {
+                        nome: data.nome || configCliente.nome,
+                        logo: data.logo || "",
+                        cor: data.cor || configCliente.cor,
+                        tituloForm: data.titulo || data.tituloForm || configCliente.tituloForm,
+                        textoApresentacao: data.apresentacao || configCliente.textoApresentacao,
+                        htmlCampos: data.campos || configCliente.htmlCampos
+                    };
+                }
+            } catch (e) {
+                console.error("Aviso (Template):", e);
+                throw e; 
+            }
         }
 
-        async function carregarClientes() {
-            const lista = document.getElementById("tabela-clientes");
-            if (!lista) return; lista.innerHTML = "";
-            const user = auth.currentUser; if (!user) return;
-
-            let totalMRR = 0; let totalAtivos = 0; let totalDemos = 0; let totalContador = 0;
-
+        async function inicializarCentralDinamica() {
             try {
-                const q = query(collection(db, "clients"), where("ownerId", "==", user.uid));
-                const querySnapshot = await getDocs(q);
+                const nichoUrl = urlParams.get('nicho');
+                const idUrl = urlParams.get('id');
+
+                if (!idUrl) {
+                    document.getElementById("loading").innerHTML = "<p class='text-red-500 font-bold'>ERRO: Link inválido. Falta o ID do cliente.</p>";
+                    return;
+                }
+
+                // 1. Busca dados do cliente no banco
+                const clienteRef = doc(db, "clients", idUrl);
+                const clienteSnap = await getDoc(clienteRef);
                 
-                querySnapshot.forEach((docSnapshot) => {
-                    const dados = docSnapshot.data();
-                    const id = docSnapshot.id;
-                    totalContador++;
-                    const valorMRR = Number(dados.mrr || 0);
+                if (!clienteSnap.exists()) {
+                    document.getElementById("loading").innerHTML = "<p class='text-red-500 font-bold'>ERRO: Cliente não encontrado na base de dados.</p>";
+                    return;
+                }
 
-                    if(dados.status.includes("Ativo") || dados.status === "Ativo - Pago") {
-                        totalMRR += valorMRR; totalAtivos++;
-                    }
-                    if(dados.status === "Demonstração") totalDemos++;
+                const dadosCliente = clienteSnap.data();
+                
+                // 2. Busca o template com base no nicho salvo (ou da URL como fallback para clientes velhos)
+                const nichoDefinitivo = dadosCliente.nicho || nichoUrl || 'capoeira';
+                await buscarTemplateDoBanco(nichoDefinitivo);
 
-                    let badgeClass = "text-yellow-400 border border-yellow-500/20 bg-yellow-500/5"; 
-                    if (dados.status === "Ativo") badgeClass = "text-green-400 border border-green-500/20 bg-green-500/5";
-                    if (dados.status === "Bloqueado") badgeClass = "text-red-400 border border-red-500/20 bg-red-500/5";
+                // 3. Sistema de Status Comercial
+                if (dadosCliente.status === "Bloqueado") {
+                    document.body.innerHTML = "<div class='flex h-screen items-center justify-center bg-red-900 text-white font-bold p-6 text-center rounded'>ACESSO BLOQUEADO:<br>Entre em contato com o administrador.</div>";
+                    return;
+                }
 
-                    const nichoSeguro = dados.nicho || "capoeira";
-                    const corSegura = dados.cor || "#3B82F6";
+                // 4. Injeção de Variáveis na Tela
+                document.title = `${configCliente.nome} — Central Operacional`;
+                document.getElementById("custom-nome").innerText = dadosCliente.nome || configCliente.nome;
+                
+                const logoEl = document.getElementById("custom-logo");
+                if(configCliente.logo) {
+                    logoEl.src = configCliente.logo;
+                } else {
+                    // Cria uma logo provisória com a inicial do cliente se ele não tiver logo
+                    logoEl.src = "https://via.placeholder.com/150/171A21/FFFFFF?text=" + (dadosCliente.nome ? dadosCliente.nome.charAt(0) : "B");
+                }
 
-                    lista.innerHTML += `
-                        <tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition text-xs">
-                            <td class="px-4 py-3.5 font-bold text-white">${dados.nome}</td>
-                            <td class="px-4 py-3.5 text-right font-mono">R$ ${valorMRR.toFixed(2)}</td>
-                            <td class="px-4 py-3.5 text-center">
-                            
-                            <select onchange="window.atualizarStatus('${id}', this.value)" class="bg-[#171A21] text-[11px] font-semibold border border-gray-800 rounded px-2 py-1 cursor-pointer ${badgeClass}">
-                            <option value="Demonstração" ${dados.status === 'Demonstração' ? 'selected' : ''}>Demonstração</option>
-                            <option value="Ativo" ${dados.status === 'Ativo' ? 'selected' : ''}>Contrato Ativo</option>
-                            <option value="Bloqueado" ${dados.status === 'Bloqueado' ? 'selected' : ''}>Bloqueado</option>
-                            </select>
-                            
-                            </td>
-                          <td class="px-4 py-3.5 text-center flex justify-center gap-2">
-                                <button onclick="window.open('../template-central/index.html?nicho=${nichoSeguro}&cor=${encodeURIComponent(corSegura)}&id=${id}', '_blank')" class="bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 text-blue-400 px-3 py-1 rounded text-[11px] font-bold transition cursor-pointer">👁️ Visualizar Link</button>
-                                <button onclick="window.copiarGatilho('preview', '${dados.nome}', 'template-central/index.html?nicho=${nichoSeguro}&cor=${encodeURIComponent(corSegura)}&id=${id}', ${valorMRR}, '${dados.contato}')" class="bg-green-500/10 border border-green-500/20 hover:bg-green-500/20 text-green-400 px-3 py-1 rounded text-[11px] font-bold transition cursor-pointer">📋 Copiar Texto</button>
-                            </td>
-                            <td class="px-4 py-3.5 text-center">
-                                <button onclick="if(confirm('Remover?')) { window.remover('${id}') }" class="text-gray-600 hover:text-red-400 transition">Deletar</button>
-                            </td>
-                        </tr>
-                    `;
-                });
+                const corDefinitiva = dadosCliente.cor || configCliente.cor || "#3B82F6";
+                document.getElementById("custom-border-logo").style.borderColor = corDefinitiva;
+                
+                const btnSubmit = document.getElementById("btn-submit-dinamico");
+                btnSubmit.style.backgroundColor = corDefinitiva;
+                btnSubmit.style.color = "#FFFFFF";
 
-                document.getElementById("mrr-total").innerText = `R$ ${totalMRR.toFixed(2)}`;
-                document.getElementById("dash-ativos").innerText = totalAtivos;
-                document.getElementById("dash-demos").innerText = totalDemos;
-                document.getElementById("dash-ticket").innerText = `R$ ${(totalAtivos > 0 ? totalMRR/totalAtivos : 0).toFixed(2)}`;
-            } catch (e) { console.error(e); }
+                if (dadosCliente.status === "Demonstração") {
+                    btnSubmit.onclick = (e) => {
+                        e.preventDefault();
+                        alert("⚠️ MODO DEMONSTRAÇÃO ATIVO. As informações foram validadas, mas o sistema oficial ainda será liberado após a contratação.");
+                    };
+                }
+
+                document.getElementById("titulo-formulario").innerText = configCliente.tituloForm;
+                document.getElementById("texto-apresentacao").innerHTML = configCliente.textoApresentacao;
+                document.getElementById("campos-formulario").innerHTML = configCliente.htmlCampos;
+
+                // Transição: Some o Loading e mostra o painel
+                document.getElementById("loading").classList.add("hidden");
+                document.getElementById("interface-dinamica").classList.remove("hidden");
+
+            } catch (error) {
+                console.error("Erro fatal na Central:", error);
+                document.getElementById("loading").innerHTML = `
+                    <div class='bg-red-900/20 border border-red-500/50 p-4 rounded-xl text-center max-w-sm mx-auto'>
+                        <h3 class='text-red-400 font-bold mb-2'>Bloqueio de Banco de Dados</h3>
+                        <p class='text-xs text-gray-300 font-mono mb-2'>${error.message}</p>
+                        <p class='text-[10px] text-gray-500'>Dica: Verifique se as Regras do Firestore permitem 'read' público nas coleções 'clients' e 'templates'.</p>
+                    </div>`;
+            }
         }
 
-        window.atualizarStatus = async (id, status) => { await updateDoc(doc(db, "clients", id), { status }); carregarClientes(); };
-        window.remover = async (id) => { await deleteDoc(doc(db, 'clients', id)); carregarClientes(); };
-
-        document.getElementById("form-cliente")?.addEventListener("submit", (e) => {
-            e.preventDefault();
-            cadastrarCliente(
-                document.getElementById("cli-nome").value,
-                document.getElementById("cli-contato").value,
-                document.getElementById("cli-mrr").value,
-                document.getElementById("cli-vencimento").value,
-                document.getElementById("cli-nicho").value,
-                document.getElementById("cli-cor").value,
-                document.getElementById("cli-status").value
-            );
-            e.target.reset();
-        });
+        window.addEventListener('DOMContentLoaded', inicializarCentralDinamica);
     </script>
 </body>
 </html>
