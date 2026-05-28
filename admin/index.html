@@ -186,38 +186,45 @@
                     <h2 class="text-md font-bold mb-4 flex items-center gap-2">
                         <span>🚀</span> Lançar Novo Sistema (Template)
                     </h2>
-                    <form id="form-cliente" class="space-y-3 text-sm">
+                    <form id="form-cliente" class="space-y-4 text-sm">
                         <div>
-                            <label class="block text-textoSecundario mb-1">Nome do Cliente / Negócio</label>
-                            <input type="text" id="cli-nome" required class="w-full bg-bgPrincipal border border-gray-700 rounded px-3 py-2 text-textoPrincipal focus:outline-none focus:border-corPrincipal">
+                            <label class="block text-textoSecundario mb-1 font-medium tracking-wide">Nome do Cliente / Empresa</label>
+                            <input type="text" id="cli-nome" required class="w-full bg-bgPrincipal border border-gray-800 rounded px-3 py-2 text-textoPrincipal focus:outline-none focus:border-purple-500 transition-all duration-300">
                         </div>
                         <div>
-                            <label class="block text-textoSecundario mb-1">WhatsApp / Contato</label>
-                            <input type="text" id="cli-contato" required class="w-full bg-bgPrincipal border border-gray-700 rounded px-3 py-2 text-textoPrincipal focus:outline-none focus:border-corPrincipal" placeholder="(75) 99999-9999">
+                            <label class="block text-textoSecundario mb-1 font-medium tracking-wide">WhatsApp / Contato</label>
+                            <input type="text" id="cli-contato" required class="w-full bg-bgPrincipal border border-gray-800 rounded px-3 py-2 text-textoPrincipal focus:outline-none focus:border-purple-500 transition-all duration-300" placeholder="(75) 99999-9999">
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-textoSecundario mb-1">Escolher Template</label>
-                                <select id="cli-plano" class="w-full bg-bgPrincipal border border-gray-700 rounded px-2 py-2 text-textoPrincipal focus:outline-none">
-                                    <option value="Capoeira v1.0">Módulo Capoeira</option>
-                                    <option value="Personal Trainer">Módulo Personal</option>
-                                    <option value="Comércio Local">Módulo Agenda/CRM</option>
-                                </select>
+                                <label class="block text-textoSecundario mb-1 font-medium tracking-wide">Valor Mensal (MRR)</label>
+                                <input type="number" id="cli-mrr" value="49" required class="w-full bg-bgPrincipal border border-gray-800 rounded px-3 py-2 text-textoPrincipal focus:outline-none focus:border-purple-500 transition-all duration-300">
                             </div>
                             <div>
-                                <label class="block text-textoSecundario mb-1">Valor Mensal</label>
-                                <input type="number" id="cli-mrr" value="49" required class="w-full bg-bgPrincipal border border-gray-700 rounded px-3 py-2 text-textoPrincipal focus:outline-none focus:border-corPrincipal">
+                                <label class="block text-textoSecundario mb-1 font-medium tracking-wide">Status Inicial</label>
+                                <select id="cli-status" class="w-full bg-bgPrincipal border border-gray-800 rounded px-2 py-2 text-textoPrincipal focus:outline-none focus:border-purple-500">
+                                    <option value="Ativo">Ativo (Produção)</option>
+                                    <option value="Demonstração">Demonstração</option>
+                                </select>
                             </div>
                         </div>
+
                         <div>
-                            <label class="block text-textoSecundario mb-1">Status Inicial</label>
-                            <select id="cli-status" class="w-full bg-bgPrincipal border border-gray-700 rounded px-2 py-2 text-textoPrincipal focus:outline-none">
-                                <option value="Ativo">Ativo (Produção)</option>
-                                <option value="Demonstração">Demonstração</option>
-                            </select>
+                            <label class="block text-textoSecundario mb-2 font-semibold tracking-wide flex items-center gap-1 text-xs uppercase">
+                                <span>⚡</span> Ativar Módulos do Sistema
+                            </label>
+                            <div class="grid grid-cols-2 gap-2 bg-bgPrincipal p-3 rounded-lg border border-gray-800/80 max-h-40 overflow-y-auto custom-scrollbar">
+                                <label class="flex items-center gap-2 cursor-pointer text-xs hover:text-white transition"><input type="checkbox" name="modulos" value="Core Cadastro" checked class="rounded border-gray-700 text-purple-600 bg-bgCard focus:ring-0"> Cadastro/Core</label>
+                                <label class="flex items-center gap-2 cursor-pointer text-xs hover:text-white transition"><input type="checkbox" name="modulos" value="Agenda" class="rounded border-gray-700 text-purple-600 bg-bgCard focus:ring-0"> Agenda/CRM</label>
+                                <label class="flex items-center gap-2 cursor-pointer text-xs hover:text-white transition"><input type="checkbox" name="modulos" value="Financeiro" class="rounded border-gray-700 text-purple-600 bg-bgCard focus:ring-0"> Financeiro</label>
+                                <label class="flex items-center gap-2 cursor-pointer text-xs hover:text-white transition"><input type="checkbox" name="modulos" value="Presença" class="rounded border-gray-700 text-purple-600 bg-bgCard focus:ring-0"> Módulo Presença</label>
+                                <label class="flex items-center gap-2 cursor-pointer text-xs hover:text-white transition"><input type="checkbox" name="modulos" value="Eventos" class="rounded border-gray-700 text-purple-600 bg-bgCard focus:ring-0"> Eventos</label>
+                                <label class="flex items-center gap-2 cursor-pointer text-xs hover:text-white transition"><input type="checkbox" name="modulos" value="WhatsApp" class="rounded border-gray-700 text-purple-600 bg-bgCard focus:ring-0"> Disparo WhatsApp</label>
+                            </div>
                         </div>
-                        <button type="submit" class="w-full bg-corPrincipal hover:bg-blue-600 transition text-textoPrincipal font-bold py-2 rounded mt-2">
-                            Criar Estrutura no Firestore
+
+                        <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 transition-all duration-300 text-textoPrincipal font-bold py-2.5 rounded-lg shadow-lg shadow-purple-900/20 tracking-wide mt-2">
+                            Instanciar Sistema Inteligente
                         </button>
                     </form>
                 </div>
