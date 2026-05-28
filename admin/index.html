@@ -498,6 +498,38 @@
             }
         }
 
+        // 🔄 [FINANCEIRO] Atualizar Status de Pagamento/Instância direto da Tabela
+        import { updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        
+        async function atualizarStatusFinanceiro(id, novoStatus) {
+            try {
+                const user = auth.currentUser;
+                if (!user) return;
+                
+                const clienteRef = doc(db, "clients", id);
+                await updateDoc(clienteRef, { status: novoStatus });
+                
+                // Recarrega os dados imediatamente para recalcular o MRR nos cards do topo
+                carregarClientes();
+            } catch (e) {
+                console.error("Erro ao atualizar status financeiro: ", e);
+                alert("Erro de permissão ao alterar status.");
+            }
+        }
+        window.atualizarStatusFinanceiro = atualizarStatusFinanceiro;
+
+        // 🗑️ [REMOVER] Exclusão de Instância com barreira lógica de segurança
+        async function removerInstancia(id) {
+            try {
+                await deleteDoc(doc(db, 'clients', id));
+                carregarClientes();
+            } catch(e) {
+                console.error("Erro ao deletar: ", e);
+                alert("Você não tem permissão para remover este documento.");
+            }
+        }
+        window.removerInstancia = removerInstancia;
+
         // 3. Registrar Chamado de Suporte Seguro com Vinculo de ownerId
         async function enviarSuporte(clienteNome, solicitacao, prioridade) {
             try {
