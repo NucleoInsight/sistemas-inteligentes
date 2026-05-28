@@ -88,33 +88,57 @@
         const urlParams = new URLSearchParams(window.location.search);
         const clientId = urlParams.get('id');
 
-        // 🏆 DICIONÁRIO DE ARQUITETURA DE NICHOS (Garante a padronização do sistema)
+       // 🏆 DICIONÁRIO DE ARQUITETURA DE NICHOS (Garante a padronização do sistema)
         const perfisNichos = {
             "capoeira": {
-                titulo: "Ficha de Matrícula e Graduação",
-                apresentacao: "Área operacional ativa. Este painel serve para captação de novos alunos, registro de dados de saúde e controle de graduações oficiais de cordões sob supervisão técnica.",
-                cor: "#FFD700", // Amarelo Ouro Original
+                titulo: "Ficha Cadastral e Apresentação Oficial",
+                apresentacao: `
+                    <div class="bg-[#fffef0]/5 border-l-4 border-[#FFD700] p-4 text-gray-300 text-justify text-xs rounded-r-lg mb-4 leading-relaxed">
+                        A <strong>ASSOCIAÇÃO DE CAPOEIRA CORDÃO DE OURO</strong> foi fundada pelo <strong>Mestre Suassuna</strong> em 1º de Setembro de 1967, juntamente com Mestre Brasília. O nome "Cordão de Ouro" veio da música de Elis Regina e faz referência a Besouro Mangangá. Hoje o grupo é um dos mais tradicionais e respeitados do mundo, responsável por difundir o estilo "Miudinho".
+                    </div>
+                    <div class="bg-black/40 border border-gray-800 p-4 rounded-xl text-left space-y-1.5 text-xs font-mono text-gray-400">
+                        <p class="text-[#FFD700] font-bold uppercase tracking-wider mb-1">Contra Mestre Juninho — Cordão de Ouro</p>
+                        <p><strong>Apelido na Capoeira:</strong> Juninho</p>
+                        <p><strong>Filial Operacional Ativa:</strong> Supervisão Técnica Geral</p>
+                    </div>
+                `,
+                cor: "#FFD700",
                 logo: "https://grupocordaodeouro.com.br/wp-content/uploads/2021/08/logo-cdo.png",
                 campos: `
                     <div class="flex flex-col gap-1"><label class="text-gray-400">Nome Completo</label><input type="text" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-[#FFD700]"></div>
                     <div class="flex flex-col gap-1"><label class="text-gray-400">Apelido na Capoeira</label><input type="text" class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-[#FFD700]"></div>
-                    <div class="flex flex-col gap-1"><label class="text-gray-400">WhatsApp / Contato</label><input type="tel" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-[#FFD700]"></div>
+                    <div class="flex flex-col gap-1"><label class="text-gray-400">Data de Nascimento</label><input type="date" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-[#FFD700]"></div>
+                    <div class="flex flex-col gap-1"><label class="text-gray-400">CPF</label><input type="text" placeholder="000.000.000-00" class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-[#FFD700]"></div>
+                    <div class="flex flex-col gap-1"><label class="text-gray-400">Telefone / WhatsApp</label><input type="tel" required placeholder="(00) 00000-0000" class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-[#FFD700]"></div>
+                    <div class="flex flex-col gap-1"><label class="text-gray-400">E-mail</label><input type="email" class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-[#FFD700]"></div>
                     <div class="flex flex-col gap-1">
-                        <label class="text-gray-400">Graduação / Cordão</label>
+                        <label class="text-gray-400">Graduação Atual / Cordão</label>
                         <select class="bg-[#0F1115] border border-gray-800 rounded px-2 py-2 text-white focus:outline-none focus:border-[#FFD700]">
-                            <option>Iniciante</option><option>Crua</option><option>Amarela</option><option>Laranja</option><option>Azul</option><option>Verde</option><option>Professor</option>
+                            <option>Iniciante</option><option>Crua</option><option>Crua-Amarela</option><option>Amarela</option><option>Amarela-Laranja</option><option>Laranja</option><option>Laranja-Azul</option><option>Azul</option><option>Azul-Verde</option><option>Verde</option><option>Verde-Roxa</option><option>Roxa</option><option>Roxa-Marrom</option><option>Marrom</option><option>Marrom-Vermelha</option><option>Vermelha - Professor</option><option>Vermelha-Branca - Contramestre</option><option>Branca - Mestre</option>
                         </select>
                     </div>
-                    <div class="flex flex-col gap-1 sm:col-span-2"><label class="text-gray-400">Histórico Médico / Restrições de Saúde</label><textarea rows="2" class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-[#FFD700]"></textarea></div>
+                    <div class="flex flex-col gap-1"><label class="text-gray-400">Data de Início na Capoeira</label><input type="date" class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-[#FFD700]"></div>
+                    <div class="flex flex-col gap-1 sm:col-span-2"><label class="text-gray-400">Endereço Completo</label><input type="text" class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-[#FFD700]"></div>
+                    <div class="flex flex-col gap-1 sm:col-span-2"><label class="text-gray-400">Histórico Médico / Restrições de Saúde / Medicamentos</label><textarea rows="2" class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-[#FFD700]"></textarea></div>
+                    <div class="flex flex-col gap-1 sm:col-span-2"><label class="text-gray-400">Contato de Emergência (Nome e Telefone)</label><input type="text" class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-[#FFD700]"></div>
+                    <div class="flex flex-col gap-1 sm:col-span-2"><label class="text-gray-400">Objetivo com a Capoeira (Condicionamento, Defesa, Cultura...)</label><textarea rows="2" class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-[#FFD700]"></textarea></div>
+                    
+                    <div class="sm:col-span-2 border-t border-gray-800 mt-4 pt-4">
+                        <p class="text-[11px] text-gray-400 text-justify leading-relaxed font-sans">
+                            <strong>Termo de Responsabilidade:</strong> Declaro que as informações acima são verdadeiras e autorizo minha participação/imagem nas atividades do Grupo Cordão de Ouro sob responsabilidade do Contra Mestre Juninho. Comprometo-me a seguir as regras e fundamentos da capoeira e do grupo.
+                        </p>
+                    </div>
+                    <div class="flex flex-col gap-1"><label class="text-gray-500 text-[10px] uppercase font-mono mt-2">Local e Data</label><input type="text" class="bg-[#0F1115] border border-gray-800 rounded px-3 py-1.5 text-white focus:outline-none focus:border-[#FFD700]"></div>
+                    <div class="flex flex-col gap-1"><label class="text-gray-500 text-[10px] uppercase font-mono mt-2">Assinatura do Aluno ou Responsável</label><input type="text" class="bg-[#0F1115] border border-gray-800 rounded px-3 py-1.5 text-white focus:outline-none focus:border-[#FFD700]"></div>
                 `
             },
             "prestador_servico": {
                 titulo: "Ordem de Serviço & Chamado Técnico",
                 apresentacao: "Área de registro operacional. Registre novos chamados, visitas técnicas, manutenções ou orçamentos de serviços diretamente na nossa central unificada.",
-                cor: "#10B981", // Verde Esmeralda (Transmite confiança técnica)
+                cor: "#10B981",
                 logo: "https://cdn-icons-png.flaticon.com/512/2942/2942503.png",
                 campos: `
-                    <div class="flex flex-col gap-1"><label class="text-gray-400">Nome do Client</label><input type="text" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-emerald-500"></div>
+                    <div class="flex flex-col gap-1"><label class="text-gray-400">Nome do Cliente</label><input type="text" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-emerald-500"></div>
                     <div class="flex flex-col gap-1"><label class="text-gray-400">WhatsApp / Telefone</label><input type="tel" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-emerald-500"></div>
                     <div class="flex flex-col gap-1 sm:col-span-2"><label class="text-gray-400">Endereço do Atendimento</label><input type="text" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-emerald-500"></div>
                     <div class="flex flex-col gap-1 sm:col-span-2"><label class="text-gray-400">Descrição Detalhada do Defeito / Serviço</label><textarea rows="2" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-emerald-500"></textarea></div>
@@ -123,7 +147,7 @@
             "estetica_barbearia": {
                 titulo: "Agendamento de Horário Premium",
                 apresentacao: "Central de Reservas Ativa. Selecione o serviço desejado e preencha seus dados de contato para travar sua cadeira ou maca na grade operacional do dia.",
-                cor: "#EF4444", // Vermelho Clínico/Barber
+                cor: "#EF4444",
                 logo: "https://cdn-icons-png.flaticon.com/512/1995/1995470.png",
                 campos: `
                     <div class="flex flex-col gap-1"><label class="text-gray-400">Nome Completo</label><input type="text" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-red-500"></div>
@@ -141,7 +165,7 @@
             "fitness_personal": {
                 titulo: "Check-in de Alunos & Ficha Ativa",
                 apresentacao: "Painel Core de controle de acesso e treino. Realize a validação da sua presença para liberar a grade diária de treinos ou agendamento com o Personal responsável.",
-                cor: "#06B6D4", // Neon Ciano (Energia/Academia)
+                cor: "#06B6D4",
                 logo: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
                 campos: `
                     <div class="flex flex-col gap-1"><label class="text-gray-400">Nome do Aluno / Paciente</label><input type="text" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-cyan-500"></div>
