@@ -54,22 +54,35 @@
 
         // FUNÇÕES OPERACIONAIS DO PAINEL ALFA
 
-        // 1. Cadastrar Cliente no Firestore
-        async function cadastrarCliente(nome, contato, plano, status, mrr) {
+        // 1. Instanciação Dupla Avançada: Cria Cliente e Desacopla o Sistema com seus Módulos
+        async function cadastrarCliente(nome, contato, modulosAtivos, status, mrr) {
             try {
-                const docRef = await addDoc(collection(db, "clients"), {
+                // Passo A: Grava o registro mestre na coleção 'clients'
+                const clientDocRef = await addDoc(collection(db, "clients"), {
                     nome: nome,
                     contato: contato,
-                    plano: plano,
-                    status: status,
                     mrr: parseFloat(mrr),
+                    status: status,
                     dataCriacao: new Date().toISOString()
                 });
-                alert("Cliente cadastrado com sucesso no Painel Alfa!");
+
+                const clientId = clientDocRef.id; // Chave primária gerada pelo Firebase
+
+                // Passo B: Desacopla a instância na coleção 'systems' apontando para o clientId
+                await addDoc(collection(db, "systems"), {
+                    clientId: clientId,
+                    systemName: `Instância Inteligente - ${nome}`,
+                    modulos: modulosAtivos,
+                    status: status,
+                    versao: "1.0.0",
+                    dataInstancia: new Date().toISOString()
+                });
+
+                alert("Sucesso! Cliente registrado e Instância do Sistema criada de forma isolada no Firestore.");
                 carregarClientes();
             } catch (e) {
-                console.error("Erro ao salvar cliente: ", e);
-                alert("Erro ao salvar. Verifique se as Regras do Firestore estão públicas.");
+                console.error("Erro na arquitetura de gravação: ", e);
+                alert("Erro ao salvar dados. Verifique a saúde do seu Firestore.");
             }
         }
 
