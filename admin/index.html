@@ -135,12 +135,16 @@
                 const status = document.getElementById("cli-status").value;
                 const mrr = document.getElementById("cli-mrr").value;
                 
-                // Mapeia dinamicamente os módulos universais ativos
+                // Coleta o array puro de módulos selecionados para a nova coleção 'systems'
                 const checkboxes = document.querySelectorAll('input[name="modulos"]:checked');
                 const modulosAtivos = Array.from(checkboxes).map(cb => cb.value);
-                const planoFormatado = modulosAtivos.join(" + ") || "Core Base";
 
-                cadastrarCliente(nome, contato, planoFormatado, status, mrr);
+                if(modulosAtivos.length === 0) {
+                    alert("Atenção: Selecione ao menos 1 módulo para ativar o sistema.");
+                    return;
+                }
+
+                cadastrarCliente(nome, contato, modulosAtivos, status, mrr);
                 e.target.reset();
             });
 
