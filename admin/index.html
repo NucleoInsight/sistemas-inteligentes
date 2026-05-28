@@ -114,19 +114,41 @@
         });
         // FUNÇÕES OPERACIONAIS DO PAINEL ALFA
 
-        // Função Auxiliar para Disparar Mensagens de WhatsApp de Forma Direta
+        // 🔥 RECURSO MAGNÉTICO: Motor de Inteligência de Comunicação WhatsApp v2.0
         function dispararWhatsApp(nome, contato, status, valor, diaVenc) {
             const numeroLimpo = contato.replace(/\D/g, "");
             let mensagem = "";
             
-            if (status.includes("Pendente") || status === "Atrasado") {
-                mensagem = `Olá! Passando para lembrar que a assinatura do seu Sistema Inteligente (Mensalidade de R$ ${valor.toFixed(2)}) vence dia ${diaVenc}. Segue a chave Pix para liquidação da fatura. Obrigado pela parceria!`;
+            // Script de Alta Conversão modelado para o comércio local
+            if (status === "Ativo - Pendente" || status === "Atrasado") {
+                mensagem = `*💡 BORGES SOLUÇÕES INTELIGENTES*\n\n` +
+                           `Olá, *${nome}*! Tudo bem?\n\n` +
+                           `Passando para informar que a fatura da sua assinatura mensal já está disponível para liquidação.\n\n` +
+                           `*📌 Detalhes da Fatura:*\n` +
+                           `• *Serviço:* Licença de Sistema Modular\n` +
+                           `• *Vencimento:* Dia ${diaVenc}\n` +
+                           `• *Valor:* R$ ${valor.toFixed(2)}\n\n` +
+                           `Para sua comodidade, você pode efetuar o pagamento via PIX utilizando a nossa chave CNPJ ou Copia e Cola enviada abaixo. Após o pagamento, o sistema processará a liberação automática dos seus módulos.\n\n` +
+                           `_Obrigado por nos escolher para otimizar a sua operação!_`;
             } else if (status === "Demonstração") {
-                mensagem = `Olá! Seu período de demonstração gratuita do seu Sistema Inteligente está ativo. Ficamos felizes em ajudar seu negócio a automatizar processos. Qualquer dúvida com os módulos, acesse o suporte!`;
+                mensagem = `*🚀 SEU SISTEMA INTELIGENTE ESTÁ PRONTO!*\n\n` +
+                           `Olá, *${nome}*!\n\n` +
+                           `A sua instância de demonstração gratuita já foi criada com sucesso na nossa fábrica de software.\n\n` +
+                           `*🛠️ Módulos Ativados para Teste:*\n` +
+                           `• Painel de Controle Core\n` +
+                           `• Banco de Dados Isolado\n` +
+                           `• Ferramentas de Gestão Selecionadas\n\n` +
+                           `Aproveite este período para testar a velocidade e a organização que o sistema vai trazer para o seu negócio. Qualquer dúvida, basta acionar nossa central de suporte direto pelo painel!\n\n` +
+                           `_Borges Soluções Inteligentes — Tecnologia que gera resultado._`;
             } else {
-                mensagem = `Olá! Confirmamos o recebimento do pagamento da sua assinatura. Seu sistema está 100% ativo e atualizado. Obrigado!`;
+                mensagem = `*✅ CONFIRMAÇÃO DE LIQUIDAÇÃO*\n\n` +
+                           `Olá, *${nome}*!\n\n` +
+                           `Recebemos o seu pagamento referente à mensalidade deste mês. O seu status no Painel Alfa foi atualizado para *[Regularizado]*.\n\n` +
+                           `Todos os seus módulos operacionais continuam ativos, protegidos e rodando na velocidade máxima.\n\n` +
+                           `_Obrigado pela confiança contínua na nossa infraestrutura!_`;
             }
             
+            // Dispara abrindo a API nativa do WhatsApp com formatação negritada profissional
             window.open(`https://api.whatsapp.com/send?phone=55${numeroLimpo}&text=${encodeURIComponent(mensagem)}`, "_blank");
         }
         window.dispararWhatsApp = dispararWhatsApp;
