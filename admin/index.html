@@ -128,14 +128,19 @@
         window.addEventListener('DOMContentLoaded', () => {
             carregarClientes();
 
-            document.getElementById("form-cliente")?.addEventListener("submit", (e) => {
+           document.getElementById("form-cliente")?.addEventListener("submit", (e) => {
                 e.preventDefault();
                 const nome = document.getElementById("cli-nome").value;
                 const contato = document.getElementById("cli-contato").value;
-                const plano = document.getElementById("cli-plano").value;
                 const status = document.getElementById("cli-status").value;
                 const mrr = document.getElementById("cli-mrr").value;
-                cadastrarCliente(nome, contato, plano, status, mrr);
+                
+                // Mapeia dinamicamente os módulos universais ativos
+                const checkboxes = document.querySelectorAll('input[name="modulos"]:checked');
+                const modulosAtivos = Array.from(checkboxes).map(cb => cb.value);
+                const planoFormatado = modulosAtivos.join(" + ") || "Core Base";
+
+                cadastrarCliente(nome, contato, planoFormatado, status, mrr);
                 e.target.reset();
             });
 
