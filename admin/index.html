@@ -79,67 +79,58 @@
         });
         // FUNÇÕES OPERACIONAIS DO PAINEL ALFA
 
-        // 1. Instanciação Limpa de MVP (Apenas 1 Gravação Eficiente no Firestore)
-        async function cadastrarCliente(nome, contato, modulosAtivos, status, mrr) {
-            try {
-                const timestampAtual = new Date().toISOString();
+        // Função Auxiliar para Disparar Mensagens de WhatsApp de Forma Direta
+        function dispararWhatsApp(nome, contato, status, valor, diaVenc) {
+            const numeroLimpo = contato.replace(/\D/g, "");
+            let mensagem = "";
+            
+            if (status.includes("Pendente") || status === "Atrasado") {
+                mensagem = `Olá! Passando para lembrar que a assinatura do seu Sistema Inteligente (Mensalidade de R$ ${valor.toFixed(2)}) vence dia ${diaVenc}. Segue a chave Pix para liquidação da fatura. Obrigado pela parceria!`;
+            } else if (status === "Demonstração") {
+                mensagem = `Olá! Seu período de demonstração gratuita do seu Sistema Inteligente está ativo. Ficamos felizes em ajudar seu negócio a automatizar processos. Qualquer dúvida com os módulos, acesse o suporte!`;
+            } else {
+                mensagem = `Olá! Confirmamos o recebimento do pagamento da sua assinatura. Seu sistema está 100% ativo e atualizado. Obrigado!`;
+            }
+            
+            window.open(`https://api.whatsapp.com/send?phone=55${numeroLimpo}&text=${encodeURIComponent(mensagem)}`, "_blank");
+        }
+        window.dispararWhatsApp = dispararWhatsApp;
 
-                // Salva tudo encapsulado em um único documento para zerar custos e latência
+        // 1. Instanciar Nova Operação com Isolamento de Organização (ownerId) e Metadados Financeiros
+        async function cadastrarCliente(nome, contato, modulosAtivos, status, mrr, diaVencimento) {
+            try {
+                const user = auth.currentUser;
+                if (!user) { alert("Sessão encerrada. Faça login novamente."); return; }
+
                 await addDoc(collection(db, "clients"), {
+                    ownerId: user.uid, // 🛡️ ISOLAMENTO SEGURO POR ADMIN LOGADO
                     nome: nome,
                     contato: contato,
                     mrr: parseFloat(mrr),
                     status: status,
+                    diaVencimento: diaVencimento,
                     modulosContratados: modulosAtivos,
-                    financeiro: {
-                        statusPagamento: "Pendente",
-                        ultimoVencimento: timestampAtual
-                    },
-                    dataCriacao: timestampAtual
+                    dataCriacao: new Date().toISOString()
                 });
 
-                alert("Operação instanciada com sucesso! Pronto para rodar o Core Base.");
+                alert("Sucesso! Nova Operação instanciada e protegida com isolamento por ID de dono.");
                 carregarClientes();
             } catch (e) {
-                console.error("Erro ao salvar operação: ", e);
-                alert("Erro ao salvar. Verifique se as Regras do Firestore estão públicas.");
+                console.error("Erro na gravação: ", e);
+                alert("Erro ao instanciar operação.");
             }
         }
 
-       import { doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        // Funções Globais de Ação de Tela vinculadas ao escopo do módulo
-        async function deletarOperacao(id) {
-            if(confirm("Deseja realmente excluir/cancelar esta operação do banco de dados?")) {
-                try {
-                    await deleteDoc(doc(db, "clients", id));
-                    carregarClientes();
-                } catch(e) { alert("Erro de permissão ao excluir."); }
-            }
-        }
-
-        async function alternarStatus(id, statusAtual) {
-            const novoStatus = statusAtual === "Ativo" ? "Demonstração" : "Ativo";
-            try {
-                await updateDoc(doc(db, "clients", id), { status: novoStatus });
-                carregarClientes();
-            } catch(e) { alert("Erro de permissão ao atualizar status."); }
-        }
-
-        // Exporta para escopo global do navegador para os botões HTML funcionarem
-        window.deletarOperacao = deletarOperacao;
-        window.alternarStatus = alternarStatus;
-
-        // 2. Carregar Clientes, Processar Dashboard SaaS e Renderizar Linhas Operacionais
+        // 2. Renderização do Painel Alfa com Dashboard de Negócio e Réguas de Cobrança WhatsApp
         async function carregarClientes() {
             const listaClientes = document.getElementById("tabela-clientes");
             if (!listaClientes) return;
             listaClientes.innerHTML = "";
             
-            let totalMRR = 0;
-            let totalAtivos = 0;
-            let totalDemos = 0;
-            let totalContador = 0;
+            const user = auth.currentUser;
+            if (!user) return;
+
+            let totalMRR = 0; let totalAtivos = 0; let totalDemos = 0; let totalContador = 0;
 
             try {
                 const q = query(collection(db, "clients"));
@@ -147,33 +138,43 @@
                 
                 querySnapshot.forEach((docSnapshot) => {
                     const dados = docSnapshot.data();
+                    // 🛡️ Garante que só renderiza se for o dono da informação (Isolamento)
+                    if(dados.ownerId !== user.uid) return;
+
                     const id = docSnapshot.id;
                     totalContador++;
                     totalMRR += dados.mrr || 0;
                     
-                    if(dados.status === "Ativo") totalAtivos++;
+                    if(dados.status.includes("Ativo")) totalAtivos++;
                     if(dados.status === "Demonstração") totalDemos++;
                     
                     const modulosTexto = (dados.modulosContratados || []).join(", ") || "Core Base";
+                    const diaVenc = dados.diaVencimento || "10";
+
+                    let badgeClass = "bg-green-500/10 text-green-400 border border-green-500/20";
+                    if (dados.status === "Ativo - Pendente") badgeClass = "bg-blue-500/10 text-blue-400 border border-blue-500/20";
+                    if (dados.status === "Demonstração") badgeClass = "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20";
+                    if (dados.status === "Atrasado") badgeClass = "bg-red-500/10 text-red-400 border border-red-500/20";
                     
                     listaClientes.innerHTML += `
-                        <tr class="border-b border-bgPrincipal/60 hover:bg-bgPrincipal/30 transition text-xs">
-                            <td class="px-4 py-3.5 font-medium text-textoPrincipal">${dados.nome}</td>
-                            <td class="px-4 py-3.5 text-textoSecundario text-[11px] max-w-[180px] truncate" title="${modulosTexto}">${modulosTexto}</td>
+                        <tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition text-xs">
+                            <td class="px-4 py-3.5 font-bold text-textoPrincipal">${dados.nome}</td>
+                            <td class="px-4 py-3.5 text-textoSecundario text-[11px] max-w-[150px] truncate" title="${modulosTexto}">${modulosTexto}</td>
+                            <td class="px-4 py-3.5 text-center font-mono text-textoSecundario">${diaVenc}</td>
                             <td class="px-4 py-3.5 text-right font-mono text-textoPrincipal">R$ ${dados.mrr.toFixed(2)}</td>
                             <td class="px-4 py-3.5 text-center">
-                                <button onclick="window.alternarStatus('${id}', '${dados.status}')" class="px-2 py-0.5 text-[10px] font-medium rounded tracking-wide transition transform hover:scale-105 ${dados.status === 'Ativo' ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'}">
+                                <span class="px-2 py-0.5 text-[10px] font-medium rounded tracking-wide ${badgeClass}">
                                     ${dados.status}
-                                </button>
+                                </span>
                             </td>
-                            <td class="px-4 py-3.5 text-center flex items-center justify-center gap-2">
-                                <button onclick="window.deletarOperacao('${id}')" class="text-red-400/80 hover:text-red-400 transition text-[11px] font-medium">Excluir</button>
+                            <td class="px-4 py-3.5 text-center flex items-center justify-center gap-3">
+                                <button onclick="window.dispararWhatsApp('${dados.nome}', '${dados.contato}', '${dados.status}', ${dados.mrr}, '${diaVenc}')" class="text-green-400 hover:text-green-300 transition font-semibold text-[11px]">💬 Notificar</button>
+                                <button onclick="if(confirm('Excluir sistema?')) { import('https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js').then(({doc, deleteDoc}) => deleteDoc(doc(db, 'clients', '${id}'))).then(()=>carregarClientes()) }" class="text-gray-500 hover:text-red-400 transition text-[11px]">Remover</button>
                             </td>
                         </tr>
                     `;
                 });
 
-                // Atualização em Tempo Real do Dashboard de Negócio
                 const ticketMedio = totalContador > 0 ? (totalMRR / totalContador) : 0;
                 document.getElementById("mrr-total").innerText = `R$ ${totalMRR.toFixed(2)}`;
                 document.getElementById("dash-ativos").innerText = totalAtivos;
@@ -181,14 +182,14 @@
                 document.getElementById("dash-ticket").innerText = `R$ ${ticketMedio.toFixed(2)}`;
 
             } catch (e) {
-                console.error("Erro ao processar inteligência do dashboard: ", e);
-                listaClientes.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-red-400 text-xs">Acesso negado. Ative a autenticação nas regras do Firestore.</td></tr>`;
+                console.error("Erro na leitura das instâncias: ", e);
             }
         }
 
         // 3. Registrar Chamado de Suporte (Motor Base)
         async function enviarSuporte(clienteNome, solicitacao, prioridade) {
             try {
+                const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
                 await addDoc(collection(db, "support"), {
                     cliente: clienteNome,
                     solicitacao: solicitacao,
@@ -204,25 +205,23 @@
 
         // Event Listeners para os formulários da interface
         window.addEventListener('DOMContentLoaded', () => {
-            carregarClientes();
-
-           document.getElementById("form-cliente")?.addEventListener("submit", (e) => {
+            document.getElementById("form-cliente")?.addEventListener("submit", (e) => {
                 e.preventDefault();
                 const nome = document.getElementById("cli-nome").value;
                 const contato = document.getElementById("cli-contato").value;
                 const status = document.getElementById("cli-status").value;
                 const mrr = document.getElementById("cli-mrr").value;
+                const diaVencimento = document.getElementById("cli-vencimento").value;
                 
-                // Coleta o array puro de módulos selecionados para a nova coleção 'systems'
                 const checkboxes = document.querySelectorAll('input[name="modulos"]:checked');
                 const modulosAtivos = Array.from(checkboxes).map(cb => cb.value);
 
                 if(modulosAtivos.length === 0) {
-                    alert("Atenção: Selecione ao menos 1 módulo para ativar o sistema.");
+                    alert("Selecione ao menos 1 módulo operacional para instanciar.");
                     return;
                 }
 
-                cadastrarCliente(nome, contato, modulosAtivos, status, mrr);
+                cadastrarCliente(nome, contato, modulosAtivos, status, mrr, diaVencimento);
                 e.target.reset();
             });
 
@@ -233,7 +232,7 @@
                 const prioridade = document.getElementById("sup-prioridade").value;
                 enviarSuporte(cliente, msg, prioridade);
                 e.target.reset();
-            });
+            }); 
         });
     </script>
 
