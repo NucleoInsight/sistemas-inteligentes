@@ -455,44 +455,83 @@
         </section>
 
         <!-- SEÇÃO 2: EXPERIÊNCIA DO CLIENTE -->
-        <section id="aba-cliente" class="hidden space-y-6">
-            <div class="bg-bgCard p-6 rounded-xl border border-gray-800 text-center max-w-xl mx-auto space-y-4">
-                <div class="w-16 h-16 bg-corPrincipal/10 text-corPrincipal rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
-                    B
+       <section id="aba-cliente" class="hidden space-y-6 animate-fadeIn">
+            
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-[#171A21] p-4 rounded-xl border border-gray-800">
+                    <p class="text-[10px] font-bold text-textoSecundario uppercase tracking-wider">📅 Agendamentos / Fluxo Total</p>
+                    <p class="text-xl font-extrabold text-white mt-1">142 <span class="text-xs text-green-400 font-normal font-mono">+12%</span></p>
                 </div>
-                <div>
-                    <h2 class="text-xl font-bold text-textoPrincipal">Bem-vindo ao seu Sistema Inteligente</h2>
-                    <p class="text-sm text-textoSecundario mt-1">Configurado e otimizado por Borges Soluções Digitais</p>
+                <div class="bg-[#171A21] p-4 rounded-xl border border-gray-800">
+                    <p class="text-[10px] font-bold text-textoSecundario uppercase tracking-wider">💰 Faturamento da Unidade</p>
+                    <p class="text-xl font-extrabold text-cyan-400 mt-1">R$ 4.850,00</p>
+                </div>
+                <div class="bg-[#171A21] p-4 rounded-xl border border-gray-800">
+                    <p class="text-[10px] font-bold text-textoSecundario uppercase tracking-wider">⚡ Retenção de Clientes</p>
+                    <p class="text-xl font-extrabold text-purple-400 mt-1">94.2%</p>
+                </div>
+                <div class="bg-[#171A21] p-4 rounded-xl border border-gray-800">
+                    <p class="text-[10px] font-bold text-textoSecundario uppercase tracking-wider">📲 Presença Digital (PWA)</p>
+                    <p class="text-xl font-semibold text-green-400 mt-1 flex items-center gap-1.5 text-xs">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> App Instalado
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <div class="bg-[#171A21] p-5 rounded-xl border border-gray-800 lg:col-span-2 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-sm font-bold tracking-wide text-white uppercase">📊 Desempenho de Módulos (Semanal)</h3>
+                        <span class="text-[10px] text-textoSecundario font-mono">ATUALIZADO AGORA</span>
+                    </div>
+                    
+                    <div class="space-y-3 pt-2">
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-mono"><span class="text-textoSecundario">Módulo de Agendamentos</span><span class="text-white">85%</span></div>
+                            <div class="w-full bg-[#0F1115] h-2 rounded-full overflow-hidden"><div class="bg-gradient-to-r from-blue-500 to-cyan-400 h-full rounded-full" style="width: 85%"></div></div>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-mono"><span class="text-textoSecundario">Módulo Fluxo Financeiro</span><span class="text-white">62%</span></div>
+                            <div class="w-full bg-[#0F1115] h-2 rounded-full overflow-hidden"><div class="bg-gradient-to-r from-purple-500 to-pink-500 h-full rounded-full" style="width: 62%"></div></div>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-mono"><span class="text-textoSecundario">Campanhas via WhatsApp</span><span class="text-white">95%</span></div>
+                            <div class="w-full bg-[#0F1115] h-2 rounded-full overflow-hidden"><div class="bg-gradient-to-r from-green-500 to-emerald-400 h-full rounded-full" style="width: 95%"></div></div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Links de Ação Premium -->
-                <div class="grid grid-cols-1 gap-2 pt-2 text-sm text-left">
-                    <a href="#" onclick="alert('Instruções PWA: No iPhone use Compartilhar > Adicionar à Tela de Início. No Android clique nos 3 pontinhos > Instalar aplicativo.')" class="bg-bgPrincipal p-3 rounded border border-gray-700 flex items-center justify-between hover:border-corPrincipal transition">
-                        <div>
-                            <p class="font-bold text-textoPrincipal">📲 Instalar Aplicativo Próprio</p>
-                            <p class="text-xs text-textoSecundario">Adicione o sistema na tela inicial do seu celular.</p>
-                        </div>
-                        <span class="text-corPrincipal font-bold">→</span>
-                    </a>
-                    
-                    <div class="bg-bgPrincipal p-3 rounded border border-gray-700">
-                        <p class="font-bold text-textoPrincipal mb-2">🛠️ Central de Ajustes Rápidos (Suporte)</p>
-                        <form id="form-suporte" class="space-y-2 mt-2">
-                            <input type="text" id="sup-cliente" placeholder="Seu Nome ou Empresa" required class="w-full bg-bgCard border border-gray-700 rounded px-2 py-1.5 text-xs text-textoPrincipal focus:outline-none">
-                            <textarea id="sup-msg" placeholder="Descreva o ajuste (Ex: mudar cor do botão, trocar texto)" required rows="2" class="w-full bg-bgCard border border-gray-700 rounded px-2 py-1.5 text-xs text-textoPrincipal focus:outline-none"></textarea>
-                            <div class="flex justify-between items-center gap-2">
-                                <select id="sup-prioridade" class="bg-bgCard border border-gray-700 rounded px-2 py-1 text-xs text-textoSecundario focus:outline-none">
+                <div class="space-y-4">
+                    <div class="bg-[#171A21] p-5 rounded-xl border border-gray-800 space-y-3">
+                        <h3 class="text-sm font-bold text-white uppercase tracking-wide">📲 Mobilidade Premium</h3>
+                        <p class="text-xs text-textoSecundario">Transforme este painel em um aplicativo exclusivo na tela do seu celular sem usar espaço de armazenamento.</p>
+                        <button onclick="alert('Instruções PWA:\n\n• No Android: Clique nos 3 pontinhos do navegador e selecione [Instalar aplicativo].\n• No iPhone: Clique no botão de compartilhar do Safari e selecione [Adicionar à Tela de Início].')" class="w-full bg-gradient-to-r from-gray-800 to-gray-700 hover:from-gray-700 hover:to-gray-600 border border-gray-700 text-white text-xs font-bold py-2 rounded-lg transition">
+                            Instalar Aplicativo Nativo
+                        </button>
+                    </div>
+
+                    <div class="bg-[#171A21] p-5 rounded-xl border border-gray-800">
+                        <h3 class="text-sm font-bold text-white uppercase tracking-wide mb-3">🛠️ Ajustes Rápidos & Suporte</h3>
+                        <form id="form-suporte" class="space-y-2 text-xs">
+                            <input type="text" id="sup-cliente" placeholder="Seu Nome ou Empresa" required class="w-full bg-[#0F1115] border border-gray-800 rounded px-2.5 py-2 text-white focus:outline-none focus:border-cyan-500">
+                            <textarea id="sup-msg" placeholder="Descreva o ajuste desejado (Ex: mudar cor do botão, trocar texto)" required rows="2" class="w-full bg-[#0F1115] border border-gray-800 rounded px-2.5 py-2 text-white focus:outline-none focus:border-cyan-500"></textarea>
+                            <div class="flex justify-between items-center gap-2 pt-1">
+                                <select id="sup-prioridade" class="bg-[#0F1115] border border-gray-800 rounded px-2 py-1.5 text-textoSecundario focus:outline-none">
                                     <option value="Baixa">Ajuste Comum</option>
-                                    <option value="Urgente">Urgente (Fora do Ar)</option>
+                                    <option value="Urgente">Urgente</option>
                                 </select>
-                                <button type="submit" class="bg-corPrincipal hover:bg-blue-600 text-textoPrincipal font-bold text-xs px-3 py-1.5 rounded transition">
+                                <button type="submit" class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold px-4 py-1.5 rounded-lg transition">
                                     Abrir Chamado
                                 </button>
                             </div>
                         </form>
                     </div>
                 </div>
+
             </div>
+            
+            <p class="text-center text-[10px] text-gray-600 uppercase tracking-widest pt-2">🛡️ Borges Soluções Inteligentes — Infraestrutura Homologada & Criptografada</p>
         </section>
 
     </main>
