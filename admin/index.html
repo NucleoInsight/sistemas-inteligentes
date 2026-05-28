@@ -54,28 +54,38 @@
         const analytics = getAnalytics(app);
         const auth = getAuth(app);
 
-        // Sistema de Barreira de Autenticação para proteção contra vazamento
+        // 🔒 Escutador em Tempo Real do Estado de Autenticação do Administrador
         onAuthStateChanged(auth, (user) => {
+            const telaLogin = document.getElementById("tela-login");
             if (user) {
-                // Usuário autenticado com sucesso -> Libera o Painel Alfa
-                document.getElementById("aba-alfa").classList.remove("blur-md", "pointer-events-none");
+                // Se o usuário já estiver logado: esconde a tela de login e puxa a query filtrada
+                if(telaLogin) {
+                    telaLogin.classList.add("opacity-0", "pointer-events-none");
+                }
                 carregarClientes();
             } else {
-                // Sem credenciais -> Aplica trava visual de segurança e pede login
-                document.getElementById("aba-alfa").classList.add("blur-md", "pointer-events-none");
-                const email = prompt("🔒 ACESSO RESTRITO - BORGES SOLUÇÕES INTELIGENTES\n\nInsira seu e-mail administrativo:");
-                const senha = prompt("Insira sua senha mestre:");
-                
-                if(email && senha) {
-                    signInWithEmailAndPassword(auth, email, senha)
-                        .catch(err => {
-                            alert("Credenciais Inválidas! Sistema de segurança travou a tela.");
-                            window.location.reload();
-                        });
-                } else {
-                    window.location.reload();
+                // Se não estiver logado: garante que a barreira visual de login cubra tudo
+                if(telaLogin) {
+                    telaLogin.classList.remove("opacity-0", "pointer-events-none");
                 }
             }
+        });
+
+        // ⚡ Capturador de Evento do Formulário de Login Profissional
+        document.getElementById("form-login-mestre")?.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const btn = document.getElementById("btn-entrar-login");
+            const email = document.getElementById("login-email").value;
+            const senha = document.getElementById("login-senha").value;
+
+            if(btn) btn.innerText = "Autenticando...";
+
+            // Executa a validação de segurança oficial do Firebase Auth
+            signInWithEmailAndPassword(auth, email, senha)
+                .catch(err => {
+                    alert("Acesso Negado: Credenciais administrativas inválidas.");
+                    if(btn) btn.innerText = "Acessar Central";
+                });
         });
         // FUNÇÕES OPERACIONAIS DO PAINEL ALFA
 
