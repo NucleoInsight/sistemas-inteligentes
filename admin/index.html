@@ -96,19 +96,23 @@
             }
         });
 
-        // ⚡ Capturador de Evento do Formulário de Login Profissional
+       // ⚡ Capturador de Evento do Formulário de Login Profissional com Debug Ativo
         document.getElementById("form-login-mestre")?.addEventListener("submit", (e) => {
             e.preventDefault();
             const btn = document.getElementById("btn-entrar-login");
-            const email = document.getElementById("login-email").value;
+            const email = document.getElementById("login-email").value.trim();
             const senha = document.getElementById("login-senha").value;
 
             if(btn) btn.innerText = "Autenticando...";
 
-            // Executa a validação de segurança oficial do Firebase Auth
+            // Executa a validação oficial no servidor do Firebase Auth
             signInWithEmailAndPassword(auth, email, senha)
+                .then((userCredential) => {
+                    alert(`Bem-vindo, Gilvan! Autenticação confirmada para o ID: ${userCredential.user.uid}`);
+                })
                 .catch(err => {
-                    alert("Acesso Negado: Credenciais administrativas inválidas.");
+                    console.error("Código de Erro do Firebase Auth:", err.code, err.message);
+                    alert(`Acesso Negado!\nMotivo técnico: ${err.code}\n\nVerifique se o e-mail e senha estão digitados sem espaços.`);
                     if(btn) btn.innerText = "Acessar Central";
                 });
         });
