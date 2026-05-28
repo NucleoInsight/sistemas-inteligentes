@@ -121,14 +121,23 @@
                 return;
             }
             
-            // Busca o template no Firestore
-            await buscarTemplateDoBanco(nichoUrl);
+           // 1. Busca dados do cliente (status, nicho, etc)
+            const clienteRef = doc(db, "clients", urlParams.get('id') || "Oz3mkqgEmxBpQuL8gow1");
+            const clienteSnap = await getDoc(clienteRef);
+            
+            if (!clienteSnap.exists()) {
+                document.getElementById("loading").innerHTML = "<p class='text-red-500'>Cliente não encontrado.</p>";
+                return;
+            }
 
-            // Verifica se o template carregou (se o nome mudou de "Carregando...")
-            if (configCliente.nome === "Carregando...") {
-                console.error("Template " + nichoUrl + " não encontrado no banco.");
-                document.getElementById("custom-nome").innerText = "Template não encontrado";
-                document.getElementById("loading").innerHTML = "<p class='text-red-500'>Erro: Verifique o nome do nicho no banco.</p>";
+            const dadosCliente = clienteSnap.data();
+            
+            // 2. Com o nicho do cliente, busca o template
+            await buscarTemplateDoBanco(dadosCliente.nicho);
+
+            // 3. Sistema de Status Comercial (Bloqueio Inteligente)
+            if (dadosCliente.status === "Bloqueado") {
+                document.body.innerHTML = "<div class='flex h-screen items-center justify-center text-red-500 font-bold'>ACESSO BLOQUEADO: Regularize sua mensalidade.</div>";
                 return;
             }
 
