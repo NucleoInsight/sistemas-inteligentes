@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carregando Central Inteligente...</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0F1115; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #171A21; border-radius: 3px; }
+    </style>
+</head>
+<body class="min-h-screen bg-[#0F1115] text-white font-sans custom-scrollbar flex flex-col justify-between">
+
+    <main class="flex-1 w-full max-w-4xl mx-auto p-4 md:p-6" id="conteudo-central">
+        
+        <div id="loading" class="flex flex-col items-center justify-center py-20 space-y-4">
+            <div class="w-10 h-10 border-4 border-t-blue-500 border-gray-800 rounded-full animate-spin"></div>
+            <p class="text-xs text-gray-400 uppercase tracking-widest font-mono">Conectando à Fábrica NoSQL...</p>
+        </div>
+
+        <div id="interface-dinamica" class="hidden space-y-6">
+            
+            <div class="p-6 md:p-8 rounded-2xl border border-gray-800/60 relative overflow-hidden flex flex-col items-center text-center space-y-3" id="custom-header">
+                <div class="absolute inset-0 opacity-10 pointer-events-none" id="custom-bg-gradient"></div>
+                <div class="w-20 h-20 bg-white rounded-full p-1 border-2 shadow-xl overflow-hidden flex items-center justify-center" id="custom-border-logo">
+                    <img id="custom-logo" src="" alt="Logo Cliente" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-black uppercase tracking-wide" id="custom-nome">Carregando...</h1>
+                    <p class="text-xs text-gray-400 mt-1 font-mono uppercase" id="custom-subtitulo">Painel Operacional Ativo</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <div class="bg-[#171A21] p-5 rounded-xl border border-gray-800/80 md:col-span-2">
+                    <h2 class="text-sm font-bold uppercase tracking-wider mb-4 flex items-center gap-2 text-white">
+                        <span>📝</span> <span id="titulo-formulario">Ficha de Registro Geral</span>
+                    </h2>
+                    <form id="form-dinamico-cliente" class="space-y-4 text-xs">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="campos-formulario">
+                            </div>
+                        <button type="submit" id="btn-submit-dinamico" class="w-full text-xs font-bold py-2.5 rounded-lg transition-all duration-300 uppercase tracking-wider shadow-lg">
+                            Confirmar Ação e Salvar
+                        </button>
+                    </form>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="bg-[#171A21] p-5 rounded-xl border border-gray-800/80 space-y-2 text-xs">
+                        <h3 class="font-bold text-white uppercase tracking-wider">💡 Informações Legais</h3>
+                        <p class="text-gray-400 leading-relaxed text-justify" id="texto-apresentacao">
+                            Carregando histórico e termos de uso do estabelecimento...
+                        </p>
+                    </div>
+                    
+                    <div class="bg-[#171A21] p-4 rounded-xl border border-gray-800/40 text-center">
+                        <button onclick="window.print()" class="text-[11px] text-gray-400 hover:text-white transition font-mono">🖨️ IMPRIMIR COMPROVANTE / PDF</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-[#171A21] border-t border-gray-800/60 text-center py-4 text-[10px] text-gray-500 font-mono mt-6">
+        <p>POWERED BY BORGES SISTEMAS INTELIGENTES — INFRAESTRUTURA ESCALÁVEL</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAMYE7ZLM4jtoVnshqowLSaSL-mYCW1lhI",
+            authDomain: "sistemas-inteligentes-38cdc.firebaseapp.com",
+            projectId: "sistemas-inteligentes-38cdc",
+            storageBucket: "sistemas-inteligentes-38cdc.firebasestorage.app",
+            messagingSenderId: "632476998816",
+            appId: "1:632476998816:web:3cb6936a5e3517b09dbdc5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 🔍 Lê os parâmetros da URL para saber qual cliente está abrindo a página
+        const urlParams = new URLSearchParams(window.location.search);
+        const clientId = urlParams.get('id');
+
+        // Configuração Padrão caso não passe ID na URL (Modo Demonstração Genérico)
+        let configCliente = {
+            nome: "Borges Demonstração",
+            logo: "https://grupocordaodeouro.com.br/wp-content/uploads/2021/08/logo-cdo.png",
+            cor: "#3B82F6",
+            templateNicho: "Capoeira / Artes Marciais"
+        };
+
+        async function inicializarCentralDinamica() {
+            if (clientId) {
+                try {
+                    const docRef = doc(db, "clients", clientId);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        const dadosBanco = docSnap.data();
+                        // Mapeia os dados salvos pelo seu Painel Alfa
+                        configCliente.nome = dadosBanco.nome;
+                        configCliente.templateNicho = dadosBanco.templateNicho;
+                        
+                        // Define cores base automáticas baseadas no nicho para poupar digitação
+                        if(dadosBanco.templateNicho.includes("Capoeira")) configCliente.cor = "#FFD700";
+                        if(dadosBanco.templateNicho.includes("Barbearia")) configCliente.cor = "#EF4444";
+                        if(dadosBanco.templateNicho.includes("Academia")) configCliente.cor = "#06B6D4";
+                    }
+                } catch (e) {
+                    console.error("Erro ao puxar customização: ", e);
+                }
+            }
+
+            // 🎨 RENDERIZAÇÃO ESTILIZADA DINÂMICA
+            document.title = `${configCliente.nome} — Central de Atendimento`;
+            document.getElementById("custom-nome").innerText = configCliente.nome;
+            document.getElementById("custom-logo").src = configCliente.logo;
+            document.getElementById("custom-border-logo").style.borderColor = configCliente.cor;
+            
+            const btnSubmit = document.getElementById("btn-submit-dinamico");
+            btnSubmit.style.backgroundColor = configCliente.cor;
+            btnSubmit.style.color = configCliente.cor === "#FFD700" ? "#000000" : "#FFFFFF";
+
+            const camposArea = document.getElementById("campos-formulario");
+            const textoApresentacao = document.getElementById("texto-apresentacao");
+            const tituloForm = document.getElementById("titulo-formulario");
+
+            // 🥋 SE FOR TEMPLATE DE CAPOEIRA / ARTES MARCIAIS
+            if (configCliente.templateNicho.includes("Capoeira")) {
+                tituloForm.innerText = "Ficha de Matrícula e Graduação";
+                textoApresentacao.innerHTML = `A <strong>Associação de Capoeira Cordão de Ouro</strong> foi fundada pelo Mestre Suassuna em 1967. Este painel operacional serve para a captação de novos alunos, registro de saúde e controle de graduações oficiais de cordões sob a supervisão técnica do Contra Mestre responsável.`;
+                camposArea.innerHTML = `
+                    <div class="flex flex-col gap-1"><label class="text-gray-400">Nome Completo</label><input type="text" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-yellow-500"></div>
+                    <div class="flex flex-col gap-1"><label class="text-gray-400">Apelido na Capoeira</label><input type="text" class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-yellow-500"></div>
+                    <div class="flex flex-col gap-1"><label class="text-gray-400">WhatsApp / Contato</label><input type="tel" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-yellow-500"></div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-gray-400">Graduação / Cordão</label>
+                        <select class="bg-[#0F1115] border border-gray-800 rounded px-2 py-2 text-white focus:outline-none focus:border-yellow-500">
+                            <option>Iniciante</option><option>Crua</option><option>Amarela</option><option>Laranja</option><option>Azul</option><option>Verde</option><option>Professor</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col gap-1 sm:col-span-2"><label class="text-gray-400">Histórico Médico / Restrições de Saúde</label><textarea rows="2" class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-yellow-500"></textarea></div>
+                `;
+            } 
+            // 💈 SE FOR TEMPLATE DE BARBEARIA / HORA MARCADA
+            else if (configCliente.templateNicho.includes("Barbearia")) {
+                tituloForm.innerText = "Agendamento de Horário Inteligente";
+                textoApresentacao.innerHTML = `Bem-vindo à central de atendimento exclusivo. Escolha o serviço desejado, defina o profissional e selecione o horário vago na grade operacional para reservar a sua cadeira. Evite atrasos e otimize o seu tempo.`;
+                camposArea.innerHTML = `
+                    <div class="flex flex-col gap-1"><label class="text-gray-400">Seu Nome</label><input type="text" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-red-500"></div>
+                    <div class="flex flex-col gap-1"><label class="text-gray-400">Seu WhatsApp</label><input type="tel" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-red-500"></div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-gray-400">Serviço Desejado</label>
+                        <select class="bg-[#0F1115] border border-gray-800 rounded px-2 py-2 text-white focus:outline-none focus:border-red-500">
+                            <option>Cabelo Masculino (R$ 35)</option><option>Barba Alinhada (R$ 25)</option><option>Combo Premium (Cabelo + Barba) (R$ 50)</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col gap-1"><label class="text-gray-400">Data Desejada</label><input type="date" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-red-500"></div>
+                `;
+            }
+            // 🏋️ TEMPLATE DE ACADEMIA / PILATES
+            else {
+                tituloForm.innerText = "Check-in de Presença e Matrícula";
+                textoApresentacao.innerHTML = `Painel Core de controle de acesso de alunos da unidade. Realize o seu check-in diário para liberar a catraca de entrada e registrar o seu plano de treino ativo.`;
+                camposArea.innerHTML = `
+                    <div class="flex flex-col gap-1"><label class="text-gray-400">Nome do Aluno</label><input type="text" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none"></div>
+                    <div class="flex flex-col gap-1"><label class="text-gray-400">Matrícula ou CPF</label><input type="text" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none"></div>
+                `;
+            }
+
+            // Esconde o loading e abre o painel tunado
+            document.getElementById("loading").classList.add("hidden");
+            document.getElementById("interface-dinamica").classList.remove("hidden");
+        }
+
+        // Executa a montagem dinâmica na inicialização da página
+        window.addEventListener('DOMContentLoaded', inicializarCentralDinamica);
+    </script>
+</body>
+</html>
