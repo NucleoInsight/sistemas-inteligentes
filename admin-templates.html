@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Admin de Templates — Borges Soluções</title>
+</head>
+<body class="bg-[#0F1115] text-white p-8">
+    <div class="max-w-2xl mx-auto bg-[#1A1D24] p-6 rounded-xl border border-gray-800">
+        <h1 class="text-xl font-bold mb-6">Criador de Template Dinâmico</h1>
+        
+        <div class="space-y-4">
+            <input id="idNicho" type="text" placeholder="ID do Nicho (ex: capoeira)" class="w-full bg-[#0F1115] p-2 rounded border border-gray-700">
+            <input id="nomeNicho" type="text" placeholder="Nome da Empresa/Nicho" class="w-full bg-[#0F1115] p-2 rounded border border-gray-700">
+            <input id="corNicho" type="text" placeholder="Cor (ex: #FFD700)" class="w-full bg-[#0F1115] p-2 rounded border border-gray-700">
+            <input id="logoNicho" type="text" placeholder="URL da Logo" class="w-full bg-[#0F1115] p-2 rounded border border-gray-700">
+            <textarea id="apresentacaoNicho" placeholder="HTML da Apresentação" class="w-full bg-[#0F1115] p-2 rounded border border-gray-700 h-20"></textarea>
+            <textarea id="camposNicho" placeholder="HTML dos Inputs (Formulário)" class="w-full bg-[#0F1115] p-2 rounded border border-gray-700 h-40"></textarea>
+            
+            <button onclick="salvarTemplate()" class="w-full bg-blue-600 py-3 rounded font-bold hover:bg-blue-700">SALVAR NO FIRESTORE</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+        // IMPORTANTE: Adicione seu firebaseConfig aqui
+        const firebaseConfig = { /* SEU CONFIG AQUI */ };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.salvarTemplate = async () => {
+            const id = document.getElementById('idNicho').value;
+            const data = {
+                nome: document.getElementById('nomeNicho').value,
+                cor: document.getElementById('corNicho').value,
+                logo: document.getElementById('logoNicho').value,
+                apresentacao: document.getElementById('apresentacaoNicho').value,
+                campos: document.getElementById('camposNicho').value
+            };
+
+            try {
+                await setDoc(doc(db, "templates", id), data);
+                alert("Template salvo com sucesso! Já está disponível na plataforma.");
+            } catch (e) {
+                alert("Erro ao salvar: " + e.message);
+            }
+        };
+    </script>
+</body>
+</html>
