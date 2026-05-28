@@ -170,25 +170,32 @@
     <main class="flex-1 p-6 max-w-7xl w-full mx-auto">
         
         <section id="aba-alfa" class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div class="bg-bgCard p-4 rounded-xl border border-gray-800 shadow-inner relative overflow-hidden group">
-                    <div class="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-transparent pointer-events-none"></div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-textoSecundario">🧠 Receita Recorrente (MRR)</p>
-                    <p class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mt-1" id="mrr-total">R$ 0,00</p>
-                </div>
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
                 <div class="bg-bgCard p-4 rounded-xl border border-gray-800 relative overflow-hidden">
-                    <p class="text-xs font-semibold uppercase tracking-wider text-textoSecundario">⚡ Engenharia de Escala</p>
-                    <p class="text-base font-medium text-textoPrincipal mt-1 flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span> Módulos Universais
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-full blur-xl pointer-events-none"></div>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-textoSecundario">🧠 FATURAMENTO RECORRENTE (MRR)</p>
+                    <p class="text-3xl font-extrabold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent mt-1" id="mrr-total">R$ 0,00</p>
+                </div>
+                
+                <div class="bg-bgCard p-4 rounded-xl border border-gray-800 relative overflow-hidden">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-textoSecundario">🏭 ARQUITETURA OPERACIONAL</p>
+                    <p class="text-sm font-semibold text-textoPrincipal mt-2 flex items-center gap-2">
+                        <span class="flex h-2 w-2 relative"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span></span>
+                        Fábrica de Sistemas Ativa
                     </p>
+                    <p class="text-[11px] text-textoSecundario mt-1">Isolamento de Clientes, Instâncias e Módulos</p>
                 </div>
-                <div class="bg-bgCard p-4 rounded-xl border border-gray-800 relative overflow-hidden">
-                    <p class="text-xs font-semibold uppercase tracking-wider text-textoSecundario">🚀 Domínio de Entrega</p>
-                    <p class="text-base font-medium text-blue-400 mt-1 tracking-wide">solucoesinteligentes.site</p>
-                </div>
-                <div class="bg-bgCard p-4 rounded-xl border border-gray-800 relative overflow-hidden">
-                    <p class="text-xs font-semibold uppercase tracking-wider text-textoSecundario">🔮 Insights de Automação</p>
-                    <p class="text-xs font-medium text-green-400 mt-1">Infraestrutura 100% Otimizada</p>
+
+                <div class="bg-bgCard p-4 rounded-xl border border-purple-900/40 lg:col-span-2 relative overflow-hidden flex flex-col justify-between">
+                    <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-purple-500 to-transparent"></div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-purple-400 flex items-center gap-1">🔮 CENTRAL DE INTELIGÊNCIA OPERACIONAL</p>
+                        <span class="text-[9px] bg-purple-500/10 text-purple-400 px-1.5 py-0.5 rounded border border-purple-500/20 font-mono">INSIGHTS ATIVOS</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mt-2 text-[11px]">
+                        <div class="text-textoSecundario flex items-center gap-1">⚠️ <span class="text-textoPrincipal font-medium">Alerta Operacional:</span> Banco de dados configurado para testes públicos.</div>
+                        <div class="text-textoSecundario flex items-center gap-1">⚡ <span class="text-cyan-400 font-medium">Próxima Automação:</span> Integração de Webhooks de Pagamento.</div>
+                    </div>
                 </div>
             </div>
 
