@@ -39,9 +39,9 @@
                     <h2 class="text-sm font-bold uppercase tracking-wider mb-4 flex items-center gap-2 text-white">
                         <span>📝</span> <span id="titulo-formulario">Ficha de Registro Geral</span>
                     </h2>
-                    <form id="form-dinamico-cliente" class="space-y-4 text-xs">
+                    <form id="form-dinamico-cliente" class="space-y-4 text-xs" onsubmit="event.preventDefault(); alert('Modo Demonstração: Dados validados com sucesso!');">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="campos-formulario">
-                            </div>
+                        </div>
                         <button type="submit" id="btn-submit-dinamico" class="w-full text-xs font-bold py-2.5 rounded-lg transition-all duration-300 uppercase tracking-wider shadow-lg">
                             Confirmar Ação e Salvar
                         </button>
@@ -52,7 +52,7 @@
                     <div class="bg-[#171A21] p-5 rounded-xl border border-gray-800/80 space-y-2 text-xs">
                         <h3 class="font-bold text-white uppercase tracking-wider">💡 Informações Legais</h3>
                         <p class="text-gray-400 leading-relaxed text-justify" id="texto-apresentacao">
-                            Carregando histórico e termos de uso do estabelecimento...
+                            Carregando histórico e termos de uso do establishment...
                         </p>
                     </div>
                     
@@ -71,7 +71,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAMYE7ZLM4jtoVnshqowLSaSL-mYCW1lhI",
@@ -85,40 +85,59 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // 🔍 Lê os parâmetros da URL para saber qual cliente está abrindo a página
         const urlParams = new URLSearchParams(window.location.search);
         const clientId = urlParams.get('id');
 
-        // Configuração Padrão caso não passe ID na URL (Modo Demonstração Genérico)
         let configCliente = {
             nome: "Borges Demonstração",
-            logo: "https://grupocordaodeouro.com.br/wp-content/uploads/2021/08/logo-cdo.png",
+            logo: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
             cor: "#3B82F6",
             templateNicho: "Capoeira / Artes Marciais"
         };
 
         async function inicializarCentralDinamica() {
-            if (clientId) {
+            // Se houver ID, tenta buscar as configurações reais gravadas do cliente
+            if (clientId && clientId !== "undefined") {
                 try {
                     const docRef = doc(db, "clients", clientId);
                     const docSnap = await getDoc(docRef);
                     if (docSnap.exists()) {
                         const dadosBanco = docSnap.data();
-                        // Mapeia os dados salvos pelo seu Painel Alfa
                         configCliente.nome = dadosBanco.nome;
-                        configCliente.templateNicho = dadosBanco.templateNicho;
-                        
-                        // Define cores base automáticas baseadas no nicho para poupar digitação
-                        if(dadosBanco.templateNicho.includes("Capoeira")) configCliente.cor = "#FFD700";
-                        if(dadosBanco.templateNicho.includes("Barbearia")) configCliente.cor = "#EF4444";
-                        if(dadosBanco.templateNicho.includes("Academia")) configCliente.cor = "#06B6D4";
+                        configCliente.templateNicho = dadosBanco.templateNicho || "Capoeira / Artes Marciais";
                     }
                 } catch (e) {
                     console.error("Erro ao puxar customização: ", e);
                 }
+            } 
+            // Se o link vier como "previa-juninho" ou termos da URL sem ID NoSQL fixo (Gatilho rápido de vendas)
+            else {
+                const pathCompleto = window.location.href.toLowerCase();
+                if (pathCompleto.includes("juninho") || pathCompleto.includes("capoeira")) {
+                    configCliente.nome = "Grupo Cordão de Ouro";
+                    configCliente.templateNicho = "Capoeira / Artes Marciais";
+                } else if (pathCompleto.includes("barber") || pathCompleto.includes("barbearia")) {
+                    configCliente.nome = "Barbearia Premium Local";
+                    configCliente.templateNicho = "Barbearia / Salão";
+                } else if (pathCompleto.includes("academia") || pathCompleto.includes("fitness")) {
+                    configCliente.nome = "Academia Fitness Local";
+                    configCliente.templateNicho = "Academia / Studio Fitness";
+                }
             }
 
-            // 🎨 RENDERIZAÇÃO ESTILIZADA DINÂMICA
+            // 🎨 Definição automática de cores e logomarcas baseadas no nicho
+            if (configCliente.templateNicho.includes("Capoeira")) {
+                configCliente.cor = "#FFD700";
+                configCliente.logo = "https://grupocordaodeouro.com.br/wp-content/uploads/2021/08/logo-cdo.png";
+            } else if (configCliente.templateNicho.includes("Barbearia")) {
+                configCliente.cor = "#EF4444";
+                configCliente.logo = "https://cdn-icons-png.flaticon.com/512/1995/1995470.png";
+            } else if (configCliente.templateNicho.includes("Academia")) {
+                configCliente.cor = "#06B6D4";
+                configCliente.logo = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+            }
+
+            // 🎨 RENDERIZAÇÃO NO DOM
             document.title = `${configCliente.nome} — Central de Atendimento`;
             document.getElementById("custom-nome").innerText = configCliente.nome;
             document.getElementById("custom-logo").src = configCliente.logo;
@@ -132,25 +151,22 @@
             const textoApresentacao = document.getElementById("texto-apresentacao");
             const tituloForm = document.getElementById("titulo-formulario");
 
-            // 🥋 SE FOR TEMPLATE DE CAPOEIRA / ARTES MARCIAIS
             if (configCliente.templateNicho.includes("Capoeira")) {
                 tituloForm.innerText = "Ficha de Matrícula e Graduação";
                 textoApresentacao.innerHTML = `A <strong>Associação de Capoeira Cordão de Ouro</strong> foi fundada pelo Mestre Suassuna em 1967. Este painel operacional serve para a captação de novos alunos, registro de saúde e controle de graduações oficiais de cordões sob a supervisão técnica do Contra Mestre responsável.`;
                 camposArea.innerHTML = `
-                    <div class="flex flex-col gap-1"><label class="text-gray-400">Nome Completo</label><input type="text" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-yellow-500"></div>
-                    <div class="flex flex-col gap-1"><label class="text-gray-400">Apelido na Capoeira</label><input type="text" class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-yellow-500"></div>
-                    <div class="flex flex-col gap-1"><label class="text-gray-400">WhatsApp / Contato</label><input type="tel" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-yellow-500"></div>
+                    <div class="flex flex-col gap-1"><label class="text-gray-400">Nome Completo</label><input type="text" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-[#FFD700]"></div>
+                    <div class="flex flex-col gap-1"><label class="text-gray-400">Apelido na Capoeira</label><input type="text" class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-[#FFD700]"></div>
+                    <div class="flex flex-col gap-1"><label class="text-gray-400">WhatsApp / Contato</label><input type="tel" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-[#FFD700]"></div>
                     <div class="flex flex-col gap-1">
                         <label class="text-gray-400">Graduação / Cordão</label>
-                        <select class="bg-[#0F1115] border border-gray-800 rounded px-2 py-2 text-white focus:outline-none focus:border-yellow-500">
+                        <select class="bg-[#0F1115] border border-gray-800 rounded px-2 py-2 text-white focus:outline-none focus:border-[#FFD700]">
                             <option>Iniciante</option><option>Crua</option><option>Amarela</option><option>Laranja</option><option>Azul</option><option>Verde</option><option>Professor</option>
                         </select>
                     </div>
-                    <div class="flex flex-col gap-1 sm:col-span-2"><label class="text-gray-400">Histórico Médico / Restrições de Saúde</label><textarea rows="2" class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-yellow-500"></textarea></div>
+                    <div class="flex flex-col gap-1 sm:col-span-2"><label class="text-gray-400">Histórico Médico / Restrições de Saúde</label><textarea rows="2" class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-[#FFD700]"></textarea></div>
                 `;
-            } 
-            // 💈 SE FOR TEMPLATE DE BARBEARIA / HORA MARCADA
-            else if (configCliente.templateNicho.includes("Barbearia")) {
+            } else if (configCliente.templateNicho.includes("Barbearia")) {
                 tituloForm.innerText = "Agendamento de Horário Inteligente";
                 textoApresentacao.innerHTML = `Bem-vindo à central de atendimento exclusivo. Escolha o serviço desejado, defina o profissional e selecione o horário vago na grade operacional para reservar a sua cadeira. Evite atrasos e otimize o seu tempo.`;
                 camposArea.innerHTML = `
@@ -164,23 +180,19 @@
                     </div>
                     <div class="flex flex-col gap-1"><label class="text-gray-400">Data Desejada</label><input type="date" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-red-500"></div>
                 `;
-            }
-            // 🏋️ TEMPLATE DE ACADEMIA / PILATES
-            else {
+            } else {
                 tituloForm.innerText = "Check-in de Presença e Matrícula";
                 textoApresentacao.innerHTML = `Painel Core de controle de acesso de alunos da unidade. Realize o seu check-in diário para liberar a catraca de entrada e registrar o seu plano de treino ativo.`;
                 camposArea.innerHTML = `
-                    <div class="flex flex-col gap-1"><label class="text-gray-400">Nome do Aluno</label><input type="text" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none"></div>
-                    <div class="flex flex-col gap-1"><label class="text-gray-400">Matrícula ou CPF</label><input type="text" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none"></div>
+                    <div class="flex flex-col gap-1"><label class="text-gray-400">Nome do Aluno</label><input type="text" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-cyan-500"></div>
+                    <div class="flex flex-col gap-1"><label class="text-gray-400">Matrícula ou CPF</label><input type="text" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-cyan-500"></div>
                 `;
             }
 
-            // Esconde o loading e abre o painel tunado
             document.getElementById("loading").classList.add("hidden");
             document.getElementById("interface-dinamica").classList.remove("hidden");
         }
 
-        // Executa a montagem dinâmica na inicialização da página
         window.addEventListener('DOMContentLoaded', inicializarCentralDinamica);
     </script>
 </body>
