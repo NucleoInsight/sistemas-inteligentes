@@ -133,7 +133,11 @@
             let totalMRR = 0; let totalAtivos = 0; let totalDemos = 0; let totalContador = 0;
 
             try {
-                const q = query(collection(db, "clients"));
+                // Importa o operador de filtro NoSQL diretamente para otimizar a requisição
+                const { where } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+                
+                // 🛡️ Executa a busca filtrada direto no servidor do Firebase (Custo mínimo e segurança máxima)
+                const q = query(collection(db, "clients"), where("ownerId", "==", user.uid));
                 const querySnapshot = await getDocs(q);
                 
                 querySnapshot.forEach((docSnapshot) => {
