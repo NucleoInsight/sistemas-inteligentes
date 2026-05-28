@@ -251,20 +251,32 @@
             }
         }
 
-        // 3. Registrar Chamado de Suporte (Motor Base)
+        // 3. Registrar Chamado de Suporte com Vínculo de Segurança (ownerId)
         async function enviarSuporte(clienteNome, solicitacao, prioridade) {
             try {
+                // Captura o administrador logado para passar pela barreira de regras do Firestore
+                const user = auth.currentUser;
+                if (!user) { 
+                    alert("Ação Bloqueada: Você precisa estar autenticado para abrir um chamado de suporte."); 
+                    return; 
+                }
+
                 const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+                
+                // Grava o chamado carimbando o ID do dono para validação de segurança rígida
                 await addDoc(collection(db, "support"), {
+                    ownerId: user.uid, // 🛡️ CHAVE MESTRE DE SEGURANÇA EXIGIDA NAS REGRAS
                     cliente: clienteNome,
                     solicitacao: solicitacao,
                     prioridade: prioridade,
                     status: "Aberto",
                     data: new Date().toISOString()
                 });
-                alert("Solicitação enviada! Limite de 3 ajustes pequenos ativado para este mês.");
+                
+                alert("Solicitação enviada com sucesso! Limite de 3 pequenos ajustes visuais ativado para este mês.");
             } catch (e) {
-                console.error("Erro ao enviar chamado: ", e);
+                console.error("Erro de permissão ou rede ao enviar chamado para o Firestore: ", e);
+                alert("Erro ao enviar chamado. Verifique os logs de segurança no console.");
             }
         }
 
