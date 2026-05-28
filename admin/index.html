@@ -237,6 +237,7 @@
             if (user) {
                 if(telaLogin) telaLogin.classList.add("opacity-0", "pointer-events-none");
                 carregarClientes();
+                listarTemplates(); // ⚡ Motor de listagem ativado
             } else {
                 if(telaLogin) telaLogin.classList.remove("opacity-0", "pointer-events-none");
             }
