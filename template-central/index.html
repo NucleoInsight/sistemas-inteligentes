@@ -151,6 +151,16 @@
             btnSubmit.style.backgroundColor = configCliente.cor;
             btnSubmit.style.color = "#FFFFFF";
 
+            // 🛡️ LÓGICA DE DEGUSTAÇÃO (TRAVA DE DESENVOLVIMENTO)
+            if (dadosCliente.status === "Demonstração") {
+                btnSubmit.onclick = (e) => {
+                    e.preventDefault();
+                    alert("⚠️ ESSA FERRAMENTA AINDA ESTÁ EM DESENVOLVIMENTO. Entre em contato com Borges Soluções para liberar seu acesso total.");
+                };
+            } else if (dadosCliente.status === "Bloqueado") {
+                document.body.innerHTML = "<div class='flex h-screen items-center justify-center text-red-500 font-bold'>ACESSO BLOQUEADO: Regularize sua mensalidade.</div>";
+            }
+
             document.getElementById("titulo-formulario").innerText = configCliente.tituloForm;
             document.getElementById("texto-apresentacao").innerHTML = configCliente.textoApresentacao;
             document.getElementById("campos-formulario").innerHTML = configCliente.htmlCampos;
