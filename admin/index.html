@@ -291,10 +291,9 @@
                     }
                     if(dados.status === "Demonstração") totalDemos++;
 
-                    let badgeClass = "text-green-400 border border-green-500/20 bg-green-500/5";
-                    if (dados.status === "Ativo - Pendente") badgeClass = "text-blue-400 border border-blue-500/20 bg-blue-500/5";
-                    if (dados.status === "Demonstração") badgeClass = "text-yellow-400 border border-yellow-500/20 bg-yellow-500/5";
-                    if (dados.status === "Atrasado") badgeClass = "text-red-400 border border-red-500/20 bg-red-500/5";
+                    let badgeClass = "text-yellow-400 border border-yellow-500/20 bg-yellow-500/5"; // Demonstração
+                    if (dados.status === "Ativo") badgeClass = "text-green-400 border border-green-500/20 bg-green-500/5";
+                    if (dados.status === "Bloqueado") badgeClass = "text-red-400 border border-red-500/20 bg-red-500/5";
 
                     lista.innerHTML += `
                         <tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition text-xs">
