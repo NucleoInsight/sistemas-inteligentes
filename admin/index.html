@@ -301,12 +301,13 @@
                             <td class="px-4 py-3.5 font-bold text-white">${dados.nome}</td>
                             <td class="px-4 py-3.5 text-right font-mono">R$ ${valorMRR.toFixed(2)}</td>
                             <td class="px-4 py-3.5 text-center">
-                                <select onchange="window.atualizarStatus('${id}', this.value)" class="bg-[#171A21] text-[11px] font-semibold border border-gray-800 rounded px-2 py-1 cursor-pointer ${badgeClass}">
-                                    <option value="Demonstração" ${dados.status === 'Demonstração' ? 'selected' : ''}>Demonstração</option>
-                                    <option value="Ativo - Pendente" ${dados.status === 'Ativo - Pendente' ? 'selected' : ''}>Ativo - Pendente</option>
-                                    <option value="Ativo - Pago" ${dados.status === 'Ativo - Pago' ? 'selected' : ''}>Ativo - Pago</option>
-                                    <option value="Atrasado" ${dados.status === 'Atrasado' ? 'selected' : ''}>Atrasado</option>
-                                </select>
+                            
+                            <select onchange="window.atualizarStatus('${id}', this.value)" class="bg-[#171A21] text-[11px] font-semibold border border-gray-800 rounded px-2 py-1 cursor-pointer ${badgeClass}">
+                            <option value="Demonstração" ${dados.status === 'Demonstração' ? 'selected' : ''}>Demonstração</option>
+                            <option value="Ativo" ${dados.status === 'Ativo' ? 'selected' : ''}>Contrato Ativo</option>
+                            <option value="Bloqueado" ${dados.status === 'Bloqueado' ? 'selected' : ''}>Bloqueado</option>
+                            </select>
+                            
                             </td>
                            <td class="px-4 py-3.5 text-center space-x-2">
                                 <button onclick="window.copiarGatilho('preview', '${dados.nome}', '${dados.linkDemo || ''}', ${valorMRR}, '${dados.contato}')" class="bg-yellow-500/10 border border-yellow-500/20 hover:bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded text-[11px] font-bold transition">📋 Enviar Prévia</button>
