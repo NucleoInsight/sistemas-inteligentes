@@ -113,25 +113,26 @@
         }
 
         async function inicializarCentralDinamica() {
-            // Tenta buscar nicho via URL (gatilho rápido) ou ID de cliente
-            const nichoUrl = urlParams.get('nicho') || "padrao";
+            const nichoUrl = urlParams.get('nicho');
             
-            // Busca o template no Firestore (Coleção "templates")
+            // Se não tem nicho, não tenta buscar
+            if (!nichoUrl) {
+                console.error("Nicho não especificado na URL");
+                return;
+            }
+            
+            // Busca o template no Firestore
             await buscarTemplateDoBanco(nichoUrl);
 
-            // Fallback de segurança caso o nicho não exista no banco (Segurança de Escala)
-            if (!configCliente.nome || configCliente.nome === "Carregando...") {
-                configCliente = {
-                    nome: "Sistema em Configuração",
-                    logo: "https://cdn-icons-png.flaticon.com/512/190/190411.png",
-                    cor: "#6B7280",
-                    tituloForm: "Aguardando Template",
-                    textoApresentacao: "O template solicitado não foi encontrado na base de dados. Contate o administrador.",
-                    htmlCampos: "<p class='text-gray-500'>Aguardando carga...</p>"
-                };
+            // Verifica se o template carregou (se o nome mudou de "Carregando...")
+            if (configCliente.nome === "Carregando...") {
+                console.error("Template " + nichoUrl + " não encontrado no banco.");
+                document.getElementById("custom-nome").innerText = "Template não encontrado";
+                document.getElementById("loading").innerHTML = "<p class='text-red-500'>Erro: Verifique o nome do nicho no banco.</p>";
+                return;
             }
 
-            // 🎨 INJEÇÃO DE VARIÁVEIS NO DOM (Renderização limpa e padronizada)
+            // 🎨 INJEÇÃO DE VARIÁVEIS NO DOM
             document.title = `${configCliente.nome} — Central de Atendimento`;
             document.getElementById("custom-nome").innerText = configCliente.nome;
             document.getElementById("custom-logo").src = configCliente.logo;
