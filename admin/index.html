@@ -54,72 +54,34 @@
 
         // FUNÇÕES OPERACIONAIS DO PAINEL ALFA
 
-        // 1. Engenharia de Produção: Criação Mestre Desacoplada Otimizada para NoSQL
+        // 1. Instanciação Limpa de MVP (Apenas 1 Gravação Eficiente no Firestore)
         async function cadastrarCliente(nome, contato, modulosAtivos, status, mrr) {
             try {
                 const timestampAtual = new Date().toISOString();
 
-                // Coleção 1: 'clients' - Documento mestre do faturamento com espelhamento técnico
-                const clientDocRef = await addDoc(collection(db, "clients"), {
+                // Salva tudo encapsulado em um único documento para zerar custos e latência
+                await addDoc(collection(db, "clients"), {
                     nome: nome,
                     contato: contato,
                     mrr: parseFloat(mrr),
                     status: status,
-                    totalSystems: 1,
-                    ultimoAcesso: timestampAtual,
-                    modulosContratados: modulosAtivos, // Otimização NoSQL: evita query cruzada
+                    modulosContratados: modulosAtivos,
+                    financeiro: {
+                        statusPagamento: "Pendente",
+                        ultimoVencimento: timestampAtual
+                    },
                     dataCriacao: timestampAtual
                 });
 
-                const clientId = clientDocRef.id;
-
-                // Coleção 2: 'systems' - Instanciação da máquina de software do cliente
-                const systemDocRef = await addDoc(collection(db, "systems"), {
-                    clientId: clientId,
-                    systemName: `Instância Operacional - ${nome}`,
-                    modulos: modulosAtivos,
-                    status: status,
-                    versao: "1.5.0",
-                    dataInstancia: timestampAtual
-                });
-
-                // Coleção 3: 'users' - Inicialização da conta administrativa mestre do cliente
-                await addDoc(collection(db, "users"), {
-                    clientId: clientId,
-                    systemId: systemDocRef.id,
-                    email: `admin@${nome.toLowerCase().replace(/\s+/g, '')}.com`,
-                    permissao: "Master",
-                    status: "Ativo"
-                });
-
-                // Coleção 4: 'payments' - Provisionamento da primeira fatura de setup/recorrência
-                await addDoc(collection(db, "payments"), {
-                    clientId: clientId,
-                    valor: parseFloat(mrr),
-                    vencimento: timestampAtual,
-                    status: "Aguardando Liquidação",
-                    comprovante: ""
-                });
-
-                // Coleção 5: 'modules' - Registro técnico de auditoria de ativação dos blocos de código
-                for (const modulo of modulosAtivos) {
-                    await addDoc(collection(db, "modules"), {
-                        systemId: systemDocRef.id,
-                        nomeModulo: modulo,
-                        categoria: modulo.includes("Cadastro") ? "Core" : "Operacional",
-                        versaoEstavel: "1.0.0"
-                    });
-                }
-
-                alert("Arquitetura 10/10 Concluída! Firestore provisionou 5 coleções conectadas com isolamento absoluto.");
+                alert("Operação instanciada com sucesso! Pronto para rodar o Core Base.");
                 carregarClientes();
             } catch (e) {
-                console.error("Falha fatal na esteira de produção NoSQL: ", e);
-                alert("Erro ao instanciar arquitetura. Verifique os logs.");
+                console.error("Erro ao salvar operação: ", e);
+                alert("Erro ao salvar. Verifique se as Regras do Firestore estão públicas.");
             }
         }
 
-        // 2. Carregar Clientes em Tempo Real na Tabela
+        // 2. Carregar Clientes Corrigido (Mapeando modulosContratados dinamicamente)
         async function carregarClientes() {
             const listaClientes = document.getElementById("tabela-clientes");
             if (!listaClientes) return;
@@ -134,11 +96,14 @@
                     const dados = doc.data();
                     totalMRR += dados.mrr || 0;
                     
+                    // Converte o array de módulos em texto legível na tabela sem quebrar o layout
+                    const modulosTexto = (dados.modulosContratados || []).join(", ") || "Apenas Core Base";
+                    
                     listaClientes.innerHTML += `
                         <tr class="border-b border-bgPrincipal">
-                            <td class="px-4 py-3 font-medium">${dados.nome}</td>
-                            <td class="px-4 py-3 text-textoSecundario">${dados.plano}</td>
-                            <td class="px-4 py-3 text-right">R$ ${dados.mrr.toFixed(2)}</td>
+                            <td class="px-4 py-3 font-medium text-textoPrincipal">${dados.nome}</td>
+                            <td class="px-4 py-3 text-textoSecundario text-xs max-w-xs truncate" title="${modulosTexto}">${modulosTexto}</td>
+                            <td class="px-4 py-3 text-right text-textoPrincipal">R$ ${dados.mrr.toFixed(2)}</td>
                             <td class="px-4 py-3 text-center">
                                 <span class="px-2 py-1 text-xs rounded ${dados.status === 'Ativo' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}">
                                     ${dados.status}
@@ -149,8 +114,8 @@
                 });
                 document.getElementById("mrr-total").innerText = `R$ ${totalMRR.toFixed(2)}`;
             } catch (e) {
-                console.error("Erro ao buscar dados do Firestore: ", e);
-                listaClientes.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-yellow-500 text-xs">Aguardando dados... Certifique-se de ativar o Firestore Database no console.</td></tr>`;
+                console.error("Erro ao carregar tabela: ", e);
+                listaClientes.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-yellow-500 text-xs">Erro de conexão com o banco de dados.</td></tr>`;
             }
         }
 
