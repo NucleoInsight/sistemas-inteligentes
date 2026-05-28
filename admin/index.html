@@ -185,32 +185,23 @@
     <main class="flex-1 p-6 max-w-7xl w-full mx-auto">
         
         <section id="aba-alfa" class="space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-bgCard p-4 rounded-xl border border-gray-800 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-full blur-xl pointer-events-none"></div>
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-textoSecundario">🧠 FATURAMENTO RECORRENTE (MRR)</p>
-                    <p class="text-3xl font-extrabold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent mt-1" id="mrr-total">R$ 0,00</p>
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-blue-500/10 rounded-full blur-xl pointer-events-none"></div>
+                    <p class="text-[9px] font-bold uppercase tracking-widest text-textoSecundario">💰 RECEITA RECORRENTE (MRR)</p>
+                    <p class="text-2xl font-black bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mt-1" id="mrr-total">R$ 0,00</p>
                 </div>
-                
-                <div class="bg-bgCard p-4 rounded-xl border border-gray-800 relative overflow-hidden">
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-textoSecundario">🏭 ARQUITETURA OPERACIONAL</p>
-                    <p class="text-sm font-semibold text-textoPrincipal mt-2 flex items-center gap-2">
-                        <span class="flex h-2 w-2 relative"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span></span>
-                        Fábrica de Sistemas Ativa
-                    </p>
-                    <p class="text-[11px] text-textoSecundario mt-1">Isolamento de Clientes, Instâncias e Módulos</p>
+                <div class="bg-bgCard p-4 rounded-xl border border-gray-800">
+                    <p class="text-[9px] font-bold uppercase tracking-widest text-textoSecundario">🟢 OPERAÇÕES ATIVAS</p>
+                    <p class="text-2xl font-black text-green-400 mt-1" id="dash-ativos">0</p>
                 </div>
-
-                <div class="bg-bgCard p-4 rounded-xl border border-purple-900/40 lg:col-span-2 relative overflow-hidden flex flex-col justify-between">
-                    <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-purple-500 to-transparent"></div>
-                    <div class="flex items-center justify-between">
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-purple-400 flex items-center gap-1">🔮 CENTRAL DE INTELIGÊNCIA OPERACIONAL</p>
-                        <span class="text-[9px] bg-purple-500/10 text-purple-400 px-1.5 py-0.5 rounded border border-purple-500/20 font-mono">INSIGHTS ATIVOS</span>
-                    </div>
-                   <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2 text-[11px]">
-                        <div class="text-textoSecundario flex items-center gap-1">💈 <span class="text-textoPrincipal font-medium">Nicho Barbearia:</span> Módulo de Agenda + Comunicação WhatsApp pronto para validação local.</div>
-                        <div class="text-textoSecundario flex items-center gap-1">🤸 <span class="text-cyan-400 font-medium">Nicho Capoeira:</span> Módulo de Cadastro de Pessoas + Controle de Presença validado.</div>
-                    </div>
+                <div class="bg-bgCard p-4 rounded-xl border border-gray-800">
+                    <p class="text-[9px] font-bold uppercase tracking-widest text-textoSecundario">🧪 EM DEMONSTRAÇÃO</p>
+                    <p class="text-2xl font-black text-yellow-500 mt-1" id="dash-demos">0</p>
+                </div>
+                <div class="bg-bgCard p-4 rounded-xl border border-gray-800">
+                    <p class="text-[9px] font-bold uppercase tracking-widest text-textoSecundario">📊 TICKET MÉDIO</p>
+                    <p class="text-2xl font-black text-purple-400 mt-1" id="dash-ticket">R$ 0,00</p>
                 </div>
             </div>
 
