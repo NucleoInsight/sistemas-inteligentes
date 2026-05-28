@@ -237,10 +237,8 @@
     }
 
     navigator.clipboard.writeText(copy).then(() => {
-        alert(`Sucesso! Link verificado [${caminhoFinal}]. Texto copiado para o cliente ${nome}.`);
-        window.open(`https://api.whatsapp.com/send?phone=55${numeroLimpo}&text=${encodeURIComponent(copy)}`, "_blank");
+        alert(`Texto copiado com sucesso para o cliente ${nome}! Agora é só colar no seu WhatsApp.`);
     });
-};
 
         // 🟢 CADASTRAR OPERAÇÃO NO FIREBASE
         async function cadastrarCliente(nome, contato, mrr, diaVencimento, nicho, cor, status) {
