@@ -471,6 +471,20 @@
                 btn.innerText = textoOriginal;
             }
         });
+        async function listarTemplates() {
+            const select = document.getElementById("tpl-id");
+            if (!select) return;
+            try {
+                const snap = await getDocs(collection(db, "templates"));
+                select.innerHTML = '<option value="">Selecione um template...</option>';
+                snap.forEach(doc => {
+                    const opt = document.createElement("option");
+                    opt.value = doc.id;
+                    opt.textContent = doc.id;
+                    select.appendChild(opt);
+                });
+            } catch (err) { console.error("Erro ao listar:", err); }
+        }
     </script>
 </body>
 </html>
