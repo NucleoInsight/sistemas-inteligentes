@@ -475,20 +475,32 @@
                 btn.innerText = textoOriginal;
             }
         });
-        async function listarTemplates() {
-            const select = document.getElementById("tpl-id");
-            if (!select) return;
-            try {
-                const snap = await getDocs(collection(db, "templates"));
-                select.innerHTML = '<option value="">Selecione um template...</option>';
-                snap.forEach(doc => {
-                    const opt = document.createElement("option");
-                    opt.value = doc.id;
-                    opt.textContent = doc.id;
-                    select.appendChild(opt);
-                });
-            } catch (err) { console.error("Erro ao listar:", err); }
-        }
+        // 🔍 BUSCA DINÂMICA
+        window.filtrarTemplates = async (termo) => {
+            const container = document.getElementById("resultado-busca");
+            if (termo.length < 2) { container.classList.add('hidden'); return; }
+            
+            const snap = await getDocs(collection(db, "templates"));
+            container.innerHTML = "";
+            let encontrou = false;
+
+            snap.forEach(doc => {
+                if (doc.id.toLowerCase().includes(termo.toLowerCase())) {
+                    encontrou = true;
+                    container.classList.remove('hidden');
+                    const div = document.createElement("div");
+                    div.className = "p-2 hover:bg-purple-600/20 cursor-pointer text-xs";
+                    div.textContent = doc.id;
+                    div.onclick = () => {
+                        document.getElementById("tpl-id").value = doc.id;
+                        window.resgatarTemplate(doc.id); // Busca automática ao clicar
+                        container.classList.add('hidden');
+                    };
+                    container.appendChild(div);
+                }
+            });
+            if(!encontrou) container.classList.add('hidden');
+        };
     </script>
 </body>
 </html>
