@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Borges Sistemas Inteligentes | Agenda para Barbeiros</title>
+  <meta name="description" content="Agenda online com lembrete WhatsApp. Chega de perder cliente por no-show.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg: #0F1115;
+      --card: #171A21;
+      --text: #FFFFFF;
+      --text-sec: #A8B0C0;
+      --primary: #3B82F6;
+    }
+    body { background: var(--bg); color: var(--text); }
+  </style>
+</head>
+<body class="min-h-screen">
+  
+  <header class="p-6 border-b border-[var(--card)]">
+    <div class="max-w-5xl mx-auto flex justify-between items-center">
+      <h1 class="text-xl font-bold text-[var(--primary)]">Borges Sistemas Inteligentes</h1>
+      <a href="#login" class="text-sm text-[var(--text-sec)] hover:text-white">Entrar</a>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-6 py-20">
+    <div class="text-center">
+      <h2 class="text-4xl md:text-5xl font-bold mb-4">Sua barbearia perdendo cliente no WhatsApp?</h2>
+      <p class="text-[var(--text-sec)] text-lg mb-8 max-w-2xl mx-auto">Agenda online com confirmação automática. Cliente agenda sozinho, paga no Pix e recebe lembrete. Você só corta.</p>
+      <a href="#demo" class="bg-[var(--primary)] px-8 py-3 rounded font-semibold hover:bg-blue-600 inline-block">Ver Demonstração</a>
+      <p class="text-sm text-[var(--text-sec)] mt-3">Instalação em 2 dias. R$300 + R$49/mês</p>
+    </div>
+
+    <div class="mt-20 grid md:grid-cols-3 gap-6 text-center">
+      <div class="bg-[var(--card)] p-8 rounded">
+        <p class="text-3xl font-bold text-[var(--primary)]">-80%</p>
+        <p class="text-[var(--text-sec)] mt-2">No-shows com lembrete automático</p>
+      </div>
+      <div class="bg-[var(--card)] p-8 rounded">
+        <p class="text-3xl font-bold text-[var(--primary)]">24/7</p>
+        <p class="text-[var(--text-sec)] mt-2">Cliente agenda sem te chamar</p>
+      </div>
+      <div class="bg-[var(--card)] p-8 rounded">
+        <p class="text-3xl font-bold text-[var(--primary)]">Pix</p>
+        <p class="text-[var(--text-sec)] mt-2">Receba na hora do agendamento</p>
+      </div>
+    </div>
+  </main>
+
+  <section id="login" class="max-w-md mx-auto px-6 py-16">
+    <div class="bg-[var(--card)] p-8 rounded">
+      <h3 class="text-2xl font-bold mb-6 text-center">Acessar sistema</h3>
+      
+      <div id="phone-form">
+        <label class="text-sm text-[var(--text-sec)]">Celular com WhatsApp</label>
+        <div class="flex gap-2 mt-2 mb-4">
+  <span class="bg-[var(--bg)] border border-[var(--card)] p-3 rounded text-[var(--text-sec)]">+55</span>
+  <input id="phone" type="tel" placeholder="75 99999-9999" 
+         class="flex-1 bg-[var(--bg)] border border-[var(--card)] p-3 rounded text-white focus:border-[var(--primary)] outline-none">
+</div>
+        <div id="recaptcha-container"></div>
+        <button onclick="sendOTP()" class="w-full bg-[var(--primary)] p-3 rounded font-semibold hover:bg-blue-600">
+          Receber Código SMS
+        </button>
+      </div>
+
+      <div id="code-form" class="hidden">
+        <label class="text-sm text-[var(--text-sec)]">Código recebido por SMS</label>
+        <input id="code" type="text" placeholder="000000" 
+               class="w-full bg-[var(--bg)] border border-[var(--card)] p-3 rounded mt-2 mb-4 text-white focus:border-[var(--primary)] outline-none">
+        <button onclick="verifyOTP()" class="w-full bg-[var(--primary)] p-3 rounded font-semibold hover:bg-blue-600">
+          Entrar
+        </button>
+        <button onclick="backToPhone()" class="w-full text-[var(--text-sec)] text-sm mt-3 hover:text-white">
+          Voltar
+        </button>
+      </div>
+
+      <div class="my-6 text-center text-[var(--text-sec)] text-sm">ou</div>
+
+      <button onclick="showGoogleModal()" class="w-full border border-[var(--text-sec)] p-3 rounded flex items-center justify-center gap-2 hover:bg-[var(--bg)]">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18">
+        Continuar com Google
+      </button>
+    </div>
+  </section>
+
+  <div id="google-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-6 z-50">
+    <div class="bg-[var(--card)] p-8 rounded max-w-sm">
+      <h3 class="text-xl font-bold mb-3">🚀 Em breve!</h3>
+      <p class="text-[var(--text-sec)] mb-4">Login com Google está em fase final de implantação pra garantir máxima segurança dos seus dados.</p>
+      <p class="text-[var(--text-sec)] mb-6">Use seu celular por enquanto. É mais rápido e seguro.</p>
+      <button onclick="closeModal()" class="w-full bg-[var(--primary)] p-3 rounded font-semibold">Entendi</button>
+    </div>
+  </div>
+
+  <footer class="text-center py-8 text-[var(--text-sec)] text-sm border-t border-[var(--card)]">
+    Borges Sistemas Inteligentes © 2026
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAMYE7ZLM4jtoVnshqowLSaSL-mYCW1lhI",
+      authDomain: "sistemas-inteligentes-38cdc.firebaseapp.com",
+      projectId: "sistemas-inteligentes-38cdc",
+      storageBucket: "sistemas-inteligentes-38cdc.firebasestorage.app",
+      messagingSenderId: "632476998816",
+      appId: "1:632476998816:web:3cb6936a5e3517b09dbdc5",
+      measurementId: "G-BJ28TJTEVD"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const analytics = getAnalytics(app);
+
+    document.addEventListener('DOMContentLoaded', () => {
+  window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+    'size': 'invisible'
+  });
+  window.recaptchaVerifier.render().then(function(widgetId) {
+    window.recaptchaWidgetId = widgetId;
+  });
+});
+
+    window.sendOTP = async () => {
+      const phone = '+55' + document.getElementById('phone').value.replace(/\D/g, '');
+      if(!phone.startsWith('+')) {
+        alert('Use formato: +55 75 99999-9999');
+        return;
+      }
+      try {
+        const confirmationResult = await signInWithPhoneNumber(auth, phone, window.recaptchaVerifier);
+        window.confirmationResult = confirmationResult;
+        document.getElementById('phone-form').classList.add('hidden');
+        document.getElementById('code-form').classList.remove('hidden');
+      } catch (error) {
+        alert('Erro: ' + error.message);
+      }
+    }
+
+    window.verifyOTP = async () => {
+      const code = document.getElementById('code').value;
+      try {
+        const result = await window.confirmationResult.confirm(code);
+        alert('Login feito! Redirecionando...');
+        window.location.href = '/sistemas-inteligentes/admin/';  
+      } catch (error) {
+        alert('Código inválido');
+      }
+    }
+
+    window.backToPhone = () => {
+      document.getElementById('code-form').classList.add('hidden');
+      document.getElementById('phone-form').classList.remove('hidden');
+    }
+  </script>
+
+  <script>
+    function showGoogleModal() {
+      document.getElementById('google-modal').classList.remove('hidden');
+    }
+    function closeModal() {
+      document.getElementById('google-modal').classList.add('hidden');
+    }
+  </script>
+
+</body>
+</html>
