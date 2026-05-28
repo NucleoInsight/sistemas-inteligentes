@@ -203,52 +203,31 @@
 
         window.sairDaCentral = () => { if(confirm("Sair?")) { signOut(auth).then(()=>window.location.reload()); } };
 
-        // 🔥 FUNÇÕES DE COPIA MAGNÉTICA DE TEXTO + LINKS DO SEU RESUMO
         window.copiarGatilho = (tipo, nome, linkFixo, valor, contato) => {
-    const numeroLimpo = contato.replace(/\D/g, "");
-    
-    // Tratamento de Engenharia: se o linkFixo vier vazio, gera um slug baseado no nome do cliente
-    let caminhoFinal = linkFixo.trim();
-    if (!caminhoFinal) {
-        // Se esqueceres de preencher, ele tenta deduzir: "Academia Iron Feira" vira "academia-iron-feira.html"
-        caminhoFinal = `templates/${nome.toLowerCase().replace(/[^a-z0-9]/g, "-")}.html`;
-    }
+            const numeroLimpo = contato.replace(/\D/g, "");
+            let caminhoFinal = linkFixo.trim();
+            if (!caminhoFinal) {
+                caminhoFinal = `templates/${nome.toLowerCase().replace(/[^a-z0-9]/g, "-")}.html`;
+            }
+            const linkCompleto = `https://nucleoinsight.github.io/sistemas-inteligentes/${caminhoFinal}`;
+            let copy = "";
 
-    const linkCompleto = `https://nucleoinsight.github.io/sistemas-inteligentes/${caminhoFinal}`;
-    let copy = "";
+            if(tipo === 'preview') {
+                copy = `*🚀 SEU SISTEMA INTELIGENTE ESTÁ PRONTO PARA TESTE!*\n\nFala, *${nome}*! Beleza?\n\nConforme a gente combinou, eu já montei a estrutura inicial personalizada do seu sistema para você dar uma olhada e degustar na prática.\n\n👉 *Acesse pelo link:* ${linkCompleto}\n\nDá uma olhada no visual e vê se ficou do jeito que você imaginou para economizar seu tempo. Ficando aprovado, eu finalizo os fluxos internos e travo a liberação oficial dele pra você.\n\n_Consigo te entregar isso rodando completo até sexta se fecharmos o sinal hoje, porque a base já está pronta. Te interessa?_`;
+            } else {
+                copy = `*✅ ENTREGA DA INSTÂNCIA PREMIUM OPERACIONAL*\n\nFala, *${nome}*!\n\nTudo liberado! O seu sistema já está 100% ativo e configurado na nossa infraestrutura NoSQL.\n\n👉 *Link Oficial de Acesso:* ${linkCompleto}\n\n*💡 Instruções Importantes de Entrega:*\n1. Abra o link no celular.\n2. Se for Android, clique nos 3 pontinhos e selecione *[Instalar Aplicativo]*.\n3. Se for iPhone, clique no botão de compartilhar e selecione *[Adicionar à Tela de Início]*.\n\nO sistema vai rodar igual a um aplicativo nativo, sem ocupar memória. Qualquer dúvida, estou aqui!`;
+            }
 
-    if(tipo === 'preview') {
-        copy = `*🚀 SEU SISTEMA INTELIGENTE ESTÁ PRONTO PARA TESTE!*\n\n` +
-               `Fala, *${nome}*! Beleza?\n\n` +
-               `Conforme a gente combinou, eu já montei a estrutura inicial personalizada do seu sistema para você dar uma olhada e degustar na prática.\n\n` +
-               `👉 *Acesse pelo link:* ${linkCompleto}\n\n` +
-               `Dá uma olhada no visual e vê se ficou do jeito que você imaginou para economizar seu tempo. Ficando aprovado, eu finalizo os fluxos internos e travo a liberação oficial dele pra você.\n\n` +
-               `_Consigo te entregar isso rodando completo até sexta se fecharmos o sinal hoje, porque a base já está pronta. Te interessa?_`;
-    } else {
-        copy = `*✅ ENTREGA DA INSTÂNCIA PREMIUM OPERACIONAL*\n\n` +
-               `Fala, *${nome}*!\n\n` +
-               `Tudo liberado! O seu sistema já está 100% ativo e configurado na nossa infraestrutura NoSQL.\n\n` +
-               `👉 *Link Oficial de Acesso:* ${linkCompleto}\n\n` +
-               `*💡 Instruções Importantes de Entrega:*\n` +
-               `1. Abra o link no celular.\n` +
-               `2. Se for Android, clique nos 3 pontinhos e selecione *[Instalar Aplicativo]*.\n` +
-               `3. Se for iPhone, clique no botão de compartilhar e selecione *[Adicionar à Tela de Início]*.\n\n` +
-               `O sistema vai rodar igual a um aplicativo nativo, sem ocupar memória. Qualquer dúvida, estou aqui!`;
-    }
+            navigator.clipboard.writeText(copy).then(() => {
+                alert(`Texto copiado com sucesso para o cliente ${nome}! Agora é só colar no seu WhatsApp.`);
+            });
+        };
 
-    navigator.clipboard.writeText(copy).then(() => {
-        alert(`Texto copiado com sucesso para o cliente ${nome}! Agora é só colar no seu WhatsApp.`);
-    });
-
-        // 🟢 CADASTRAR OPERAÇÃO NO FIREBASE
         async function cadastrarCliente(nome, contato, mrr, diaVencimento, nicho, cor, status) {
             try {
                 const user = auth.currentUser;
                 if (!user) return;
-
-                // Agora gera o link com as variáveis de nicho e cor embutidas
                 const linkParametrizado = `index.html?nicho=${nicho}&cor=${encodeURIComponent(cor)}`;
-
                 await addDoc(collection(db, "clients"), {
                     ownerId: user.uid,
                     nome: nome,
@@ -266,7 +245,6 @@
             } catch (e) { console.error(e); }
         }
 
-        // 📊 RENDERIZAR TABELA COM OS SEUS BOTÕES DE DISPARO RÁPIDO
         async function carregarClientes() {
             const lista = document.getElementById("tabela-clientes");
             if (!lista) return; lista.innerHTML = "";
@@ -289,11 +267,10 @@
                     }
                     if(dados.status === "Demonstração") totalDemos++;
 
-                    let badgeClass = "text-yellow-400 border border-yellow-500/20 bg-yellow-500/5"; // Demonstração
+                    let badgeClass = "text-yellow-400 border border-yellow-500/20 bg-yellow-500/5"; 
                     if (dados.status === "Ativo") badgeClass = "text-green-400 border border-green-500/20 bg-green-500/5";
                     if (dados.status === "Bloqueado") badgeClass = "text-red-400 border border-red-500/20 bg-red-500/5";
 
-                    // PROTEÇÃO PARA CLIENTES ANTIGOS QUE NÃO TEM NICHO OU COR SALVOS NO BANCO
                     const nichoSeguro = dados.nicho || "capoeira";
                     const corSegura = dados.cor || "#3B82F6";
 
@@ -333,7 +310,7 @@
 
         document.getElementById("form-cliente")?.addEventListener("submit", (e) => {
             e.preventDefault();
-           cadastrarCliente(
+            cadastrarCliente(
                 document.getElementById("cli-nome").value,
                 document.getElementById("cli-contato").value,
                 document.getElementById("cli-mrr").value,
