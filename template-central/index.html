@@ -91,18 +91,26 @@
       // 🛠️ O "CORE" BUSCARÁ AS CONFIGURAÇÕES DIRETAMENTE DO BANCO NO FUTURO
         // Agora, o template aguarda a carga da coleção "templates" do Firestore
 
-        // Configuração padrão de Demonstração Geral (Fallback)
-        let configCliente = {
-            nome: "Borges Sistemas Demonstrativos",
-            logo: "https://cdn-icons-png.flaticon.com/512/561/561170.png",
-            cor: "#3B82F6",
-            tituloForm: "Ficha de Atendimento Geral",
-            textoApresentacao: "Central de coleta operacional ativa. Este painel adapta-se dinamicamente às necessidades do seu modelo de negócios através da nossa esteira NoSQL de 72 horas.",
-            htmlCampos: `
-                <div class="flex flex-col gap-1"><label class="text-gray-400">Nome Completo</label><input type="text" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500"></div>
-                <div class="flex flex-col gap-1"><label class="text-gray-400">WhatsApp</label><input type="tel" required class="bg-[#0F1115] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500"></div>
-            `
-        };
+        // 🔄 CONFIGURAÇÃO DINÂMICA: BUSCA A ESTRUTURA DO NICHO NO BANCO
+        let configCliente = { nome: "Carregando...", logo: "", cor: "#3B82F6", tituloForm: "", textoApresentacao: "", htmlCampos: "" };
+
+        async function buscarTemplateDoBanco(nichoId) {
+            try {
+                const docRef = doc(db, "templates", nichoId);
+                const snap = await getDoc(docRef);
+                if (snap.exists()) {
+                    const data = snap.data();
+                    configCliente = {
+                        nome: data.nome,
+                        logo: data.logo,
+                        cor: data.cor,
+                        tituloForm: data.titulo,
+                        textoApresentacao: data.apresentacao,
+                        htmlCampos: data.campos
+                    };
+                }
+            } catch (e) { console.error("Erro ao buscar template:", e); }
+        }
 
         async function inicializarCentralDinamica() {
             // 🔍 BUSCA CONFIGURAÇÃO OPERACIONAL NO FIRESTORE
