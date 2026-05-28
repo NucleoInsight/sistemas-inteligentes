@@ -403,13 +403,45 @@
                 console.log('API do Imgur falhou, ativando fallback de segurança para Base64.');
             }
 
-            // Fallback (Plano B) se a API externa cair
             const reader = new FileReader();
             reader.onload = function(e) {
                 campoLogo.value = e.target.result;
                 preview.innerHTML = `<span class="text-green-400 font-bold">✓ Imagem convertida (Base64):</span> <img src="${e.target.result}" style="width:20px;height:20px;border-radius:2px;vertical-align:middle;display:inline-block;margin-left:5px;">`;
             };
             reader.readAsDataURL(file);
+        };
+
+        // 🔍 RESGATAR TEMPLATE PARA EDIÇÃO
+        window.resgatarTemplate = async function() {
+            const idBusca = document.getElementById("tpl-id").value.trim().toLowerCase();
+            if(!idBusca) {
+                alert("Digite o ID do template primeiro! (Ex: capoeira_cdo)");
+                return;
+            }
+
+            const btn = event.currentTarget;
+            const textoOriginal = btn.innerHTML;
+            btn.innerHTML = "⏳";
+
+            try {
+                const snap = await getDoc(doc(db, "templates", idBusca));
+                if(snap.exists()) {
+                    const dados = snap.data();
+                    document.getElementById("tpl-nome").value = dados.nome || "";
+                    document.getElementById("tpl-cor").value = dados.cor || "#FFD700";
+                    document.getElementById("tpl-logo").value = dados.logo || "";
+                    document.getElementById("tpl-apresentacao").value = dados.apresentacao || "";
+                    document.getElementById("tpl-campos").value = dados.campos || "";
+                    alert("✅ Template carregado! Pode editar e salvar para atualizar.");
+                } else {
+                    alert("❌ Nenhum template encontrado com este ID. Você pode criar um novo.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Erro ao buscar: " + err.message);
+            } finally {
+                btn.innerHTML = textoOriginal;
+            }
         };
 
         // 🧩 LÓGICA DA FÁBRICA DE TEMPLATES
