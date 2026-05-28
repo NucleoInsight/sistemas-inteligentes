@@ -1,175 +1,302 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Borges Sistemas Inteligentes | Agenda para Barbeiros</title>
-  <meta name="description" content="Agenda online com lembrete WhatsApp. Chega de perder cliente por no-show.">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    :root {
-      --bg: #0F1115;
-      --card: #171A21;
-      --text: #FFFFFF;
-      --text-sec: #A8B0C0;
-      --primary: #3B82F6;
-    }
-    body { background: var(--bg); color: var(--text); }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borges Soluções Digitais</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bgPrincipal: '#0F1115',
+                        bgCard: '#171A21',
+                        textoPrincipal: '#FFFFFF',
+                        textoSecundario: '#A8B0C0',
+                        corPrincipal: '#3B82F6',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #0F1115; color: #FFFFFF; font-family: 'Arial', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0F1115; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #171A21; border-radius: 3px; }
+    </style>
 </head>
-<body class="min-h-screen">
-  
-  <header class="p-6 border-b border-[var(--card)]">
-    <div class="max-w-5xl mx-auto flex justify-between items-center">
-      <h1 class="text-xl font-bold text-[var(--primary)]">Borges Sistemas Inteligentes</h1>
-      <a href="#login" class="text-sm text-[var(--text-sec)] hover:text-white">Entrar</a>
-    </div>
-  </header>
+<body class="min-h-screen flex flex-col custom-scrollbar">
 
-  <main class="max-w-5xl mx-auto px-6 py-20">
-    <div class="text-center">
-      <h2 class="text-4xl md:text-5xl font-bold mb-4">Sua barbearia perdendo cliente no WhatsApp?</h2>
-      <p class="text-[var(--text-sec)] text-lg mb-8 max-w-2xl mx-auto">Agenda online com confirmação automática. Cliente agenda sozinho, paga no Pix e recebe lembrete. Você só corta.</p>
-      <a href="#demo" class="bg-[var(--primary)] px-8 py-3 rounded font-semibold hover:bg-blue-600 inline-block">Ver Demonstração</a>
-      <p class="text-sm text-[var(--text-sec)] mt-3">Instalação em 2 dias. R$300 + R$49/mês</p>
-    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    <div class="mt-20 grid md:grid-cols-3 gap-6 text-center">
-      <div class="bg-[var(--card)] p-8 rounded">
-        <p class="text-3xl font-bold text-[var(--primary)]">-80%</p>
-        <p class="text-[var(--text-sec)] mt-2">No-shows com lembrete automático</p>
-      </div>
-      <div class="bg-[var(--card)] p-8 rounded">
-        <p class="text-3xl font-bold text-[var(--primary)]">24/7</p>
-        <p class="text-[var(--text-sec)] mt-2">Cliente agenda sem te chamar</p>
-      </div>
-      <div class="bg-[var(--card)] p-8 rounded">
-        <p class="text-3xl font-bold text-[var(--primary)]">Pix</p>
-        <p class="text-[var(--text-sec)] mt-2">Receba na hora do agendamento</p>
-      </div>
-    </div>
-  </main>
+        // Configuração do seu Firebase - INSIRA SEUS DADOS AQUI
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_AUTH_DOMAIN",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_STORAGE_BUCKET",
+            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
 
-  <section id="login" class="max-w-md mx-auto px-6 py-16">
-    <div class="bg-[var(--card)] p-8 rounded">
-      <h3 class="text-2xl font-bold mb-6 text-center">Acessar sistema</h3>
-      
-      <div id="phone-form">
-        <label class="text-sm text-[var(--text-sec)]">Celular com WhatsApp</label>
-        <div class="flex gap-2 mt-2 mb-4">
-  <span class="bg-[var(--bg)] border border-[var(--card)] p-3 rounded text-[var(--text-sec)]">+55</span>
-  <input id="phone" type="tel" placeholder="75 99999-9999" 
-         class="flex-1 bg-[var(--bg)] border border-[var(--card)] p-3 rounded text-white focus:border-[var(--primary)] outline-none">
-</div>
-        <div id="recaptcha-container"></div>
-        <button onclick="sendOTP()" class="w-full bg-[var(--primary)] p-3 rounded font-semibold hover:bg-blue-600">
-          Receber Código SMS
-        </button>
-      </div>
+        // Inicializa o Firebase e Firestore
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-      <div id="code-form" class="hidden">
-        <label class="text-sm text-[var(--text-sec)]">Código recebido por SMS</label>
-        <input id="code" type="text" placeholder="000000" 
-               class="w-full bg-[var(--bg)] border border-[var(--card)] p-3 rounded mt-2 mb-4 text-white focus:border-[var(--primary)] outline-none">
-        <button onclick="verifyOTP()" class="w-full bg-[var(--primary)] p-3 rounded font-semibold hover:bg-blue-600">
-          Entrar
-        </button>
-        <button onclick="backToPhone()" class="w-full text-[var(--text-sec)] text-sm mt-3 hover:text-white">
-          Voltar
-        </button>
-      </div>
+        // FUNÇÕES OPERACIONAIS DO PAINEL ALFA
 
-      <div class="my-6 text-center text-[var(--text-sec)] text-sm">ou</div>
+        // 1. Cadastrar Cliente e criar no banco de dados
+        async function cadastrarCliente(nome, contato, plano, status, mrr) {
+            try {
+                const docRef = await addDoc(collection(db, "clients"), {
+                    nome: nome,
+                    contato: contato,
+                    plano: plano,
+                    status: status,
+                    mrr: parseFloat(mrr),
+                    dataCriacao: new Date().toISOString()
+                });
+                alert("Cliente cadastrado com sucesso no Painel Alfa!");
+                carregarClientes();
+            } catch (e) {
+                console.error("Erro ao salvar cliente: ", e);
+            }
+        }
 
-      <button onclick="showGoogleModal()" class="w-full border border-[var(--text-sec)] p-3 rounded flex items-center justify-center gap-2 hover:bg-[var(--bg)]">
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18">
-        Continuar com Google
-      </button>
-    </div>
-  </section>
+        // 2. Carregar Clientes em Tempo Real na Tabela
+        async function carregarClientes() {
+            const listaClientes = document.getElementById("tabela-clientes");
+            if (!listaClientes) return;
+            listaClientes.innerHTML = "";
+            
+            let totalMRR = 0;
+            const q = query(collection(db, "clients"));
+            const querySnapshot = await getDocs(q);
+            
+            querySnapshot.forEach((doc) => {
+                const dados = doc.data();
+                totalMRR += dados.mrr || 0;
+                
+                listaClientes.innerHTML += `
+                    <tr class="border-b border-bgPrincipal">
+                        <td class="px-4 py-3 font-medium">${dados.nome}</td>
+                        <td class="px-4 py-3 text-textoSecundario">${dados.plano}</td>
+                        <td class="px-4 py-3 text-right">R$ ${dados.mrr.toFixed(2)}</td>
+                        <td class="px-4 py-3 text-center">
+                            <span class="px-2 py-1 text-xs rounded ${dados.status === 'Ativo' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}">
+                                ${dados.status}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+            document.getElementById("mrr-total").innerText = `R$ ${totalMRR.toFixed(2)}`;
+        }
 
-  <div id="google-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-6 z-50">
-    <div class="bg-[var(--card)] p-8 rounded max-w-sm">
-      <h3 class="text-xl font-bold mb-3">🚀 Em breve!</h3>
-      <p class="text-[var(--text-sec)] mb-4">Login com Google está em fase final de implantação pra garantir máxima segurança dos seus dados.</p>
-      <p class="text-[var(--text-sec)] mb-6">Use seu celular por enquanto. É mais rápido e seguro.</p>
-      <button onclick="closeModal()" class="w-full bg-[var(--primary)] p-3 rounded font-semibold">Entendi</button>
-    </div>
-  </div>
+        // 3. Registrar Chamado de Suporte (Motor Base)
+        async function enviarSuporte(clienteNome, solicitacao, prioridade) {
+            try {
+                await addDoc(collection(db, "support"), {
+                    cliente: clienteNome,
+                    solicitacao: solicitacao,
+                    prioridade: prioridade,
+                    status: "Aberto",
+                    data: new Date().toISOString()
+                });
+                alert("Solicitação enviada com sucesso! Limite de 3 ajustes pequenos ativado.");
+            } catch (e) {
+                console.error("Erro ao enviar chamado: ", e);
+            }
+        }
 
-  <footer class="text-center py-8 text-[var(--text-sec)] text-sm border-t border-[var(--card)]">
-    Borges Sistemas Inteligentes © 2026
-  </footer>
+        // Event Listeners para os formulários da interface
+        window.addEventListener('DOMContentLoaded', () => {
+            carregarClientes();
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+            document.getElementById("form-cliente")?.addEventListener("submit", (e) => {
+                e.preventDefault();
+                const nome = document.getElementById("cli-nome").value;
+                const contato = document.getElementById("cli-contato").value;
+                const plano = document.getElementById("cli-plano").value;
+                const status = document.getElementById("cli-status").value;
+                const mrr = document.getElementById("cli-mrr").value;
+                cadastrarCliente(nome, contato, plano, status, mrr);
+                e.target.reset();
+            });
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAMYE7ZLM4jtoVnshqowLSaSL-mYCW1lhI",
-      authDomain: "sistemas-inteligentes-38cdc.firebaseapp.com",
-      projectId: "sistemas-inteligentes-38cdc",
-      storageBucket: "sistemas-inteligentes-38cdc.firebasestorage.app",
-      messagingSenderId: "632476998816",
-      appId: "1:632476998816:web:3cb6936a5e3517b09dbdc5",
-      measurementId: "G-BJ28TJTEVD"
-    };
+            document.getElementById("form-suporte")?.addEventListener("submit", (e) => {
+                e.preventDefault();
+                const cliente = document.getElementById("sup-cliente").value;
+                const msg = document.getElementById("sup-msg").value;
+                const prioridade = document.getElementById("sup-prioridade").value;
+                enviarSuporte(cliente, msg, prioridade);
+                e.target.reset();
+            });
+        });
+    </script>
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const analytics = getAnalytics(app);
+    <header class="bg-bgCard border-b border-gray-800 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <div class="w-3 h-3 bg-corPrincipal rounded-full animate-pulse"></div>
+            <h1 class="text-lg font-bold tracking-wide">BORGES SOLUÇÕES DIGITAIS</h1>
+        </div>
+        <nav class="flex gap-4 text-sm text-textoSecundario">
+            <button onclick="switchAba('alfa')" class="hover:text-textoPrincipal transition px-3 py-1 rounded bg-bgPrincipal text-textoPrincipal" id="btn-alfa">Painel Alfa</button>
+            <button onclick="switchAba('cliente')" class="hover:text-textoPrincipal transition px-3 py-1 rounded" id="btn-cliente">Experiência do Cliente</button>
+        </nav>
+    </header>
 
-    document.addEventListener('DOMContentLoaded', () => {
-  window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-    'size': 'invisible'
-  });
-  window.recaptchaVerifier.render().then(function(widgetId) {
-    window.recaptchaWidgetId = widgetId;
-  });
-});
+    <main class="flex-1 p-6 max-w-7xl w-full mx-auto">
+        
+        <section id="aba-alfa" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-bgCard p-4 rounded-xl border border-gray-800">
+                    <p class="text-sm text-textoSecundario">Faturamento Recorrente (MRR)</p>
+                    <p class="text-2xl font-bold text-corPrincipal mt-1" id="mrr-total">R$ 0,00</p>
+                </div>
+                <div class="bg-bgCard p-4 rounded-xl border border-gray-800">
+                    <p class="text-sm text-textoSecundario">Mecanismo de Escala</p>
+                    <p class="text-base font-medium text-textoPrincipal mt-1">Base Reutilizável Ativa</p>
+                </div>
+                <div class="bg-bgCard p-4 rounded-xl border border-gray-800">
+                    <p class="text-sm text-textoSecundario">Domínio de Entrega</p>
+                    <p class="text-base font-medium text-green-400 mt-1">solucoesdigitais.site</p>
+                </div>
+            </div>
 
-    window.sendOTP = async () => {
-      const phone = '+55' + document.getElementById('phone').value.replace(/\D/g, '');
-      if(!phone.startsWith('+')) {
-        alert('Use formato: +55 75 99999-9999');
-        return;
-      }
-      try {
-        const confirmationResult = await signInWithPhoneNumber(auth, phone, window.recaptchaVerifier);
-        window.confirmationResult = confirmationResult;
-        document.getElementById('phone-form').classList.add('hidden');
-        document.getElementById('code-form').classList.remove('hidden');
-      } catch (error) {
-        alert('Erro: ' + error.message);
-      }
-    }
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-bgCard p-5 rounded-xl border border-gray-800 h-fit">
+                    <h2 class="text-md font-bold mb-4 flex items-center gap-2">
+                        <span>🚀</span> Lançar Novo Sistema (Template)
+                    </h2>
+                    <form id="form-cliente" class="space-y-3 text-sm">
+                        <div>
+                            <label class="block text-textoSecundario mb-1">Nome do Cliente / Negócio</label>
+                            <input type="text" id="cli-nome" required class="w-full bg-bgPrincipal border border-gray-700 rounded px-3 py-2 text-textoPrincipal focus:outline-none focus:border-corPrincipal">
+                        </div>
+                        <div>
+                            <label class="block text-textoSecundario mb-1">WhatsApp / Contato</label>
+                            <input type="text" id="cli-contato" required class="w-full bg-bgPrincipal border border-gray-700 rounded px-3 py-2 text-textoPrincipal focus:outline-none focus:border-corPrincipal" placeholder="(75) 99999-9999">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-textoSecundario mb-1">Escolher Template</label>
+                                <select id="cli-plano" class="w-full bg-bgPrincipal border border-gray-700 rounded px-2 py-2 text-textoPrincipal focus:outline-none">
+                                    <option value="Capoeira v1.0">Módulo Capoeira</option>
+                                    <option value="Personal Trainer">Módulo Personal</option>
+                                    <option value="Comércio Local">Módulo Agenda/CRM</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-textoSecundario mb-1">Valor Mensal</label>
+                                <input type="number" id="cli-mrr" value="49" required class="w-full bg-bgPrincipal border border-gray-700 rounded px-3 py-2 text-textoPrincipal focus:outline-none focus:border-corPrincipal">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-textoSecundario mb-1">Status Inicial</label>
+                            <select id="cli-status" class="w-full bg-bgPrincipal border border-gray-700 rounded px-2 py-2 text-textoPrincipal focus:outline-none">
+                                <option value="Ativo">Ativo (Produção)</option>
+                                <option value="Demonstração">Demonstração (Bloqueio automático em 3 dias)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-corPrincipal hover:bg-blue-600 transition text-textoPrincipal font-bold py-2 rounded mt-2">
+                            Criar Estrutura no Firestore
+                        </button>
+                    </form>
+                </div>
 
-    window.verifyOTP = async () => {
-      const code = document.getElementById('code').value;
-      try {
-        const result = await window.confirmationResult.confirm(code);
-        alert('Login feito! Redirecionando...');
-        window.location.href = '/sistemas-inteligentes/admin/';  
-      } catch (error) {
-        alert('Código inválido');
-      }
-    }
+                <div class="bg-bgCard p-5 rounded-xl border border-gray-800 lg:col-span-2 flex flex-col">
+                    <h2 class="text-md font-bold mb-4 flex items-center gap-2">
+                        <span>📊</span> Operação e Clientes Ativos
+                    </h2>
+                    <div class="overflow-x-auto flex-1 custom-scrollbar">
+                        <table class="w-full text-left text-sm whitespace-nowrap">
+                            <thead>
+                                <tr class="text-textoSecundario border-b border-gray-800 text-xs uppercase">
+                                    <th class="px-4 py-2">Cliente / Empresa</th>
+                                    <th class="px-4 py-2">Módulo Ativo</th>
+                                    <th class="px-4 py-2 text-right">Mensalidade</th>
+                                    <th class="px-4 py-2 text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-clientes">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    window.backToPhone = () => {
-      document.getElementById('code-form').classList.add('hidden');
-      document.getElementById('phone-form').classList.remove('hidden');
-    }
-  </script>
+        <section id="aba-cliente" class="hidden space-y-6">
+            <div class="bg-bgCard p-6 rounded-xl border border-gray-800 text-center max-w-xl mx-auto space-y-4">
+                <div class="w-16 h-16 bg-corPrincipal/10 text-corPrincipal rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
+                    B
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-textoPrincipal">Bem-vindo ao seu Sistema Inteligente</h2>
+                    <p class="text-sm text-textoSecundario mt-1">Configurado e otimizado por Borges Soluções Digitais</p>
+                </div>
 
-  <script>
-    function showGoogleModal() {
-      document.getElementById('google-modal').classList.remove('hidden');
-    }
-    function closeModal() {
-      document.getElementById('google-modal').classList.add('hidden');
-    }
-  </script>
+                <div class="grid grid-cols-1 gap-2 pt-2 text-sm text-left">
+                    <a href="#" onclick="alert('Funcionalidade de PWA ativa: No celular, clique em Compartilhar > Adicionar à Tela de Início para usar como Aplicativo.')" class="bg-bgPrincipal p-3 rounded border border-gray-700 flex items-center justify-between hover:border-corPrincipal transition">
+                        <div>
+                            <p class="font-bold text-textoPrincipal">📲 Instalar Aplicativo Próprio</p>
+                            <p class="text-xs text-textoSecundario">Acesse direto da sua tela inicial sem instalar nada da Play Store.</p>
+                        </div>
+                        <span class="text-corPrincipal font-bold">→</span>
+                    </a>
+                    
+                    <div class="bg-bgPrincipal p-3 rounded border border-gray-700">
+                        <p class="font-bold text-textoPrincipal mb-2">🛠️ Central de Ajustes Rápidos (Suporte)</p>
+                        <form id="form-suporte" class="space-y-2 mt-2">
+                            <input type="text" id="sup-cliente" placeholder="Seu Nome ou Empresa" required class="w-full bg-bgCard border border-gray-700 rounded px-2 py-1.5 text-xs text-textoPrincipal focus:outline-none">
+                            <textarea id="sup-msg" placeholder="Descreva o ajuste curto (Ex: alterar cor do botão, mudar texto de aviso)" required rows="2" class="w-full bg-bgCard border border-gray-700 rounded px-2 py-1.5 text-xs text-textoPrincipal focus:outline-none"></textarea>
+                            <div class="flex justify-between items-center gap-2">
+                                <select id="sup-prioridade" class="bg-bgCard border border-gray-700 rounded px-2 py-1 text-xs text-textoSecundario focus:outline-none">
+                                    <option value="Baixa">Ajuste Comum</option>
+                                    <option value="Urgente">Urgente (Sistema Fora do Ar)</option>
+                                </select>
+                                <button type="submit" class="bg-corPrincipal hover:bg-blue-600 text-textoPrincipal font-bold text-xs px-3 py-1.5 rounded transition">
+                                    Abrir Chamado
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <p class="text-xs text-textoSecundario pt-2">🔑 Hospedagem segura e banco de dados criptografado ativos.</p>
+            </div>
+        </section>
 
+    </main>
+
+    <footer class="bg-bgCard border-t border-gray-800 text-center py-4 text-xs text-textoSecundario mt-6">
+        <p>© 2026 Borges Soluções Digitais. Operação Enxuta & Sistemas Inteligentes.</p>
+    </footer>
+
+    <script>
+        function switchAba(aba) {
+            const painelAlfa = document.getElementById("aba-alfa");
+            const painelCliente = document.getElementById("aba-cliente");
+            const btnAlfa = document.getElementById("btn-alfa");
+            const btnCliente = document.getElementById("btn-cliente");
+
+            if(aba === 'alfa') {
+                painelAlfa.classList.remove("hidden");
+                painelCliente.classList.add("hidden");
+                btnAlfa.classList.add("bg-bgPrincipal", "text-textoPrincipal");
+                btnCliente.classList.remove("bg-bgPrincipal", "text-textoPrincipal");
+            } else {
+                painelAlfa.classList.add("hidden");
+                painelCliente.classList.remove("hidden");
+                btnCliente.classList.add("bg-bgPrincipal", "text-textoPrincipal");
+                btnAlfa.classList.remove("bg-bgPrincipal", "text-textoPrincipal");
+            }
+        }
+    </script>
 </body>
 </html>
