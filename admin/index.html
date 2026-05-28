@@ -374,49 +374,111 @@
             e.target.reset();
         });
 
-        // 📸 MOTOR DE UPLOAD DE IMAGEM (Extraído do Eterno Amor)
+        // 📸 MOTOR DE UPLOAD DE IMAGEM
         window.subirLogo = async function(input) {
             const file = input.files[0];
             if (!file) return;
-
             const preview = document.getElementById('preview-logo');
             const campoLogo = document.getElementById('tpl-logo');
             preview.innerText = 'Fazendo upload da imagem... ⏳';
 
-            if (file.size > 5 * 1024 * 1024) {
-                alert('A logo é muito pesada. Máximo permitido é 5MB.');
-                preview.innerText = '';
-                return;
-            }
-
             try {
                 const formData = new FormData();
                 formData.append('image', file);
-
                 const response = await fetch('https://api.imgur.com/3/image', {
                     method: 'POST',
                     headers: { 'Authorization': 'Client-ID 546c25a59c58ad7' },
                     body: formData
                 });
-
                 const data = await response.json();
                 if (data.success) {
                     campoLogo.value = data.data.link;
-                    preview.innerHTML = `<span class="text-green-400 font-bold">✓ Upload concluído:</span> <img src="${data.data.link}" style="width:20px;height:20px;border-radius:2px;vertical-align:middle;display:inline-block;margin-left:5px;">`;
+                    preview.innerHTML = `<span class="text-green-400 font-bold">✓ Upload OK:</span> <img src="${data.data.link}" style="width:20px;height:20px;border-radius:2px;vertical-align:middle;display:inline-block;margin-left:5px;">`;
                     return;
                 }
-            } catch (e) {
-                console.log('API do Imgur falhou, ativando fallback de segurança para Base64.');
-            }
-
+            } catch (e) { console.log('Fallback Base64 ativado'); }
+            
             const reader = new FileReader();
             reader.onload = function(e) {
                 campoLogo.value = e.target.result;
-                preview.innerHTML = `<span class="text-green-400 font-bold">✓ Imagem convertida (Base64):</span> <img src="${e.target.result}" style="width:20px;height:20px;border-radius:2px;vertical-align:middle;display:inline-block;margin-left:5px;">`;
+                preview.innerHTML = `<span class="text-green-400 font-bold">✓ Convertido (Base64).</span>`;
             };
             reader.readAsDataURL(file);
         };
 
+        // 🔍 RESGATAR TEMPLATE PARA EDIÇÃO
+        window.resgatarTemplate = async function(idClicado) {
+            const idBusca = idClicado || document.getElementById("tpl-id").value.trim().toLowerCase();
+            if(!idBusca) { alert("Digite o ID ou selecione um template!"); return; }
+
+            try {
+                const snap = await getDoc(doc(db, "templates", idBusca));
+                if(snap.exists()) {
+                    const dados = snap.data();
+                    document.getElementById("tpl-id").value = idBusca;
+                    document.getElementById("tpl-nome").value = dados.nome || "";
+                    document.getElementById("tpl-cor").value = dados.cor || "#FFD700";
+                    document.getElementById("tpl-logo").value = dados.logo || "";
+                    document.getElementById("tpl-apresentacao").value = dados.apresentacao || "";
+                    document.getElementById("tpl-campos").value = dados.campos || "";
+                    alert("✅ Template '" + idBusca + "' carregado!");
+                } else {
+                    alert("❌ Template não encontrado.");
+                }
+            } catch (err) { console.error(err); }
+        };
+
+        // 🧩 LÓGICA DA FÁBRICA DE TEMPLATES
+        document.getElementById("form-template")?.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const idNicho = document.getElementById("tpl-id").value.trim().toLowerCase();
+            await setDoc(doc(db, "templates", idNicho), {
+                nome: document.getElementById("tpl-nome").value,
+                cor: document.getElementById("tpl-cor").value,
+                logo: document.getElementById("tpl-logo").value,
+                apresentacao: document.getElementById("tpl-apresentacao").value,
+                campos: document.getElementById("tpl-campos").value
+            });
+            alert(`Template '${idNicho}' salvo!`);
+            listarTemplates();
+            e.target.reset();
+        });
+
+        // 🔍 BUSCA DINÂMICA
+        window.filtrarTemplates = async (termo) => {
+            const container = document.getElementById("resultado-busca");
+            if (termo.length < 2) { container.classList.add('hidden'); return; }
+            const snap = await getDocs(collection(db, "templates"));
+            container.innerHTML = "";
+            snap.forEach(doc => {
+                if (doc.id.toLowerCase().includes(termo.toLowerCase())) {
+                    container.classList.remove('hidden');
+                    const div = document.createElement("div");
+                    div.className = "p-2 hover:bg-purple-600/20 cursor-pointer text-xs";
+                    div.textContent = doc.id;
+                    div.onclick = () => {
+                        window.resgatarTemplate(doc.id);
+                        container.classList.add('hidden');
+                    };
+                    container.appendChild(div);
+                }
+            });
+        };
+
+        async function listarTemplates() {
+            const select = document.getElementById("tpl-id");
+            if (!select) return;
+            try {
+                const snap = await getDocs(collection(db, "templates"));
+                select.innerHTML = '<option value="">Selecione um template...</option>';
+                snap.forEach(doc => {
+                    const opt = document.createElement("option");
+                    opt.value = doc.id;
+                    opt.textContent = doc.id;
+                    select.appendChild(opt);
+                });
+            } catch (err) { console.error("Erro ao listar:", err); }
+        }
        // 🔍 RESGATAR TEMPLATE PARA EDIÇÃO
         window.resgatarTemplate = async function(idClicado) {
             const idBusca = idClicado || document.getElementById("tpl-id").value.trim().toLowerCase();
