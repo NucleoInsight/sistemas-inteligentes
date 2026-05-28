@@ -225,20 +225,20 @@
                     <form id="form-cliente" class="space-y-4 text-sm">
                         <div>
                             <label class="block text-textoSecundario mb-1 font-medium tracking-wide">Nome do Cliente / Empresa</label>
-                            <input type="text" id="cli-nome" required class="w-full bg-bgPrincipal border border-gray-800 rounded px-3 py-2 text-textoPrincipal focus:outline-none focus:border-purple-500 transition-all duration-300">
+                            <input type="text" id="cli-nome" required class="w-full bg-bgPrincipal border border-gray-800 rounded px-3 py-2 text-textoPrincipal focus:outline-none focus:border-cyan-500 transition-all duration-300">
                         </div>
                         <div>
-                            <label class="block text-textoSecundario mb-1 font-medium tracking-wide">WhatsApp / Contato</label>
-                            <input type="text" id="cli-contato" required class="w-full bg-bgPrincipal border border-gray-800 rounded px-3 py-2 text-textoPrincipal focus:outline-none focus:border-purple-500 transition-all duration-300" placeholder="(75) 99999-9999">
+                            <label class="block text-textoSecundario mb-1 font-medium tracking-wide">WhatsApp / Contato Principal</label>
+                            <input type="text" id="cli-contato" required class="w-full bg-bgPrincipal border border-gray-800 rounded px-3 py-2 text-textoPrincipal focus:outline-none focus:border-cyan-500 transition-all duration-300" placeholder="(75) 99999-9999">
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-textoSecundario mb-1 font-medium tracking-wide">Valor Mensal (MRR)</label>
-                                <input type="number" id="cli-mrr" value="49" required class="w-full bg-bgPrincipal border border-gray-800 rounded px-3 py-2 text-textoPrincipal focus:outline-none focus:border-purple-500 transition-all duration-300">
+                                <label class="block text-textoSecundario mb-1 font-medium tracking-wide">Assinatura Mensal</label>
+                                <input type="number" id="cli-mrr" value="49" required class="w-full bg-bgPrincipal border border-gray-800 rounded px-3 py-2 text-textoPrincipal focus:outline-none focus:border-cyan-500 transition-all duration-300">
                             </div>
                             <div>
-                                <label class="block text-textoSecundario mb-1 font-medium tracking-wide">Status Inicial</label>
-                                <select id="cli-status" class="w-full bg-bgPrincipal border border-gray-800 rounded px-2 py-2 text-textoPrincipal focus:outline-none focus:border-purple-500">
+                                <label class="block text-textoSecundario mb-1 font-medium tracking-wide">Status Operacional</label>
+                                <select id="cli-status" class="w-full bg-bgPrincipal border border-gray-800 rounded px-2 py-2 text-textoPrincipal focus:outline-none focus:border-cyan-500">
                                     <option value="Ativo">Ativo (Produção)</option>
                                     <option value="Demonstração">Demonstração</option>
                                 </select>
@@ -247,22 +247,52 @@
 
                         <div>
                             <label class="block text-textoSecundario mb-2 font-semibold tracking-wide flex items-center justify-between text-xs uppercase">
-                                <span class="flex items-center gap-1 text-cyan-400">📦 Arquitetura de Módulos</span>
-                                <span class="text-[10px] text-gray-500">v1.2 Estável</span>
+                                <span class="flex items-center gap-1 text-cyan-400">📦 Configurar Módulos da Instância</span>
+                                <span class="text-[10px] text-purple-400 font-mono">Fábrica v1.5</span>
                             </label>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 bg-bgPrincipal p-3 rounded-lg border border-gray-800/80 max-h-48 overflow-y-auto custom-scrollbar">
-                                <label class="flex items-center gap-2 cursor-pointer text-xs hover:text-white transition text-gray-300"><input type="checkbox" name="modulos" value="Cadastro de Pessoas" checked class="rounded border-gray-700 text-purple-600 bg-bgCard focus:ring-0"> ✅ Cadastro de Pessoas</label>
-                                <label class="flex items-center gap-2 cursor-pointer text-xs hover:text-white transition text-gray-300"><input type="checkbox" name="modulos" value="Agenda e Agendamentos" class="rounded border-gray-700 text-purple-600 bg-bgCard focus:ring-0"> ✅ Agenda e Agendamentos</label>
-                                <label class="flex items-center gap-2 cursor-pointer text-xs hover:text-white transition text-gray-300"><input type="checkbox" name="modulos" value="Gestão Financeira" class="rounded border-gray-700 text-purple-600 bg-bgCard focus:ring-0"> ✅ Gestão Financeira</label>
-                                <label class="flex items-center gap-2 cursor-pointer text-xs hover:text-white transition text-gray-300"><input type="checkbox" name="modulos" value="Controle de Presença" class="rounded border-gray-700 text-purple-600 bg-bgCard focus:ring-0"> ✅ Controle de Presença</label>
-                                <label class="flex items-center gap-2 cursor-pointer text-xs hover:text-white transition text-gray-300"><input type="checkbox" name="modulos" value="Comunicação WhatsApp" class="rounded border-gray-700 text-purple-600 bg-bgCard focus:ring-0"> ✅ Comunicação WhatsApp</label>
-                                <label class="flex items-center gap-2 cursor-pointer text-xs hover:text-white transition text-gray-300"><input type="checkbox" name="modulos" value="Painel de Relatórios" class="rounded border-gray-700 text-purple-600 bg-bgCard focus:ring-0"> 📊 Painel de Relatórios</label>
-                                <label class="flex items-center gap-2 cursor-pointer text-xs hover:text-white transition text-gray-500 opacity-50"><input type="checkbox" disabled class="rounded border-gray-800 text-purple-900 bg-bgCard focus:ring-0"> 🔮 Automação com IA (Breve)</label>
+                            <div class="grid grid-cols-1 gap-2 bg-bgPrincipal p-3 rounded-lg border border-gray-800/80 max-h-52 overflow-y-auto custom-scrollbar space-y-2">
+                                
+                                <div>
+                                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">🛡️ Core / Base</p>
+                                    <div class="grid grid-cols-1 gap-1 pl-1">
+                                        <label class="flex items-center gap-2 cursor-pointer text-xs hover:text-white text-gray-300"><input type="checkbox" name="modulos" value="Cadastro de Pessoas" checked class="rounded border-gray-700 text-cyan-500 bg-bgCard focus:ring-0"> Cadastro de Pessoas</label>
+                                        <label class="flex items-center gap-2 cursor-pointer text-xs hover:text-white text-gray-300"><input type="checkbox" name="modulos" value="Painel de Controle e Permissões" checked class="rounded border-gray-700 text-cyan-500 bg-bgCard focus:ring-0"> Painel de Controle e Permissões</label>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">⚡ Comercial & Atendimento</p>
+                                    <div class="grid grid-cols-1 gap-1 pl-1">
+                                        <label class="flex items-center gap-2 cursor-pointer text-xs hover:text-white text-gray-300"><input type="checkbox" name="modulos" value="Agenda e Agendamentos" class="rounded border-gray-700 text-cyan-500 bg-bgCard focus:ring-0"> Agenda e Agendamentos</label>
+                                        <label class="flex items-center gap-2 cursor-pointer text-xs hover:text-white text-gray-300"><input type="checkbox" name="modulos" value="Comunicação WhatsApp" class="rounded border-gray-700 text-cyan-500 bg-bgCard focus:ring-0"> Comunicação WhatsApp</label>
+                                        <label class="flex items-center gap-2 cursor-pointer text-xs hover:text-white text-gray-300"><input type="checkbox" name="modulos" value="CRM e Captação de Leads" class="rounded border-gray-700 text-cyan-500 bg-bgCard focus:ring-0"> CRM e Captação de Leads</label>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">📊 Operação & Gestão</p>
+                                    <div class="grid grid-cols-1 gap-1 pl-1">
+                                        <label class="flex items-center gap-2 cursor-pointer text-xs hover:text-white text-gray-300"><input type="checkbox" name="modulos" value="Gestão Financeira" class="rounded border-gray-700 text-cyan-500 bg-bgCard focus:ring-0"> Gestão Financeira</label>
+                                        <label class="flex items-center gap-2 cursor-pointer text-xs hover:text-white text-gray-300"><input type="checkbox" name="modulos" value="Controle de Presença" class="rounded border-gray-700 text-cyan-500 bg-bgCard focus:ring-0"> Controle de Presença</label>
+                                        <label class="flex items-center gap-2 cursor-pointer text-xs hover:text-white text-gray-300"><input type="checkbox" name="modulos" value="Gestão de Eventos" class="rounded border-gray-700 text-cyan-500 bg-bgCard focus:ring-0"> Gestão de Eventos</label>
+                                        <label class="flex items-center gap-2 cursor-pointer text-xs hover:text-white text-gray-300"><input type="checkbox" name="modulos" value="Painel de Relatórios" class="rounded border-gray-700 text-cyan-500 bg-bgCard focus:ring-0"> Painel de Relatórios</label>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">🔮 Avançado (Próximas Sprints)</p>
+                                    <div class="grid grid-cols-1 gap-1 pl-1 opacity-60">
+                                        <label class="flex items-center gap-2 cursor-pointer text-xs text-gray-500"><input type="checkbox" disabled class="rounded border-gray-800 text-gray-700 bg-bgCard focus:ring-0"> Liquidação Pix Automática</label>
+                                        <label class="flex items-center gap-2 cursor-pointer text-xs text-gray-500"><input type="checkbox" disabled class="rounded border-gray-800 text-gray-700 bg-bgCard focus:ring-0"> Automações Inteligentes</label>
+                                        <label class="flex items-center gap-2 cursor-pointer text-xs text-gray-500"><input type="checkbox" disabled class="rounded border-gray-800 text-gray-700 bg-bgCard focus:ring-0"> Central de Upload de Arquivos</label>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
 
-                        <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 transition-all duration-300 text-textoPrincipal font-bold py-2.5 rounded-lg shadow-lg shadow-purple-900/20 tracking-wide mt-2">
-                            Instanciar Sistema Inteligente
+                        <button type="submit" class="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 transition-all duration-300 text-textoPrincipal font-bold py-2.5 rounded-lg shadow-lg shadow-cyan-900/10 tracking-wide mt-2">
+                            Instanciar Nova Operação
                         </button>
                     </form>
                 </div>
