@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Borges Soluções Digitais</title>
+    <!-- Tailwind CSS para desenvolvimento rápido e minimalista escuro -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -29,27 +30,31 @@
 </head>
 <body class="min-h-screen flex flex-col custom-scrollbar">
 
+    <!-- SCRIPT DO FIREBASE (Módulos v10) com suas credenciais reais -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, query } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
 
-        // Configuração do seu Firebase - INSIRA SEUS DADOS AQUI
+        // Suas credenciais oficiais injetadas com sucesso:
         const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_AUTH_DOMAIN",
-            projectId: "SEU_PROJECT_ID",
-            storageBucket: "SEU_STORAGE_BUCKET",
-            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-            appId: "SEU_APP_ID"
+            apiKey: "AIzaSyAMYE7ZLM4jtoVnshqowLSaSL-mYCW1lhI",
+            authDomain: "sistemas-inteligentes-38cdc.firebaseapp.com",
+            projectId: "sistemas-inteligentes-38cdc",
+            storageBucket: "sistemas-inteligentes-38cdc.firebasestorage.app",
+            messagingSenderId: "632476998816",
+            appId: "1:632476998816:web:3cb6936a5e3517b09dbdc5",
+            measurementId: "G-BJ28TJTEVD"
         };
 
-        // Inicializa o Firebase e Firestore
+        // Inicializa o Firebase, Firestore e Analytics
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const analytics = getAnalytics(app);
 
         // FUNÇÕES OPERACIONAIS DO PAINEL ALFA
 
-        // 1. Cadastrar Cliente e criar no banco de dados
+        // 1. Cadastrar Cliente no Firestore
         async function cadastrarCliente(nome, contato, plano, status, mrr) {
             try {
                 const docRef = await addDoc(collection(db, "clients"), {
@@ -64,6 +69,7 @@
                 carregarClientes();
             } catch (e) {
                 console.error("Erro ao salvar cliente: ", e);
+                alert("Erro ao salvar. Verifique se as Regras do Firestore estão públicas.");
             }
         }
 
@@ -74,27 +80,32 @@
             listaClientes.innerHTML = "";
             
             let totalMRR = 0;
-            const q = query(collection(db, "clients"));
-            const querySnapshot = await getDocs(q);
-            
-            querySnapshot.forEach((doc) => {
-                const dados = doc.data();
-                totalMRR += dados.mrr || 0;
+            try {
+                const q = query(collection(db, "clients"));
+                const querySnapshot = await getDocs(q);
                 
-                listaClientes.innerHTML += `
-                    <tr class="border-b border-bgPrincipal">
-                        <td class="px-4 py-3 font-medium">${dados.nome}</td>
-                        <td class="px-4 py-3 text-textoSecundario">${dados.plano}</td>
-                        <td class="px-4 py-3 text-right">R$ ${dados.mrr.toFixed(2)}</td>
-                        <td class="px-4 py-3 text-center">
-                            <span class="px-2 py-1 text-xs rounded ${dados.status === 'Ativo' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}">
-                                ${dados.status}
-                            </span>
-                        </td>
-                    </tr>
-                `;
-            });
-            document.getElementById("mrr-total").innerText = `R$ ${totalMRR.toFixed(2)}`;
+                querySnapshot.forEach((doc) => {
+                    const dados = doc.data();
+                    totalMRR += dados.mrr || 0;
+                    
+                    listaClientes.innerHTML += `
+                        <tr class="border-b border-bgPrincipal">
+                            <td class="px-4 py-3 font-medium">${dados.nome}</td>
+                            <td class="px-4 py-3 text-textoSecundario">${dados.plano}</td>
+                            <td class="px-4 py-3 text-right">R$ ${dados.mrr.toFixed(2)}</td>
+                            <td class="px-4 py-3 text-center">
+                                <span class="px-2 py-1 text-xs rounded ${dados.status === 'Ativo' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}">
+                                    ${dados.status}
+                                </span>
+                            </td>
+                        </tr>
+                    `;
+                });
+                document.getElementById("mrr-total").innerText = `R$ ${totalMRR.toFixed(2)}`;
+            } catch (e) {
+                console.error("Erro ao buscar dados do Firestore: ", e);
+                listaClientes.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-yellow-500 text-xs">Aguardando dados... Certifique-se de ativar o Firestore Database no console.</td></tr>`;
+            }
         }
 
         // 3. Registrar Chamado de Suporte (Motor Base)
@@ -107,7 +118,7 @@
                     status: "Aberto",
                     data: new Date().toISOString()
                 });
-                alert("Solicitação enviada com sucesso! Limite de 3 ajustes pequenos ativado.");
+                alert("Solicitação enviada! Limite de 3 ajustes pequenos ativado para este mês.");
             } catch (e) {
                 console.error("Erro ao enviar chamado: ", e);
             }
@@ -139,6 +150,7 @@
         });
     </script>
 
+    <!-- HEADER / NAVEGAÇÃO -->
     <header class="bg-bgCard border-b border-gray-800 px-6 py-4 flex justify-between items-center">
         <div class="flex items-center gap-2">
             <div class="w-3 h-3 bg-corPrincipal rounded-full animate-pulse"></div>
@@ -150,25 +162,29 @@
         </nav>
     </header>
 
+    <!-- CONTEÚDO PRINCIPAL -->
     <main class="flex-1 p-6 max-w-7xl w-full mx-auto">
         
+        <!-- SEÇÃO 1: PAINEL ALFA -->
         <section id="aba-alfa" class="space-y-6">
+            <!-- KPIs Rápidos -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="bg-bgCard p-4 rounded-xl border border-gray-800">
                     <p class="text-sm text-textoSecundario">Faturamento Recorrente (MRR)</p>
                     <p class="text-2xl font-bold text-corPrincipal mt-1" id="mrr-total">R$ 0,00</p>
                 </div>
                 <div class="bg-bgCard p-4 rounded-xl border border-gray-800">
-                    <p class="text-sm text-textoSecundario">Mecanismo de Escala</p>
-                    <p class="text-base font-medium text-textoPrincipal mt-1">Base Reutilizável Ativa</p>
+                    <p class="text-sm text-textoSecundario">ID do Projeto Conectado</p>
+                    <p class="text-base font-medium text-textoPrincipal mt-1">sistemas-inteligentes-38cdc</p>
                 </div>
                 <div class="bg-bgCard p-4 rounded-xl border border-gray-800">
-                    <p class="text-sm text-textoSecundario">Domínio de Entrega</p>
+                    <p class="text-sm text-textoSecundario">Ambiente Web App</p>
                     <p class="text-base font-medium text-green-400 mt-1">solucoesdigitais.site</p>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Formulário de Cadastro -->
                 <div class="bg-bgCard p-5 rounded-xl border border-gray-800 h-fit">
                     <h2 class="text-md font-bold mb-4 flex items-center gap-2">
                         <span>🚀</span> Lançar Novo Sistema (Template)
@@ -200,7 +216,7 @@
                             <label class="block text-textoSecundario mb-1">Status Inicial</label>
                             <select id="cli-status" class="w-full bg-bgPrincipal border border-gray-700 rounded px-2 py-2 text-textoPrincipal focus:outline-none">
                                 <option value="Ativo">Ativo (Produção)</option>
-                                <option value="Demonstração">Demonstração (Bloqueio automático em 3 dias)</option>
+                                <option value="Demonstração">Demonstração</option>
                             </select>
                         </div>
                         <button type="submit" class="w-full bg-corPrincipal hover:bg-blue-600 transition text-textoPrincipal font-bold py-2 rounded mt-2">
@@ -209,6 +225,7 @@
                     </form>
                 </div>
 
+                <!-- Tabela de Monitoramento -->
                 <div class="bg-bgCard p-5 rounded-xl border border-gray-800 lg:col-span-2 flex flex-col">
                     <h2 class="text-md font-bold mb-4 flex items-center gap-2">
                         <span>📊</span> Operação e Clientes Ativos
@@ -224,13 +241,15 @@
                                 </tr>
                             </thead>
                             <tbody id="tabela-clientes">
-                                </tbody>
+                                <!-- Preenchido dinamicamente -->
+                            </tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- SEÇÃO 2: EXPERIÊNCIA DO CLIENTE -->
         <section id="aba-cliente" class="hidden space-y-6">
             <div class="bg-bgCard p-6 rounded-xl border border-gray-800 text-center max-w-xl mx-auto space-y-4">
                 <div class="w-16 h-16 bg-corPrincipal/10 text-corPrincipal rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
@@ -241,11 +260,12 @@
                     <p class="text-sm text-textoSecundario mt-1">Configurado e otimizado por Borges Soluções Digitais</p>
                 </div>
 
+                <!-- Links de Ação Premium -->
                 <div class="grid grid-cols-1 gap-2 pt-2 text-sm text-left">
-                    <a href="#" onclick="alert('Funcionalidade de PWA ativa: No celular, clique em Compartilhar > Adicionar à Tela de Início para usar como Aplicativo.')" class="bg-bgPrincipal p-3 rounded border border-gray-700 flex items-center justify-between hover:border-corPrincipal transition">
+                    <a href="#" onclick="alert('Instruções PWA: No iPhone use Compartilhar > Adicionar à Tela de Início. No Android clique nos 3 pontinhos > Instalar aplicativo.')" class="bg-bgPrincipal p-3 rounded border border-gray-700 flex items-center justify-between hover:border-corPrincipal transition">
                         <div>
                             <p class="font-bold text-textoPrincipal">📲 Instalar Aplicativo Próprio</p>
-                            <p class="text-xs text-textoSecundario">Acesse direto da sua tela inicial sem instalar nada da Play Store.</p>
+                            <p class="text-xs text-textoSecundario">Adicione o sistema na tela inicial do seu celular.</p>
                         </div>
                         <span class="text-corPrincipal font-bold">→</span>
                     </a>
@@ -254,11 +274,11 @@
                         <p class="font-bold text-textoPrincipal mb-2">🛠️ Central de Ajustes Rápidos (Suporte)</p>
                         <form id="form-suporte" class="space-y-2 mt-2">
                             <input type="text" id="sup-cliente" placeholder="Seu Nome ou Empresa" required class="w-full bg-bgCard border border-gray-700 rounded px-2 py-1.5 text-xs text-textoPrincipal focus:outline-none">
-                            <textarea id="sup-msg" placeholder="Descreva o ajuste curto (Ex: alterar cor do botão, mudar texto de aviso)" required rows="2" class="w-full bg-bgCard border border-gray-700 rounded px-2 py-1.5 text-xs text-textoPrincipal focus:outline-none"></textarea>
+                            <textarea id="sup-msg" placeholder="Descreva o ajuste (Ex: mudar cor do botão, trocar texto)" required rows="2" class="w-full bg-bgCard border border-gray-700 rounded px-2 py-1.5 text-xs text-textoPrincipal focus:outline-none"></textarea>
                             <div class="flex justify-between items-center gap-2">
                                 <select id="sup-prioridade" class="bg-bgCard border border-gray-700 rounded px-2 py-1 text-xs text-textoSecundario focus:outline-none">
                                     <option value="Baixa">Ajuste Comum</option>
-                                    <option value="Urgente">Urgente (Sistema Fora do Ar)</option>
+                                    <option value="Urgente">Urgente (Fora do Ar)</option>
                                 </select>
                                 <button type="submit" class="bg-corPrincipal hover:bg-blue-600 text-textoPrincipal font-bold text-xs px-3 py-1.5 rounded transition">
                                     Abrir Chamado
@@ -267,17 +287,17 @@
                         </form>
                     </div>
                 </div>
-                
-                <p class="text-xs text-textoSecundario pt-2">🔑 Hospedagem segura e banco de dados criptografado ativos.</p>
             </div>
         </section>
 
     </main>
 
+    <!-- FOOTER -->
     <footer class="bg-bgCard border-t border-gray-800 text-center py-4 text-xs text-textoSecundario mt-6">
         <p>© 2026 Borges Soluções Digitais. Operação Enxuta & Sistemas Inteligentes.</p>
     </footer>
 
+    <!-- SCRIPT DE NAVEGAÇÃO SPA -->
     <script>
         function switchAba(aba) {
             const painelAlfa = document.getElementById("aba-alfa");
