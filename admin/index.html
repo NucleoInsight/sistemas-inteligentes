@@ -328,12 +328,13 @@
 
         document.getElementById("form-cliente")?.addEventListener("submit", (e) => {
             e.preventDefault();
-            cadastrarCliente(
+           cadastrarCliente(
                 document.getElementById("cli-nome").value,
                 document.getElementById("cli-contato").value,
                 document.getElementById("cli-mrr").value,
                 document.getElementById("cli-vencimento").value,
-                document.getElementById("cli-link-demo").value,
+                document.getElementById("cli-nicho").value,
+                document.getElementById("cli-cor").value,
                 document.getElementById("cli-status").value
             );
             e.target.reset();
