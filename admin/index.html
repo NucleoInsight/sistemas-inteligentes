@@ -504,6 +504,43 @@
                 carregarTemplatesParaTodos();
             }
         });
+
+        // Filtra os templates quando você escolhe o grupo
+window.filtrarTemplates = async (grupo) => {
+    const lista = document.getElementById("lista-filtrada");
+    lista.innerHTML = '<option>Carregando...</option>';
+    
+    // Busca todos os templates que começam com o nome do grupo
+    const q = query(collection(db, "templates")); 
+    const snap = await getDocs(q);
+    
+    let options = '';
+    snap.forEach(d => {
+        if(d.id.startsWith(grupo)) {
+            options += `<option value="${d.id}">${d.id}</option>`;
+        }
+    });
+    lista.innerHTML = options || '<option>Nenhum encontrado</option>';
+};
+
+// Resgata o template selecionado para os campos da Fábrica
+window.resgatarDoBanco = async () => {
+    const id = document.getElementById("lista-filtrada").value;
+    if(!id) return alert("Selecione um template na lista!");
+    
+    const snap = await getDoc(doc(db, "templates", id));
+    if(snap.exists()) {
+        const d = snap.data();
+        // Preenche os campos da Fábrica
+        document.getElementById("tpl-id").value = id; // Joga o ID no campo principal
+        document.getElementById("tpl-nome").value = d.nome || "";
+        document.getElementById("tpl-cor").value = d.cor || "#FFD700";
+        document.getElementById("tpl-logo").value = d.logo || "";
+        document.getElementById("tpl-apresentacao").value = d.apresentacao || "";
+        document.getElementById("tpl-campos").value = d.campos || "";
+        alert("✅ Template resgatado com sucesso!");
+    }
+};
     </script>
 </body>
 </html>
