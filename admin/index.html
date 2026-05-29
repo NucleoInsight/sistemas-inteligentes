@@ -168,6 +168,22 @@
             <h2 class="text-xs font-black mb-4 flex items-center gap-2 uppercase text-purple-400 tracking-wider">
                 <span>🧩</span> Fábrica de Templates (Motor Base)
             </h2>
+            <div class="bg-bgCard p-5 rounded-xl border border-gray-800 mb-6">
+    <h2 class="text-xs font-black mb-4 text-purple-400 uppercase tracking-wider">🔍 Buscar Templates no Banco</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+            <label class="block text-textoSecundario mb-1 text-xs">Selecione o Template (Resgate):</label>
+            <select id="lista-filtrada" class="w-full bg-bgPrincipal border border-gray-800 rounded px-3 py-2 text-white">
+                <option value="">Carregando todos os templates...</option>
+            </select>
+        </div>
+        <div class="flex items-end">
+            <button onclick="window.resgatarDoBanco()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded transition">
+                Resgatar do Banco 🚀
+            </button>
+        </div>
+    </div>
+</div>
             <form id="form-template" class="space-y-4 text-xs">
                 <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
                    <div>
