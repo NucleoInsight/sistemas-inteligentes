@@ -479,7 +479,8 @@
 
         document.getElementById("form-template")?.addEventListener("submit", async (e) => {
             e.preventDefault();
-            const id = document.getElementById("tpl-id").value;
+            const id = document.getElementById("tpl-id").value.trim();
+            if (!id || id === "") { alert("Selecione um template ou digite um ID!"); return; }
             await setDoc(doc(db, "templates", id), {
                 nome: document.getElementById("tpl-nome").value,
                 cor: document.getElementById("tpl-cor").value,
