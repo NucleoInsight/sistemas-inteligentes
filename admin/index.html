@@ -412,50 +412,16 @@
             reader.readAsDataURL(file);
         };
 
-        // 🔍 RESGATAR TEMPLATE CORRIGIDO
-        window.resgatarTemplate = async function(idClicado) {
-            const elId = document.getElementById("tpl-id");
-            const idBusca = (idClicado || document.getElementById("tpl-id").value || "").trim();
-            if (!idBusca || idBusca === "") return;
-            
-            if(!idBusca) {
-                alert("Digite o ID no campo ou selecione um template!");
-                return;
-            }
-
-            try {
-                const snap = await getDoc(doc(db, "templates", idBusca));
-                if(snap.exists()) {
-                    const dados = snap.data();
-                    elId.value = idBusca;
-                    document.getElementById("tpl-nome").value = dados.nome || "";
-                    document.getElementById("tpl-cor").value = dados.cor || "#FFD700";
-                    document.getElementById("tpl-logo").value = dados.logo || "";
-                    document.getElementById("tpl-apresentacao").value = dados.apresentacao || "";
-                    document.getElementById("tpl-campos").value = dados.campos || "";
-                    alert("✅ Template '" + idBusca + "' carregado!");
-                } else {
-                    alert("❌ Template não encontrado no banco.");
-                }
-            } catch (err) {
-                console.error(err);
-                alert("Erro ao buscar: " + err.message);
-            }
-        };
- // --- MOTOR UNIFICADO DE CARGA E BUSCA ---
-        async function carregarTemplatesParaTodos() {
+        // --- MOTOR DEFINITIVO ---
+        window.carregarTemplatesParaTodos = async () => {
             try {
                 const snap = await getDocs(collection(db, "templates"));
-                let options = '<option value="">-- Escolha --</option>';
+                let options = '<option value="">-- Escolha um Template --</option>';
                 snap.forEach(d => options += `<option value="${d.id}">${d.id}</option>`);
-                
-                const selFabrica = document.getElementById("tpl-id");
-                const selCliente = document.getElementById("cli-nicho");
-                
-                if(selFabrica) selFabrica.innerHTML = options;
-                if(selCliente) selCliente.innerHTML = options;
-            } catch (e) { console.error("Erro ao carregar selects:", e); }
-        }
+                document.getElementById("tpl-id").innerHTML = options;
+                document.getElementById("cli-nicho").innerHTML = options;
+            } catch (e) { console.error("Erro carga:", e); }
+        };
 
         window.resgatarTemplate = async (id) => {
             if(!id) return;
@@ -473,15 +439,13 @@
         window.puxarDadosTemplate = async (id) => {
             if(!id) return;
             const snap = await getDoc(doc(db, "templates", id));
-            if(snap.exists()) {
-                document.getElementById("cli-cor").value = snap.data().cor || "#3B82F6";
-            }
+            if(snap.exists()) document.getElementById("cli-cor").value = snap.data().cor || "#3B82F6";
         };
 
         document.getElementById("form-template")?.addEventListener("submit", async (e) => {
             e.preventDefault();
             const id = document.getElementById("tpl-id").value.trim();
-            if (!id || id === "") { alert("Selecione um template ou digite um ID!"); return; }
+            if(!id) return alert("Selecione ou digite um ID!");
             await setDoc(doc(db, "templates", id), {
                 nome: document.getElementById("tpl-nome").value,
                 cor: document.getElementById("tpl-cor").value,
@@ -491,15 +455,6 @@
             });
             alert("✅ Salvo!");
             carregarTemplatesParaTodos();
-        });
-
-        // Inicialização Garantida
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                document.getElementById("tela-login")?.classList.add("opacity-0", "pointer-events-none");
-                carregarClientes();
-                carregarTemplatesParaTodos();
-            }
         });
     </script>
 </body>
