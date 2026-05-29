@@ -231,12 +231,12 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // --- 1. LOGIN E INICIALIZAÇÃO MESTRE ---
+        // --- INICIALIZAÇÃO MESTRE (TEM QUE VIR POR ÚLTIMO) ---
 onAuthStateChanged(auth, (user) => {
     const telaLogin = document.getElementById("tela-login");
     if (user) {
         if(telaLogin) telaLogin.classList.add("opacity-0", "pointer-events-none");
-        carregarClientes();
+        carregarClientes(); 
         carregarTemplatesParaTodos();
     } else {
         if(telaLogin) telaLogin.classList.remove("opacity-0", "pointer-events-none");
@@ -245,9 +245,8 @@ onAuthStateChanged(auth, (user) => {
 
 document.getElementById("form-login-mestre")?.addEventListener("submit", (e) => {
     e.preventDefault();
-    const btn = document.getElementById("btn-entrar-login");
     signInWithEmailAndPassword(auth, document.getElementById("login-email").value.trim(), document.getElementById("login-senha").value)
-        .catch(err => { alert("Acesso Negado."); if(btn) btn.innerText = "Acessar Central"; });
+        .catch(() => alert("Acesso Negado."));
 });
 
 window.sairDaCentral = () => { if(confirm("Sair?")) { signOut(auth).then(()=>window.location.reload()); } };
