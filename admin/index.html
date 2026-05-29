@@ -173,9 +173,12 @@
                    <div>
                         <label class="block text-textoSecundario mb-1 font-medium">ID do Template (ex: capoeira_cdo)</label>
                         <div class="flex gap-2">
-                            <select id="tpl-id" onchange="window.resgatarTemplate(this.value)" class="w-full bg-bgPrincipal border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-purple-500">
-                            <option value="">Carregando templates...</option>
-                            </select>
+                            <label class="block text-textoSecundario mb-1 font-medium">ID do Template (ex: capoeira_cdo)</label>
+<div class="flex gap-2">
+    <input list="lista-templates" id="tpl-id" placeholder="Digite ou selecione..." onchange="window.resgatarTemplate(this.value)" class="w-full bg-bgPrincipal border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-purple-500">
+    <datalist id="lista-templates">
+        </datalist>
+</div>
                         </div>
                     </div>
                     <div>
