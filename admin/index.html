@@ -442,65 +442,60 @@
                 alert("Erro ao buscar: " + err.message);
             }
         };
- // --- MOTOR UNIFICADO DE CARGA E BUSCA ---
-        async function carregarTemplatesParaTodos() {
-            try {
-                const snap = await getDocs(collection(db, "templates"));
-                let options = '<option value="">-- Escolha --</option>';
-                snap.forEach(d => options += `<option value="${d.id}">${d.id}</option>`);
-                
-                const selFabrica = document.getElementById("tpl-id");
-                const selCliente = document.getElementById("cli-nicho");
-                
-                if(selFabrica) selFabrica.innerHTML = options;
-                if(selCliente) selCliente.innerHTML = options;
-            } catch (e) { console.error("Erro ao carregar selects:", e); }
+ // --- MOTOR DEFINITIVO DE CARGA ---
+window.carregarTemplatesParaTodos = async () => {
+    try {
+        const snap = await getDocs(collection(db, "templates"));
+        let options = '<option value="">-- Escolha um Template --</option>';
+        snap.forEach(d => options += `<option value="${d.id}">${d.id}</option>`);
+        const selFabrica = document.getElementById("tpl-id");
+        const selCliente = document.getElementById("cli-nicho");
+        if(selFabrica) selFabrica.innerHTML = options;
+        if(selCliente) selCliente.innerHTML = options;
+    } catch (e) { console.error("Erro carga:", e); }
+};
+
+// 🔍 RESGATAR TEMPLATE (FÁBRICA)
+window.resgatarTemplate = async (id) => {
+    const idBusca = id || document.getElementById("tpl-id").value;
+    if(!idBusca) return;
+    try {
+        const snap = await getDoc(doc(db, "templates", idBusca));
+        if(snap.exists()) {
+            const d = snap.data();
+            document.getElementById("tpl-nome").value = d.nome || "";
+            document.getElementById("tpl-cor").value = d.cor || "#FFD700";
+            document.getElementById("tpl-logo").value = d.logo || "";
+            document.getElementById("tpl-apresentacao").value = d.apresentacao || "";
+            document.getElementById("tpl-campos").value = d.campos || "";
         }
+    } catch (err) { console.error(err); }
+};
 
-        window.resgatarTemplate = async (id) => {
-            if(!id) return;
-            const snap = await getDoc(doc(db, "templates", id));
-            if(snap.exists()) {
-                const d = snap.data();
-                document.getElementById("tpl-nome").value = d.nome || "";
-                document.getElementById("tpl-cor").value = d.cor || "#FFD700";
-                document.getElementById("tpl-logo").value = d.logo || "";
-                document.getElementById("tpl-apresentacao").value = d.apresentacao || "";
-                document.getElementById("tpl-campos").value = d.campos || "";
-            }
-        };
+// ⚡ PUXAR COR (CLIENTE)
+window.puxarDadosTemplate = async (id) => {
+    if(!id) return;
+    try {
+        const snap = await getDoc(doc(db, "templates", id));
+        if(snap.exists()) document.getElementById("cli-cor").value = snap.data().cor || "#3B82F6";
+    } catch (e) { console.error(e); }
+};
 
-        window.puxarDadosTemplate = async (id) => {
-            if(!id) return;
-            const snap = await getDoc(doc(db, "templates", id));
-            if(snap.exists()) {
-                document.getElementById("cli-cor").value = snap.data().cor || "#3B82F6";
-            }
-        };
-
-        document.getElementById("form-template")?.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const id = document.getElementById("tpl-id").value.trim();
-            if (!id || id === "") { alert("Selecione um template ou digite um ID!"); return; }
-            await setDoc(doc(db, "templates", id), {
-                nome: document.getElementById("tpl-nome").value,
-                cor: document.getElementById("tpl-cor").value,
-                logo: document.getElementById("tpl-logo").value,
-                apresentacao: document.getElementById("tpl-apresentacao").value,
-                campos: document.getElementById("tpl-campos").value
-            });
-            alert("✅ Salvo!");
-            carregarTemplatesParaTodos();
-        });
-
-        // Inicialização Garantida
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                document.getElementById("tela-login")?.classList.add("opacity-0", "pointer-events-none");
-                carregarClientes();
-                carregarTemplatesParaTodos();
-            }
-        });
+// 💾 SALVAR FÁBRICA
+document.getElementById("form-template")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const id = document.getElementById("tpl-id").value.trim();
+    if(!id) return alert("Selecione um template ou digite um ID!");
+    await setDoc(doc(db, "templates", id), {
+        nome: document.getElementById("tpl-nome").value,
+        cor: document.getElementById("tpl-cor").value,
+        logo: document.getElementById("tpl-logo").value,
+        apresentacao: document.getElementById("tpl-apresentacao").value,
+        campos: document.getElementById("tpl-campos").value
+    });
+    alert("✅ Salvo com sucesso!");
+    window.carregarTemplatesParaTodos();
+});
     </script>
 </body>
 </html>
