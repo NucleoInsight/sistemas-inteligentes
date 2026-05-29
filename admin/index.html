@@ -462,20 +462,21 @@
             }
         };
  // --- MOTOR UNIFICADO DE CARGA E BUSCA ---
-        async function carregarTemplatesParaTodos() {
-            try {
-                const snap = await getDocs(collection(db, "templates"));
-                let options = '<option value="">-- Escolha --</option>';
-                snap.forEach(d => options += `<option value="${d.id}">${d.id}</option>`);
-                
-                const selFabrica = document.getElementById("tpl-id");
-                const selCliente = document.getElementById("cli-nicho");
-                
-                if(selFabrica) selFabrica.innerHTML = options;
-                if(selCliente) selCliente.innerHTML = options;
-            } catch (e) { console.error("Erro ao carregar selects:", e); }
-        }
-
+        window.carregarTemplatesParaTodos = async () => {
+    try {
+        const snap = await getDocs(collection(db, "templates"));
+        let options = '<option value="">-- Escolha um Template --</option>';
+        snap.forEach(d => options += `<option value="${d.id}">${d.id}</option>`);
+        
+        // Preenche o da Fábrica
+        document.getElementById("tpl-id").innerHTML = options;
+        // Preenche o do Cadastro de Clientes
+        document.getElementById("cli-nicho").innerHTML = options;
+        // Preenche o novo Navegador de Busca
+        document.getElementById("lista-filtrada").innerHTML = options; 
+        
+    } catch (e) { console.error("Erro carga:", e); }
+};
         window.resgatarTemplate = async (id) => {
             if(!id) return;
             const snap = await getDoc(doc(db, "templates", id));
