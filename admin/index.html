@@ -441,10 +441,45 @@
                 alert("Erro ao buscar: " + err.message);
             }
         };
- // 🧩 LÓGICA DA FÁBRICA E LISTAGEM AUTOMÁTICA
+ // --- MOTOR UNIFICADO DE CARGA E BUSCA ---
+        async function carregarTemplatesParaTodos() {
+            try {
+                const snap = await getDocs(collection(db, "templates"));
+                let options = '<option value="">-- Escolha --</option>';
+                snap.forEach(d => options += `<option value="${d.id}">${d.id}</option>`);
+                
+                const selFabrica = document.getElementById("tpl-id");
+                const selCliente = document.getElementById("cli-nicho");
+                
+                if(selFabrica) selFabrica.innerHTML = options;
+                if(selCliente) selCliente.innerHTML = options;
+            } catch (e) { console.error("Erro ao carregar selects:", e); }
+        }
+
+        window.resgatarTemplate = async (id) => {
+            if(!id) return;
+            const snap = await getDoc(doc(db, "templates", id));
+            if(snap.exists()) {
+                const d = snap.data();
+                document.getElementById("tpl-nome").value = d.nome || "";
+                document.getElementById("tpl-cor").value = d.cor || "#FFD700";
+                document.getElementById("tpl-logo").value = d.logo || "";
+                document.getElementById("tpl-apresentacao").value = d.apresentacao || "";
+                document.getElementById("tpl-campos").value = d.campos || "";
+            }
+        };
+
+        window.puxarDadosTemplate = async (id) => {
+            if(!id) return;
+            const snap = await getDoc(doc(db, "templates", id));
+            if(snap.exists()) {
+                document.getElementById("cli-cor").value = snap.data().cor || "#3B82F6";
+            }
+        };
+
         document.getElementById("form-template")?.addEventListener("submit", async (e) => {
             e.preventDefault();
-            const id = document.getElementById("tpl-id").value.trim().toLowerCase();
+            const id = document.getElementById("tpl-id").value;
             await setDoc(doc(db, "templates", id), {
                 nome: document.getElementById("tpl-nome").value,
                 cor: document.getElementById("tpl-cor").value,
@@ -452,56 +487,18 @@
                 apresentacao: document.getElementById("tpl-apresentacao").value,
                 campos: document.getElementById("tpl-campos").value
             });
-            alert("✅ Template salvo com sucesso!");
-            e.target.reset();
-            await atualizarListaDeTemplates(); // Atualiza a lista após salvar
+            alert("✅ Salvo!");
+            carregarTemplatesParaTodos();
         });
 
-        window.atualizarListaDeTemplates = async function() {
-            const select = document.getElementById("tpl-id");
-            if (!select) return;
-            const snap = await getDocs(collection(db, "templates"));
-            // Mantém o ID atual, mas limpa a lista de sugestões (se for um datalist)
-            console.log(`Lista atualizada com ${snap.size} templates.`);
-        };
-
-        // 🔄 CARREGAR TEMPLATES NO SELECT
-async function carregarTemplatesLista() {
-    const select = document.getElementById("tpl-id");
-    if (!select) return;
-    
-    try {
-        const snap = await getDocs(collection(db, "templates"));
-        select.innerHTML = '<option value="">-- Escolha um template --</option>';
-        snap.forEach(d => {
-            const opt = document.createElement("option");
-            opt.value = d.id;
-            opt.textContent = d.id;
-            select.appendChild(opt);
+        // Inicialização Garantida
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById("tela-login")?.classList.add("opacity-0", "pointer-events-none");
+                carregarClientes();
+                carregarTemplatesParaTodos();
+            }
         });
-    } catch (e) { console.error("Erro ao carregar lista:", e); }
-}
-
-// Chamar a lista assim que o usuário logar
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        carregarClientes();
-        carregarTemplatesLista(); // Carrega a lista automaticamente
-    }
-});
-        // ⚡ MOTOR QUE PUXA DADOS DO TEMPLATE PARA O CLIENTE
-window.puxarDadosTemplate = async function(id) {
-    if(!id) return;
-    try {
-        const snap = await getDoc(doc(db, "templates", id));
-        if(snap.exists()) {
-            const d = snap.data();
-            // Preenche a cor automaticamente com a cor salva no template
-            document.getElementById("cli-cor").value = d.cor || "#3B82F6";
-            console.log("✅ Dados do template carregados para o cliente:", id);
-        }
-    } catch (e) { console.error("Erro ao puxar dados:", e); }
-};
     </script>
 </body>
 </html>
