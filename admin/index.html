@@ -415,7 +415,8 @@
         // 🔍 RESGATAR TEMPLATE CORRIGIDO
         window.resgatarTemplate = async function(idClicado) {
             const elId = document.getElementById("tpl-id");
-            const idBusca = (idClicado || elId.value || "").trim().toLowerCase();
+            const idBusca = (idClicado || document.getElementById("tpl-id").value || "").trim();
+            if (!idBusca || idBusca === "") return;
             
             if(!idBusca) {
                 alert("Digite o ID no campo ou selecione um template!");
