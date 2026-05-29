@@ -487,6 +487,19 @@ onAuthStateChanged(auth, (user) => {
         carregarTemplatesLista(); // Carrega a lista automaticamente
     }
 });
+        // ⚡ MOTOR QUE PUXA DADOS DO TEMPLATE PARA O CLIENTE
+window.puxarDadosTemplate = async function(id) {
+    if(!id) return;
+    try {
+        const snap = await getDoc(doc(db, "templates", id));
+        if(snap.exists()) {
+            const d = snap.data();
+            // Preenche a cor automaticamente com a cor salva no template
+            document.getElementById("cli-cor").value = d.cor || "#3B82F6";
+            console.log("✅ Dados do template carregados para o cliente:", id);
+        }
+    } catch (e) { console.error("Erro ao puxar dados:", e); }
+};
     </script>
 </body>
 </html>
