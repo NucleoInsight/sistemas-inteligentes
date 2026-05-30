@@ -493,11 +493,11 @@
             carregarTemplatesParaTodos();
         });
 
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 document.getElementById("tela-login")?.classList.add("opacity-0", "pointer-events-none");
+                await carregarTemplatesParaTodos(); // Garante que carrega os templates ANTES de tudo
                 carregarClientes();
-                carregarTemplatesParaTodos();
             }
         });
     </script>
