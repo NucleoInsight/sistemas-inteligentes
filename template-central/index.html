@@ -131,6 +131,9 @@
 
             const dadosCliente = clienteSnap.data();
             
+            // Salva a senha correta globalmente para a função de login usar
+            window.senhaMestraCorreta = dadosCliente.senhaMestra;
+            
             if (dadosCliente.status !== "Ativo") {
                 document.body.innerHTML = "<div class='flex h-screen items-center justify-center text-red-500 font-bold'>ACESSO SUSPENSO: Entre em contato com Borges Soluções.</div>";
                 return;
