@@ -388,7 +388,24 @@
 
         window.atualizarStatus = async (id, status) => { await updateDoc(doc(db, "clients", id), { status }); carregarClientes(); };
         window.remover = async (id) => { await deleteDoc(doc(db, 'clients', id)); carregarClientes(); };
-
+        window.editarCliente = async (id) => {
+            const snap = await getDoc(doc(db, "clients", id));
+            if (snap.exists()) {
+                const dados = snap.data();
+                const config = dados.configuracaoPersonalizada || {};
+                
+                // Preenche o formulário da Fábrica com os dados do Cliente
+                document.getElementById("tpl-id").value = id; // O ID do template vira o ID do cliente
+                document.getElementById("tpl-nome").value = dados.nome || "";
+                document.getElementById("tpl-cor").value = dados.cor || "#000000";
+                document.getElementById("tpl-logo").value = config.logo || "";
+                document.getElementById("tpl-apresentacao").value = config.apresentacao || "";
+                document.getElementById("tpl-campos").value = config.campos || "";
+                
+                alert("Modo Edição: Você está editando o Cliente " + dados.nome + ". O salvamento será enviado para o perfil do cliente.");
+                window.scrollTo(0, document.getElementById("form-template").offsetTop);
+            }
+        };
         document.getElementById("form-cliente")?.addEventListener("submit", (e) => {
             e.preventDefault();
             cadastrarCliente(
