@@ -61,6 +61,19 @@
        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, getDoc, addDoc, collection } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+       window.logarAdmin = async () => {
+            const senha = document.getElementById("senhaInput").value;
+            const senhaMestra = window.senhaMestraCorreta; // Variável definida no inicializarCentralDinamica
+
+            if (senha === senhaMestra) {
+                alert("✅ Acesso Liberado!");
+                document.getElementById('loginOverlay').style.display = 'none';
+                // Aqui você pode redirecionar para o admin ou mostrar opções extras
+                window.location.href = "../admin/index.html"; 
+            } else {
+                alert("❌ Senha incorreta.");
+            }
+        };
         const firebaseConfig = {
             apiKey: "AIzaSyAMYE7ZLM4jtoVnshqowLSaSL-mYCW1lhI",
             authDomain: "sistemas-inteligentes-38cdc.firebaseapp.com",
