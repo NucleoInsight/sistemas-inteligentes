@@ -272,7 +272,12 @@
         });
 
         window.sairDaCentral = () => { if(confirm("Sair?")) { signOut(auth).then(()=>window.location.reload()); } };
-
+        window.copiarLink = (cid) => {
+            const link = `https://nucleoinsight.github.io/sistemas-inteligentes/template-central/index.html?cid=${cid}`;
+            navigator.clipboard.writeText(link).then(() => {
+                alert("✅ Link copiado! Envie para o seu cliente:\n" + link);
+            });
+        };
         window.copiarGatilho = (tipo, nome, linkFixo, valor, contato) => {
             const numeroLimpo = contato.replace(/\D/g, "");
             let caminhoFinal = linkFixo.trim();
