@@ -244,6 +244,21 @@
         import { getFirestore, collection, addDoc, getDocs, query, where, doc, deleteDoc, updateDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
+        // Filtro automático ao abrir o Admin
+const urlParams = new URLSearchParams(window.location.search);
+const cidLogado = urlParams.get('cid');
+
+async function carregarDados() {
+    if (cidLogado) {
+        // Oculta tudo que é para o Borges (Master)
+        document.querySelectorAll('.master-only').forEach(el => el.style.display = 'none');
+        // Carrega apenas os dados vinculados ao cidLogado
+        await buscarDadosDoCliente(cidLogado);
+    } else {
+        // Mostra tudo para o Borges (Master)
+        console.log("Modo Administrador Master");
+    }
+}
         const firebaseConfig = {
             apiKey: "AIzaSyAMYE7ZLM4jtoVnshqowLSaSL-mYCW1lhI",
             authDomain: "sistemas-inteligentes-38cdc.firebaseapp.com",
