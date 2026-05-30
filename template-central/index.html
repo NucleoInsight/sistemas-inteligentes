@@ -64,12 +64,18 @@
        window.logarAdmin = async () => {
             const senha = document.getElementById("senhaInput").value;
             const senhaMestra = window.senhaMestraCorreta; // Variável definida no inicializarCentralDinamica
+            
+            // Pega o ID do cliente da URL atual
+            const urlParams = new URLSearchParams(window.location.search);
+            const cid = urlParams.get('cid');
 
             if (senha === senhaMestra) {
                 alert("✅ Acesso Liberado!");
                 document.getElementById('loginOverlay').style.display = 'none';
-                // Aqui você pode redirecionar para o admin ou mostrar opções extras
-                window.location.href = "../admin/index.html"; 
+                
+                // Redireciona para o admin passando o ID do cliente específico
+                // Certifique-se de que o seu admin/index.html saiba ler o 'cid' da URL
+                window.location.href = `../admin/index.html?cid=${cid}`;
             } else {
                 alert("❌ Senha incorreta.");
             }
