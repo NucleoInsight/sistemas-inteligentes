@@ -160,6 +160,11 @@
             document.getElementById("texto-apresentacao").innerHTML = configCliente.textoApresentacao;
             document.getElementById("campos-formulario").innerHTML = configCliente.htmlCampos;
 
+            // Motor de Modularização: Carrega lógica específica do nicho
+            if (typeof window.carregarModuloEspecifico === 'function') {
+                window.carregarModuloEspecifico(dadosCliente.nicho);
+            }
+
             document.getElementById("loading").classList.add("hidden");
             document.getElementById("interface-dinamica").classList.remove("hidden");
         }
