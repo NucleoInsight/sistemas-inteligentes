@@ -134,9 +134,15 @@
             // Salva a senha correta globalmente para a função de login usar
             window.senhaMestraCorreta = dadosCliente.senhaMestra;
             
-            if (dadosCliente.status !== "Ativo") {
+           // 2. Sistema de Bloqueio (Trava de Segurança)
+            if (dadosCliente.status === "Bloqueado") {
                 document.body.innerHTML = "<div class='flex h-screen items-center justify-center text-red-500 font-bold'>ACESSO SUSPENSO: Entre em contato com Borges Soluções.</div>";
                 return;
+            }
+            
+            // Se for Demonstração, mantemos o aviso de desenvolvimento, mas não travamos o acesso total
+            if (dadosCliente.status === "Demonstração") {
+                console.log("Modo Degustação Ativo");
             }
 
             await buscarTemplateDoBanco(dadosCliente.nicho);
