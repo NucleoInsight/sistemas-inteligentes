@@ -72,7 +72,10 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-
+        // Expondo funções do Firebase para o escopo global do navegador
+        window.db = db;
+        window.doc = doc;
+        window.getDoc = getDoc;
         let configCliente = {};
 
         async function buscarConfiguracaoDoCliente(dadosCliente) {
