@@ -480,27 +480,31 @@
             } catch (e) { console.error("Erro ao carregar:", e); }
         };
 
+        window.carregarTemplatesParaTodos = async () => {
+            try {
+                const snap = await getDocs(collection(db, "templates"));
+                let options = '<option value="">-- Escolha um Template --</option>';
+                snap.forEach(d => options += `<option value="${d.id}">${d.id}</option>`);
+                
+                document.getElementById("tpl-id").innerHTML = options;
+                document.getElementById("cli-nicho").innerHTML = options;
+                document.getElementById("lista-filtrada").innerHTML = options; 
+            } catch (e) { console.error("Erro ao carregar:", e); }
+        };
+
         window.resgatarTemplate = async (id) => {
             if(!id) return;
-            // Tenta buscar na coleção templates (bases) primeiro
             let snap = await getDoc(doc(db, "templates", id));
+            if(!snap.exists()) snap = await getDoc(doc(db, "clients", id));
             
-            // Se não achou na base, tenta buscar como um cliente (snapshot)
-            if(!snap.exists()) {
-                snap = await getDoc(doc(db, "clients", id));
-            }
-
             if(snap.exists()) {
                 const d = snap.data();
-                // Verifica se é cliente (que tem configuracaoPersonalizada) ou base
                 const config = d.configuracaoPersonalizada || d;
                 
                 document.getElementById("tpl-nome").value = d.nome || "";
-                
                 const corHex = d.cor || "#FFD700";
                 document.getElementById("tpl-cor").value = corHex;
                 document.getElementById("tpl-cor-texto").value = corHex;
-                
                 document.getElementById("tpl-logo").value = config.logo || "";
                 document.getElementById("tpl-apresentacao").value = config.apresentacao || "";
                 document.getElementById("tpl-campos").value = config.campos || "";
@@ -543,46 +547,23 @@
                 carregarClientes();
             }
         });
-                    campos: document.getElementById("tpl-campos").value
-                });
-                alert("✅ Gabarito Base Salvo com sucesso!");
-            } else {
-                // SALVA NO SNAPSHOT DO CLIENTE (coleção clients)
-                await updateDoc(doc(db, "clients", id), {
-                    nome: document.getElementById("tpl-nome").value,
-                    cor: document.getElementById("tpl-cor").value,
-                    configuracaoPersonalizada: {
-                        logo: document.getElementById("tpl-logo").value,
-                        apresentacao: document.getElementById("tpl-apresentacao").value,
-                        campos: document.getElementById("tpl-campos").value
-                    }
-                });
-                alert("✅ Configuração do Cliente atualizada com sucesso!");
-                carregarClientes(); // Atualiza a tabela na tela
-            }
-        });
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 document.getElementById("tela-login")?.classList.add("opacity-0", "pointer-events-none");
-                await carregarTemplatesParaTodos(); // Garante que carrega os templates ANTES de tudo
+                await carregarTemplatesParaTodos();
                 carregarClientes();
             }
         });
 
-        // Sincronia: Digitar no texto altera o color picker
-document.getElementById('tpl-cor-texto').addEventListener('input', function() {
-    const cor = this.value;
-    if (cor.startsWith('#')) {
-        document.getElementById('tpl-cor').value = cor;
-    }
-});
+        document.getElementById('tpl-cor-texto').addEventListener('input', function() {
+            if (this.value.startsWith('#')) document.getElementById('tpl-cor').value = this.value;
+        });
 
-// Sincronia: Mudar o color picker altera o campo de texto
-document.getElementById('tpl-cor').addEventListener('input', function() {
-    document.getElementById('tpl-cor-texto').value = this.value;
-});
-        
+        document.getElementById('tpl-cor').addEventListener('input', function() {
+            document.getElementById('tpl-cor-texto').value = this.value;
+        });
     </script>
+        
 </body>
 </html>
