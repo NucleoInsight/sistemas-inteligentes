@@ -94,90 +94,28 @@
         async function inicializarCentralDinamica() {
             const params = new URLSearchParams(window.location.search);
             const cid = params.get('cid'); 
-            
-            if (!cid) {
-                document.body.innerHTML = "<div class='text-center p-10 text-red-500'>Erro: Link inválido.</div>";
-                return;
-            }
+            if (!cid) return;
             
             const clienteSnap = await getDoc(doc(db, "clients", cid));
             if (!clienteSnap.exists()) return;
 
             const dados = clienteSnap.data();
             window.senhaMestraCorreta = dados.senhaMestra;
-            
-            if (dados.status === "Bloqueado") {
-                document.body.innerHTML = "<div class='text-center p-10 text-red-500'>ACESSO SUSPENSO.</div>";
-                return;
-            }
+            window.statusCliente = dados.status;
 
             const config = dados.configuracaoPersonalizada || {};
             
             document.title = `${dados.nome} — Central`;
             document.getElementById("custom-nome").innerText = dados.nome;
             document.getElementById("custom-logo").src = config.logo || "";
-            document.getElementById("texto-apresentacao").innerHTML = config.apresentacao || "";
             
-            // Aqui é onde injetamos o HTML que vem da Fábrica direto no novo container
+            // Injeta o HTML da Apresentação e dos Campos vindos da Fábrica
+            document.getElementById("container-apresentacao").innerHTML = config.apresentacao || "";
             document.getElementById("container-dinamico").innerHTML = config.campos || "";
 
             document.getElementById("loading").classList.add("hidden");
             document.getElementById("interface-dinamica").classList.remove("hidden");
         }
-
-        window.addEventListener('DOMContentLoaded', inicializarCentralDinamica);
-
-    window.logarAdmin = function() {
-            const senhaDigitada = document.getElementById('senhaInput').value;
-            // Valida com a senhaMestra vinda do banco (configCliente ou dadosCliente)
-            // Como configCliente busca o Template, usaremos a senha que está em dadosCliente
-            // Para isso, precisamos tornar dadosCliente global ou buscá-la aqui
-            if(senhaDigitada === window.senhaMestraCorreta) {
-                document.getElementById('loginOverlay').style.display = 'none';
-                alert("Acesso liberado ao Painel Administrativo!");
-                // Aqui você abriria sua área administrativa
-            } else {
-                alert("Senha incorreta.");
-            }
-        };
-    window.processarAcao = () => {
-            // Verifica o status do cliente (carregado globalmente)
-            const statusAtual = window.statusCliente; 
-            
-            if (statusAtual === "Demonstração") {
-                alert("⚠️ Função exclusiva para assinantes! Entre em contato com a Borges Soluções para liberar o acesso total.");
-                return;
-            }
-            
-            // Se não for demonstração, submete o formulário
-            document.getElementById("form-dinamico-cliente").submit();
-        };
-
-    window.carregarModuloEspecifico = function(nicho) {
-            const container = document.getElementById("area-conteudo-dinamico");
-            
-            if (nicho === "personal") {
-                document.getElementById("titulo-formulario").innerText = "Meu Treino do Dia";
-                container.innerHTML = `
-                    <div class="space-y-4">
-                        <div class="bg-gray-800 p-4 rounded-lg flex justify-between items-center">
-                            <div>
-                                <p class="font-bold">Supino Reto</p>
-                                <p class="text-[10px] text-gray-400">3 séries de 12 repetições</p>
-                            </div>
-                            <button onclick="window.registrarAcao('Supino Reto')" class="bg-green-600 px-3 py-1 rounded text-[10px] font-bold">FEITO</button>
-                        </div>
-                        <div class="bg-gray-800 p-4 rounded-lg flex justify-between items-center">
-                            <div>
-                                <p class="font-bold">Crucifixo</p>
-                                <p class="text-[10px] text-gray-400">3 séries de 15 repetições</p>
-                            </div>
-                            <button onclick="window.registrarAcao('Crucifixo')" class="bg-green-600 px-3 py-1 rounded text-[10px] font-bold">FEITO</button>
-                        </div>
-                    </div>
-                `;
-            }
-        };
 
         window.registrarAcao = async (exercicio) => {
             try {
