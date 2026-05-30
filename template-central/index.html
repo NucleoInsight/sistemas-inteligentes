@@ -133,6 +133,7 @@
             
             // Salva a senha correta globalmente para a função de login usar
             window.senhaMestraCorreta = dadosCliente.senhaMestra;
+            window.statusCliente = dadosCliente.status;
             
            // 2. Sistema de Bloqueio (Trava de Segurança)
             if (dadosCliente.status === "Bloqueado") {
@@ -178,7 +179,18 @@
                 alert("Senha incorreta.");
             }
         };
-    
+    window.processarAcao = () => {
+            // Verifica o status do cliente (carregado globalmente)
+            const statusAtual = window.statusCliente; 
+            
+            if (statusAtual === "Demonstração") {
+                alert("⚠️ Função exclusiva para assinantes! Entre em contato com a Borges Soluções para liberar o acesso total.");
+                return;
+            }
+            
+            // Se não for demonstração, submete o formulário
+            document.getElementById("form-dinamico-cliente").submit();
+        };
     </script>
 </body>
 </html>
