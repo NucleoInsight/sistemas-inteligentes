@@ -445,6 +445,30 @@
 
         window.atualizarStatus = async (id, status) => { await updateDoc(doc(db, "clients", id), { status }); carregarClientes(); };
         window.remover = async (id) => { await deleteDoc(doc(db, 'clients', id)); carregarClientes(); };
+        
+        window.migrarTemplate = async (cid) => {
+            const novoNicho = prompt("Digite o ID do novo Template Base (ex: consultoria_base):");
+            if (!novoNicho) return;
+
+            try {
+                const snap = await getDoc(doc(db, "templates", novoNicho));
+                if (!snap.exists()) return alert("Template base não encontrado!");
+                
+                const templateDados = snap.data();
+
+                await updateDoc(doc(db, "clients", cid), {
+                    nicho: novoNicho,
+                    configuracaoPersonalizada: templateDados
+                });
+
+                alert("✅ Base migrada com sucesso!");
+                carregarClientes();
+            } catch (e) {
+                console.error(e);
+                alert("Erro na migração.");
+            }
+        };
+        
         window.editarCliente = async (id) => {
             const snap = await getDoc(doc(db, "clients", id));
             if (snap.exists()) {
