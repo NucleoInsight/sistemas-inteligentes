@@ -257,6 +257,19 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
+        // TORNA AS FERRAMENTAS GLOBAIS PARA O CONSOLE E PARA O SISTEMA
+        window.db = db;
+        window.auth = auth;
+        window.getDocs = getDocs;
+        window.getDoc = getDoc;
+        window.collection = collection;
+        window.doc = doc;
+        window.setDoc = setDoc;
+        window.updateDoc = updateDoc;
+        window.addDoc = addDoc;
+        window.query = query;
+        window.where = where;
+
         onAuthStateChanged(auth, (user) => {
             const telaLogin = document.getElementById("tela-login");
             if (user) {
