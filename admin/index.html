@@ -559,25 +559,15 @@
             document.getElementById('tpl-cor-texto').value = this.value;
         });
 
-        window.exibirVideo = (url) => {
-    if (!url) return;
-    // Converte links normais do YouTube para o formato de incorporação
-    const videoId = url.split('v=')[1] || url.split('/').pop();
-    const embedUrl = `https://www.youtube.com/embed/${videoId}`;
-    
-    document.getElementById('container-video').innerHTML = `
-        <iframe class="w-full h-48 rounded-lg mt-4" src="${embedUrl}" frameborder="0" allowfullscreen></iframe>
-    `;
-};
-
-        // Motor de Vídeo para o Aluno
-        window.exibirVideo = (url) => {
+       window.exibirVideo = (url) => {
             if (!url) return;
             const videoId = url.split('v=')[1] || url.split('/').pop();
             const embedUrl = `https://www.youtube.com/embed/${videoId}`;
             const container = document.getElementById('container-video');
             if (container) {
                 container.innerHTML = `<iframe class="w-full h-48 rounded-lg mt-4" src="${embedUrl}" frameborder="0" allowfullscreen></iframe>`;
+            } else {
+                console.warn("Elemento container-video não encontrado na página.");
             }
         };
     </script>
