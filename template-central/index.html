@@ -97,23 +97,22 @@
 
         let configCliente = {};
 
-        async function buscarTemplateDoBanco(nichoId) {
+        async function buscarConfiguracaoDoCliente(dadosCliente) {
             try {
-                const snap = await getDoc(doc(db, "templates", nichoId));
-                if (snap.exists()) {
-                    const data = snap.data();
-                    configCliente = {
-                        nome: data.nome,
-                        logo: data.logo,
-                        cor: data.cor,
-                        tituloForm: data.titulo || "Ficha de Registro",
-                        textoApresentacao: data.apresentacao,
-                        htmlCampos: data.campos
-                    };
-                }
-            } catch (e) { console.error("Erro ao buscar template:", e); }
+                // Se o cliente tem a configuração salva (snapshot), usamos ela. 
+                // Se não tiver (cliente antigo), buscamos no template original (fallback).
+                const data = dadosCliente.configuracaoPersonalizada || {};
+                
+                configCliente = {
+                    nome: dadosCliente.nome || data.nome,
+                    logo: data.logo || "",
+                    cor: dadosCliente.cor || data.cor || "#3B82F6",
+                    tituloForm: data.titulo || "Ficha de Registro",
+                    textoApresentacao: data.apresentacao || "",
+                    htmlCampos: data.campos || ""
+                };
+            } catch (e) { console.error("Erro ao configurar cliente:", e); }
         }
-
         async function inicializarCentralDinamica() {
             const params = new URLSearchParams(window.location.search);
             const cid = params.get('cid'); 
