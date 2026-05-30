@@ -63,18 +63,17 @@
 
        window.logarAdmin = async () => {
             const senha = document.getElementById("senhaInput").value;
-            const senhaMestra = window.senhaMestraCorreta; // Variável definida no inicializarCentralDinamica
-            
-            // Pega o ID do cliente da URL atual
+            const senhaMestra = window.senhaMestraCorreta; // A senha cadastrada no banco para aquele cliente
             const urlParams = new URLSearchParams(window.location.search);
             const cid = urlParams.get('cid');
 
             if (senha === senhaMestra) {
-                alert("✅ Acesso Liberado!");
+                alert("✅ Acesso Liberado ao Painel de Gestão!");
                 document.getElementById('loginOverlay').style.display = 'none';
                 
-                // Redireciona para o admin passando o ID do cliente específico
-                // Certifique-se de que o seu admin/index.html saiba ler o 'cid' da URL
+                // IMPORTANTE: Aqui você direciona para o painel de gestão DO CLIENTE
+                // Se você tiver um arquivo separado para o cliente (ex: painel-cliente.html)
+                // Ou se usar o mesmo admin, o 'cid' é o que vai filtrar os dados dele.
                 window.location.href = `../admin/index.html?cid=${cid}`;
             } else {
                 alert("❌ Senha incorreta.");
