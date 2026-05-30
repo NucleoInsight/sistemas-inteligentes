@@ -551,6 +551,20 @@
                 carregarClientes();
             }
         });
+
+        // Sincronia: Digitar no texto altera o color picker
+document.getElementById('tpl-cor-texto').addEventListener('input', function() {
+    const cor = this.value;
+    if (cor.startsWith('#')) {
+        document.getElementById('tpl-cor').value = cor;
+    }
+});
+
+// Sincronia: Mudar o color picker altera o campo de texto
+document.getElementById('tpl-cor').addEventListener('input', function() {
+    document.getElementById('tpl-cor-texto').value = this.value;
+});
+        
     </script>
 </body>
 </html>
