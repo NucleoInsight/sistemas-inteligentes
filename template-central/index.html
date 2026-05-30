@@ -155,7 +155,21 @@
         console.error("Erro ao salvar:", e);
     }
 };
-    
     </script>
+
+    <script>
+    // Script global simples para permitir acesso ao HTML injetado
+    window.exibirVideo = function(url) {
+        if (!url) return;
+        const videoId = url.split('v=')[1] || url.split('/').pop();
+        const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+        const container = document.getElementById('container-video');
+        if (container) {
+            container.innerHTML = `<iframe class="w-full h-48 rounded-lg mt-4" src="${embedUrl}" frameborder="0" allowfullscreen></iframe>`;
+        } else {
+            console.error("Elemento container-video não encontrado.");
+        }
+    };
+</script>
 </body>
 </html>
