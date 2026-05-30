@@ -488,6 +488,21 @@
                 document.getElementById("tpl-apresentacao").value = d.apresentacao || "";
                 document.getElementById("tpl-campos").value = d.campos || "";
             }
+        };window.resgatarTemplate = async (id) => {
+            if(!id) return;
+            const snap = await getDoc(doc(db, "templates", id));
+            if(snap.exists()) {
+                const d = snap.data();
+                document.getElementById("tpl-nome").value = d.nome || "";
+                
+                // Força o preenchimento da cor no input de tipo 'color'
+                const corHex = d.cor || "#FFD700";
+                document.getElementById("tpl-cor").value = corHex;
+                
+                document.getElementById("tpl-logo").value = d.logo || "";
+                document.getElementById("tpl-apresentacao").value = d.apresentacao || "";
+                document.getElementById("tpl-campos").value = d.campos || "";
+            }
         };
 
         window.resgatarDoBanco = async () => {
