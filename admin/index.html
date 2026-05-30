@@ -536,14 +536,6 @@
             }
         });
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                document.getElementById("tela-login")?.classList.add("opacity-0", "pointer-events-none");
-                await carregarTemplatesParaTodos();
-                carregarClientes();
-            }
-        });
-
         document.getElementById('tpl-cor-texto').addEventListener('input', function() {
             if (this.value.startsWith('#')) document.getElementById('tpl-cor').value = this.value;
         });
