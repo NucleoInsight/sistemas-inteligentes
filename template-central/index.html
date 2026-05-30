@@ -70,7 +70,7 @@
     </footer>
 
 <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -85,26 +85,18 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        const urlParams = new URLSearchParams(window.location.search);
-        // 🛠️ O "CORE" BUSCARÁ AS CONFIGURAÇÕES DIRETAMENTE DO BANCO NO FUTURO
-      // Agora, o template aguarda a carga da coleção "templates" do Firestore
-
-      // 🚀 CORE OPERACIONAL ATIVO: BUSCANDO TEMPLATE NO BANCO
-
-        // 🔄 CONFIGURAÇÃO DINÂMICA: BUSCA A ESTRUTURA DO NICHO NO BANCO
-        let configCliente = { nome: "Carregando...", logo: "", cor: "#3B82F6", tituloForm: "", textoApresentacao: "", htmlCampos: "" };
+        let configCliente = {};
 
         async function buscarTemplateDoBanco(nichoId) {
             try {
-                const docRef = doc(db, "templates", nichoId);
-                const snap = await getDoc(docRef);
+                const snap = await getDoc(doc(db, "templates", nichoId));
                 if (snap.exists()) {
                     const data = snap.data();
                     configCliente = {
                         nome: data.nome,
                         logo: data.logo,
                         cor: data.cor,
-                        tituloForm: data.titulo,
+                        tituloForm: data.titulo || "Ficha de Registro",
                         textoApresentacao: data.apresentacao,
                         htmlCampos: data.campos
                     };
@@ -113,17 +105,15 @@
         }
 
         async function inicializarCentralDinamica() {
-            const nichoUrl = urlParams.get('nicho');
+            const params = new URLSearchParams(window.location.search);
+            const cid = params.get('cid'); 
             
-            // Se não tem nicho, não tenta buscar
-            if (!nichoUrl) {
-                console.error("Nicho não especificado na URL");
+            if (!cid) {
+                document.body.innerHTML = "<div class='text-center p-10 text-red-500'>Erro: Link inválido. Entre em contato com Borges Soluções.</div>";
                 return;
             }
             
-           // 1. Busca dados do cliente (status, nicho, etc)
-            const clienteRef = doc(db, "clients", urlParams.get('id') || "Oz3mkqgEmxBpQuL8gow1");
-            const clienteSnap = await getDoc(clienteRef);
+            const clienteSnap = await getDoc(doc(db, "clients", cid));
             
             if (!clienteSnap.exists()) {
                 document.getElementById("loading").innerHTML = "<p class='text-red-500'>Cliente não encontrado.</p>";
@@ -132,16 +122,13 @@
 
             const dadosCliente = clienteSnap.data();
             
-            // 2. Com o nicho do cliente, busca o template
-            await buscarTemplateDoBanco(dadosCliente.nicho);
-
-            // 3. Sistema de Status Comercial (Bloqueio Inteligente)
-            if (dadosCliente.status === "Bloqueado") {
-                document.body.innerHTML = "<div class='flex h-screen items-center justify-center text-red-500 font-bold'>ACESSO BLOQUEADO: Regularize sua mensalidade.</div>";
+            if (dadosCliente.status !== "Ativo") {
+                document.body.innerHTML = "<div class='flex h-screen items-center justify-center text-red-500 font-bold'>ACESSO SUSPENSO: Entre em contato com Borges Soluções.</div>";
                 return;
             }
 
-            // 🎨 INJEÇÃO DE VARIÁVEIS NO DOM
+            await buscarTemplateDoBanco(dadosCliente.nicho);
+
             document.title = `${configCliente.nome} — Central de Atendimento`;
             document.getElementById("custom-nome").innerText = configCliente.nome;
             document.getElementById("custom-logo").src = configCliente.logo;
@@ -149,17 +136,6 @@
             
             const btnSubmit = document.getElementById("btn-submit-dinamico");
             btnSubmit.style.backgroundColor = configCliente.cor;
-            btnSubmit.style.color = "#FFFFFF";
-
-            // 🛡️ LÓGICA DE DEGUSTAÇÃO (TRAVA DE DESENVOLVIMENTO)
-            if (dadosCliente.status === "Demonstração") {
-                btnSubmit.onclick = (e) => {
-                    e.preventDefault();
-                    alert("⚠️ ESSA FERRAMENTA AINDA ESTÁ EM DESENVOLVIMENTO. Entre em contato com Borges Soluções para liberar seu acesso total.");
-                };
-            } else if (dadosCliente.status === "Bloqueado") {
-                document.body.innerHTML = "<div class='flex h-screen items-center justify-center text-red-500 font-bold'>ACESSO BLOQUEADO: Regularize sua mensalidade.</div>";
-            }
 
             document.getElementById("titulo-formulario").innerText = configCliente.tituloForm;
             document.getElementById("texto-apresentacao").innerHTML = configCliente.textoApresentacao;
