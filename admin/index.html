@@ -481,7 +481,13 @@
         document.getElementById("form-template")?.addEventListener("submit", async (e) => {
             e.preventDefault();
             const id = document.getElementById("tpl-id").value.trim();
-            if (!id) return alert("Selecione um template ou digite um ID!");
+            
+            // TRAVA DE SEGURANÇA: Se não terminar com _base, é personalizado, não vai pra coleção bases
+            if (!id.endsWith("_base")) {
+                alert("❌ Atenção: A Fábrica é exclusiva para Gabaritos (terminados em _base). Use o painel de clientes para edições específicas!");
+                return;
+            }
+
             await setDoc(doc(db, "templates", id), {
                 nome: document.getElementById("tpl-nome").value,
                 cor: document.getElementById("tpl-cor").value,
@@ -489,8 +495,7 @@
                 apresentacao: document.getElementById("tpl-apresentacao").value,
                 campos: document.getElementById("tpl-campos").value
             });
-            alert("✅ Salvo!");
-            carregarTemplatesParaTodos();
+            alert("✅ Gabarito Base Salvo com sucesso!");
         });
 
         onAuthStateChanged(auth, async (user) => {
