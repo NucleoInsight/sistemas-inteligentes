@@ -107,52 +107,30 @@
             const cid = params.get('cid'); 
             
             if (!cid) {
-                document.body.innerHTML = "<div class='text-center p-10 text-red-500'>Erro: Link inválido. Entre em contato com Borges Soluções.</div>";
+                document.body.innerHTML = "<div class='text-center p-10 text-red-500'>Erro: Link inválido.</div>";
                 return;
             }
             
             const clienteSnap = await getDoc(doc(db, "clients", cid));
+            if (!clienteSnap.exists()) return;
+
+            const dados = clienteSnap.data();
+            window.senhaMestraCorreta = dados.senhaMestra;
             
-            if (!clienteSnap.exists()) {
-                document.getElementById("loading").innerHTML = "<p class='text-red-500'>Cliente não encontrado.</p>";
+            if (dados.status === "Bloqueado") {
+                document.body.innerHTML = "<div class='text-center p-10 text-red-500'>ACESSO SUSPENSO.</div>";
                 return;
             }
 
-            const dadosCliente = clienteSnap.data();
+            const config = dados.configuracaoPersonalizada || {};
             
-            // Salva a senha correta globalmente para a função de login usar
-            window.senhaMestraCorreta = dadosCliente.senhaMestra;
-            window.statusCliente = dadosCliente.status;
+            document.title = `${dados.nome} — Central`;
+            document.getElementById("custom-nome").innerText = dados.nome;
+            document.getElementById("custom-logo").src = config.logo || "";
+            document.getElementById("texto-apresentacao").innerHTML = config.apresentacao || "";
             
-           // 2. Sistema de Bloqueio (Trava de Segurança)
-            if (dadosCliente.status === "Bloqueado") {
-                document.body.innerHTML = "<div class='flex h-screen items-center justify-center text-red-500 font-bold'>ACESSO SUSPENSO: Entre em contato com Borges Soluções.</div>";
-                return;
-            }
-            
-            // Se for Demonstração, mantemos o aviso de desenvolvimento, mas não travamos o acesso total
-            if (dadosCliente.status === "Demonstração") {
-                console.log("Modo Degustação Ativo");
-            }
-
-            await buscarConfiguracaoDoCliente(dadosCliente);
-
-            document.title = `${configCliente.nome} — Central de Atendimento`;
-            document.getElementById("custom-nome").innerText = configCliente.nome;
-            document.getElementById("custom-logo").src = configCliente.logo;
-            document.getElementById("custom-border-logo").style.borderColor = configCliente.cor;
-            
-            const btnSubmit = document.getElementById("btn-submit-dinamico");
-            btnSubmit.style.backgroundColor = configCliente.cor;
-
-            document.getElementById("titulo-formulario").innerText = configCliente.tituloForm;
-            document.getElementById("texto-apresentacao").innerHTML = configCliente.textoApresentacao;
-            document.getElementById("campos-formulario").innerHTML = configCliente.htmlCampos;
-
-            // Motor de Modularização: Carrega lógica específica do nicho
-            if (typeof window.carregarModuloEspecifico === 'function') {
-                window.carregarModuloEspecifico(dadosCliente.nicho);
-            }
+            // Aqui é onde injetamos o HTML que vem da Fábrica direto no novo container
+            document.getElementById("container-dinamico").innerHTML = config.campos || "";
 
             document.getElementById("loading").classList.add("hidden");
             document.getElementById("interface-dinamica").classList.remove("hidden");
