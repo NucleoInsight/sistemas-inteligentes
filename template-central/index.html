@@ -146,7 +146,7 @@
                 console.log("Modo Degustação Ativo");
             }
 
-            await buscarTemplateDoBanco(dadosCliente.nicho);
+            await buscarConfiguracaoDoCliente(dadosCliente);
 
             document.title = `${configCliente.nome} — Central de Atendimento`;
             document.getElementById("custom-nome").innerText = configCliente.nome;
