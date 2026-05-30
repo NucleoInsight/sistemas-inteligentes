@@ -535,35 +535,20 @@
             
             if (id.endsWith("_base")) {
                 await setDoc(doc(db, "templates", id), dadosTemplate);
-                alert("✅ Gabarito Base Salvo com sucesso!");
-           } else {
-                // Tenta atualizar, se não existir, cria o documento do cliente
-                try {
-                    await updateDoc(doc(db, "clients", id), {
-                        nome: dadosTemplate.nome,
-                        cor: dadosTemplate.cor,
-                        configuracaoPersonalizada: {
-                            logo: dadosTemplate.logo,
-                            apresentacao: dadosTemplate.apresentacao,
-                            campos: dadosTemplate.campos
-                        }
-                    });
-                    alert("✅ Cliente atualizado com sucesso!");
-                } catch (e) {
-                    // Se falhar porque não existe, criamos um novo com setDoc
-                    await setDoc(doc(db, "clients", id), {
-                        nome: dadosTemplate.nome,
-                        cor: dadosTemplate.cor,
-                        configuracaoPersonalizada: {
-                            logo: dadosTemplate.logo,
-                            apresentacao: dadosTemplate.apresentacao,
-                            campos: dadosTemplate.campos
-                        }
-                    });
-                    alert("✅ Novo registro de cliente criado na base!");
-                }
-                carregarClientes();
+                alert("✅ Gabarito Base Salvo na coleção 'templates'!");
+            } else {
+                await updateDoc(doc(db, "clients", id), {
+                    nome: dadosTemplate.nome,
+                    cor: dadosTemplate.cor,
+                    configuracaoPersonalizada: {
+                        logo: dadosTemplate.logo,
+                        apresentacao: dadosTemplate.apresentacao,
+                        campos: dadosTemplate.campos
+                    }
+                });
+                alert("✅ Configuração de Cliente atualizada!");
             }
+            carregarClientes();
         });
 
         document.getElementById('tpl-cor-texto').addEventListener('input', function() {
