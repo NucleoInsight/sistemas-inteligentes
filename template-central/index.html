@@ -210,20 +210,39 @@
                                 <p class="font-bold">Supino Reto</p>
                                 <p class="text-[10px] text-gray-400">3 séries de 12 repetições</p>
                             </div>
-                            <button onclick="alert('Treino concluído!')" class="bg-green-600 px-3 py-1 rounded text-[10px] font-bold">FEITO</button>
+                            <button onclick="window.registrarAcao('Supino Reto')" class="bg-green-600 px-3 py-1 rounded text-[10px] font-bold">FEITO</button>
                         </div>
                         <div class="bg-gray-800 p-4 rounded-lg flex justify-between items-center">
                             <div>
                                 <p class="font-bold">Crucifixo</p>
                                 <p class="text-[10px] text-gray-400">3 séries de 15 repetições</p>
                             </div>
-                            <button onclick="alert('Treino concluído!')" class="bg-green-600 px-3 py-1 rounded text-[10px] font-bold">FEITO</button>
+                            <button onclick="window.registrarAcao('Crucifixo')" class="bg-green-600 px-3 py-1 rounded text-[10px] font-bold">FEITO</button>
                         </div>
                     </div>
                 `;
             }
         };
-    
+    import { addDoc, collection } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        window.registrarAcao = async (exercicio) => {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const cid = params.get('cid');
+                
+                await addDoc(collection(db, "notificacoes"), {
+                    cid: cid,
+                    exercicio: exercicio,
+                    data: new Date().toISOString(),
+                    status: "Concluido"
+                });
+                
+                alert("✅ Exercício registrado com sucesso!");
+            } catch (e) {
+                console.error("Erro ao registrar:", e);
+                alert("Erro ao salvar notificação.");
+            }
+        };
     </script>
 </body>
 </html>
