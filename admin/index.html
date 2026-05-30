@@ -431,52 +431,19 @@
             reader.readAsDataURL(file);
         };
 
-        // 🔍 RESGATAR TEMPLATE CORRIGIDO
-        window.resgatarTemplate = async function(idClicado) {
-            const elId = document.getElementById("tpl-id");
-            const idBusca = (idClicado || document.getElementById("tpl-id").value || "").trim();
-            if (!idBusca || idBusca === "") return;
-            
-            if(!idBusca) {
-                alert("Digite o ID no campo ou selecione um template!");
-                return;
-            }
-
-            try {
-                const snap = await getDoc(doc(db, "templates", idBusca));
-                if(snap.exists()) {
-                    const dados = snap.data();
-                    elId.value = idBusca;
-                    document.getElementById("tpl-nome").value = dados.nome || "";
-                    document.getElementById("tpl-cor").value = dados.cor || "#FFD700";
-                    document.getElementById("tpl-logo").value = dados.logo || "";
-                    document.getElementById("tpl-apresentacao").value = dados.apresentacao || "";
-                    document.getElementById("tpl-campos").value = dados.campos || "";
-                    alert("✅ Template '" + idBusca + "' carregado!");
-                } else {
-                    alert("❌ Template não encontrado no banco.");
-                }
-            } catch (err) {
-                console.error(err);
-                alert("Erro ao buscar: " + err.message);
-            }
-        };
- // --- MOTOR UNIFICADO DE CARGA E BUSCA ---
+        // --- MOTOR UNIFICADO E DEFINITIVO ---
         window.carregarTemplatesParaTodos = async () => {
-    try {
-        const snap = await getDocs(collection(db, "templates"));
-        let options = '<option value="">-- Escolha um Template --</option>';
-        snap.forEach(d => options += `<option value="${d.id}">${d.id}</option>`);
-        
-        // Preenche o da Fábrica
-        document.getElementById("tpl-id").innerHTML = options;
-        // Preenche o do Cadastro de Clientes
-        document.getElementById("cli-nicho").innerHTML = options;
-        // Preenche o novo Navegador de Busca
-        document.getElementById("lista-filtrada").innerHTML = options; 
-        
-    } catch (e) { console.error("Erro carga:", e); }
-};
+            try {
+                const snap = await getDocs(collection(db, "templates"));
+                let options = '<option value="">-- Escolha um Template --</option>';
+                snap.forEach(d => options += `<option value="${d.id}">${d.id}</option>`);
+                
+                document.getElementById("tpl-id").innerHTML = options;
+                document.getElementById("cli-nicho").innerHTML = options;
+                document.getElementById("lista-filtrada").innerHTML = options; 
+            } catch (e) { console.error("Erro ao carregar:", e); }
+        };
+
         window.resgatarTemplate = async (id) => {
             if(!id) return;
             const snap = await getDoc(doc(db, "templates", id));
@@ -490,18 +457,16 @@
             }
         };
 
-        window.puxarDadosTemplate = async (id) => {
-            if(!id) return;
-            const snap = await getDoc(doc(db, "templates", id));
-            if(snap.exists()) {
-                document.getElementById("cli-cor").value = snap.data().cor || "#3B82F6";
-            }
+        window.resgatarDoBanco = async () => {
+            const id = document.getElementById("lista-filtrada").value;
+            if(!id) return alert("Selecione um template na lista!");
+            window.resgatarTemplate(id);
         };
 
         document.getElementById("form-template")?.addEventListener("submit", async (e) => {
             e.preventDefault();
             const id = document.getElementById("tpl-id").value.trim();
-            if (!id || id === "") { alert("Selecione um template ou digite um ID!"); return; }
+            if (!id) return alert("Selecione um template ou digite um ID!");
             await setDoc(doc(db, "templates", id), {
                 nome: document.getElementById("tpl-nome").value,
                 cor: document.getElementById("tpl-cor").value,
@@ -513,7 +478,6 @@
             carregarTemplatesParaTodos();
         });
 
-        // Inicialização Garantida
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById("tela-login")?.classList.add("opacity-0", "pointer-events-none");
@@ -521,43 +485,6 @@
                 carregarTemplatesParaTodos();
             }
         });
-
-        // Filtra os templates quando você escolhe o grupo
-window.filtrarTemplates = async (grupo) => {
-    const lista = document.getElementById("lista-filtrada");
-    lista.innerHTML = '<option>Carregando...</option>';
-    
-    // Busca todos os templates que começam com o nome do grupo
-    const q = query(collection(db, "templates")); 
-    const snap = await getDocs(q);
-    
-    let options = '';
-    snap.forEach(d => {
-        if(d.id.startsWith(grupo)) {
-            options += `<option value="${d.id}">${d.id}</option>`;
-        }
-    });
-    lista.innerHTML = options || '<option>Nenhum encontrado</option>';
-};
-
-// Resgata o template selecionado para os campos da Fábrica
-window.resgatarDoBanco = async () => {
-    const id = document.getElementById("lista-filtrada").value;
-    if(!id) return alert("Selecione um template na lista!");
-    
-    const snap = await getDoc(doc(db, "templates", id));
-    if(snap.exists()) {
-        const d = snap.data();
-        // Preenche os campos da Fábrica
-        document.getElementById("tpl-id").value = id; // Joga o ID no campo principal
-        document.getElementById("tpl-nome").value = d.nome || "";
-        document.getElementById("tpl-cor").value = d.cor || "#FFD700";
-        document.getElementById("tpl-logo").value = d.logo || "";
-        document.getElementById("tpl-apresentacao").value = d.apresentacao || "";
-        document.getElementById("tpl-campos").value = d.campos || "";
-        alert("✅ Template resgatado com sucesso!");
-    }
-};
     </script>
 </body>
 </html>
