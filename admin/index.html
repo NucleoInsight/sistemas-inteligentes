@@ -520,7 +520,7 @@
             window.resgatarTemplate(id);
         };
 
-        document.getElementById("form-template")?.addEventListener("submit", async (e) => {
+       document.getElementById("form-template")?.addEventListener("submit", async (e) => {
             e.preventDefault();
             const id = document.getElementById("tpl-id").value.trim();
             if (!id) return alert("Defina um ID!");
@@ -533,22 +533,30 @@
                 campos: document.getElementById("tpl-campos").value
             };
             
-            if (id.endsWith("_base")) {
-                // Salva na coleção templates
-                await setDoc(doc(db, "templates", id), dadosTemplate, { merge: true });
-                alert("✅ Gabarito Base Salvo na coleção 'templates'!");
-            } else {
-                // Salva na coleção clients (Cria se não existir, atualiza se existir)
-                await setDoc(doc(db, "clients", id), {
-                    nome: dadosTemplate.nome,
-                    cor: dadosTemplate.cor,
-                    configuracaoPersonalizada: {
-                        logo: dadosTemplate.logo,
-                        apresentacao: dadosTemplate.apresentacao,
-                        campos: dadosTemplate.campos
-                    }
-                }, { merge: true });
-                alert("✅ Configuração de Cliente processada com sucesso!");
+            // DEFINIÇÃO DINÂMICA DA COLEÇÃO
+            const colecaoDestino = id.endsWith("_base") ? "templates" : "clients";
+            
+            try {
+                if (colecaoDestino === "templates") {
+                    // Salva na coleção templates (Gabaritos)
+                    await setDoc(doc(db, "templates", id), dadosTemplate, { merge: true });
+                    alert("✅ Gabarito Base Salvo na coleção 'templates'!");
+                } else {
+                    // Salva na coleção clients (Clientes)
+                    await setDoc(doc(db, "clients", id), {
+                        nome: dadosTemplate.nome,
+                        cor: dadosTemplate.cor,
+                        configuracaoPersonalizada: {
+                            logo: dadosTemplate.logo,
+                            apresentacao: dadosTemplate.apresentacao,
+                            campos: dadosTemplate.campos
+                        }
+                    }, { merge: true });
+                    alert("✅ Cliente atualizado/criado na coleção 'clients'!");
+                }
+            } catch (err) {
+                console.error("Erro ao salvar:", err);
+                alert("Erro ao salvar no banco. Verifique as permissões.");
             }
             carregarClientes();
         });
