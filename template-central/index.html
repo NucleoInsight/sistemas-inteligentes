@@ -35,17 +35,18 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 
-                <div class="bg-[#171A21] p-5 rounded-xl border border-gray-800/80 md:col-span-2">
+                <div class="bg-[#171A21] p-5 rounded-xl border border-gray-800/80 md:col-span-2" id="container-modulo">
                     <h2 class="text-sm font-bold uppercase tracking-wider mb-4 flex items-center gap-2 text-white">
                         <span>📝</span> <span id="titulo-formulario">Ficha de Registro Geral</span>
                     </h2>
-                    <form id="form-dinamico-cliente" class="space-y-4 text-xs" onsubmit="event.preventDefault(); alert('Modo Demonstração: Dados validados com sucesso!');">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="campos-formulario">
-                        </div>
-                       <button type="button" onclick="window.processarAcao()" id="btn-submit-dinamico" class="w-full text-xs font-bold py-2.5 rounded-lg transition-all duration-300 uppercase tracking-wider shadow-lg">
-                            Confirmar Ação e Salvar
-                        </button>
-                    </form>
+                    <div id="area-conteudo-dinamico">
+                        <form id="form-dinamico-cliente" class="space-y-4 text-xs" onsubmit="event.preventDefault(); alert('Modo Demonstração: Dados validados com sucesso!');">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="campos-formulario"></div>
+                            <button type="button" onclick="window.processarAcao()" id="btn-submit-dinamico" class="w-full text-xs font-bold py-2.5 rounded-lg transition-all duration-300 uppercase tracking-wider shadow-lg">
+                                Confirmar Ação e Salvar
+                            </button>
+                        </form>
+                    </div>
                 </div>
 
                 <div class="space-y-4">
