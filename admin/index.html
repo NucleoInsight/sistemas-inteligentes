@@ -244,39 +244,6 @@
         import { getFirestore, collection, addDoc, getDocs, query, where, doc, deleteDoc, updateDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // Filtro automático ao abrir o Admin
-const urlParams = new URLSearchParams(window.location.search);
-const cidLogado = urlParams.get('cid');
-
-async function carregarDados() {
-    if (cidLogado) {
-        // Oculta tudo que é para o Borges (Master)
-        document.querySelectorAll('.master-only').forEach(el => el.style.display = 'none');
-        // Carrega apenas os dados vinculados ao cidLogado
-        await buscarDadosDoCliente(cidLogado);
-    } else {
-        // Mostra tudo para o Borges (Master)
-        console.log("Modo Administrador Master");
-    }
-}
-
-        async function buscarDadosDoCliente(cid) {
-            try {
-                const docRef = doc(db, "clients", cid);
-                const docSnap = await getDoc(docRef);
-                
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    console.log("Dados do Cliente Carregados:", data);
-                    // AQUI VOCÊ PODE PREENCHER O HTML COM OS DADOS DO CLIENTE
-                    // Exemplo: document.getElementById('nome-cliente').innerText = data.nome;
-                } else {
-                    alert("Cliente não encontrado!");
-                }
-            } catch (e) {
-                console.error("Erro ao buscar dados:", e);
-            }
-        }
         const firebaseConfig = {
             apiKey: "AIzaSyAMYE7ZLM4jtoVnshqowLSaSL-mYCW1lhI",
             authDomain: "sistemas-inteligentes-38cdc.firebaseapp.com",
@@ -286,21 +253,49 @@ async function carregarDados() {
             appId: "1:632476998816:web:3cb6936a5e3517b09dbdc5"
         };
 
-        // Inicializa o filtro de segurança assim que a página carregar
-        carregarDados();
-
-        // TORNA AS FERRAMENTAS GLOBAIS PARA O CONSOLE E PARA O SISTEMA
-        window.db = db;
-        window.auth = auth;
-        window.buscarDadosDoCliente = buscarDadosDoCliente;
-        
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // TORNA AS FERRAMENTAS GLOBAIS PARA O CONSOLE E PARA O SISTEMA
+        // TORNA AS FERRAMENTAS GLOBAIS
         window.db = db;
         window.auth = auth;
+        window.getDocs = getDocs;
+        window.getDoc = getDoc;
+        window.collection = collection;
+        window.doc = doc;
+        window.setDoc = setDoc;
+        window.updateDoc = updateDoc;
+        window.addDoc = addDoc;
+        window.query = query;
+        window.where = where;
+
+        async function buscarDadosDoCliente(cid) {
+            try {
+                const docRef = doc(db, "clients", cid);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    console.log("Dados do Cliente Carregados:", docSnap.data());
+                } else {
+                    alert("Cliente não encontrado!");
+                }
+            } catch (e) { console.error("Erro ao buscar dados:", e); }
+        }
+
+        async function carregarDados() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const cidLogado = urlParams.get('cid');
+            if (cidLogado) {
+                document.querySelectorAll('.master-only').forEach(el => el.style.display = 'none');
+                await buscarDadosDoCliente(cidLogado);
+            } else {
+                console.log("Modo Administrador Master");
+            }
+        }
+
+        // Inicializa o filtro de segurança
+        carregarDados();
+        window.buscarDadosDoCliente = buscarDadosDoCliente;
         window.getDocs = getDocs;
         window.getDoc = getDoc;
         window.collection = collection;
