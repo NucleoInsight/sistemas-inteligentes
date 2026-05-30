@@ -534,10 +534,12 @@
             };
             
             if (id.endsWith("_base")) {
-                await setDoc(doc(db, "templates", id), dadosTemplate);
+                // Salva na coleção templates
+                await setDoc(doc(db, "templates", id), dadosTemplate, { merge: true });
                 alert("✅ Gabarito Base Salvo na coleção 'templates'!");
             } else {
-                await updateDoc(doc(db, "clients", id), {
+                // Salva na coleção clients (Cria se não existir, atualiza se existir)
+                await setDoc(doc(db, "clients", id), {
                     nome: dadosTemplate.nome,
                     cor: dadosTemplate.cor,
                     configuracaoPersonalizada: {
@@ -545,8 +547,8 @@
                         apresentacao: dadosTemplate.apresentacao,
                         campos: dadosTemplate.campos
                     }
-                });
-                alert("✅ Configuração de Cliente atualizada!");
+                }, { merge: true });
+                alert("✅ Configuração de Cliente processada com sucesso!");
             }
             carregarClientes();
         });
