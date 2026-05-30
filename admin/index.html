@@ -270,11 +270,13 @@
         window.query = query;
         window.where = where;
 
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             const telaLogin = document.getElementById("tela-login");
             if (user) {
                 if(telaLogin) telaLogin.classList.add("opacity-0", "pointer-events-none");
-                carregarClientes();
+                // Carrega tudo DEPOIS que o usuário logar e a tela estiver pronta
+                await carregarTemplatesParaTodos();
+                await carregarClientes();
             } else {
                 if(telaLogin) telaLogin.classList.remove("opacity-0", "pointer-events-none");
             }
