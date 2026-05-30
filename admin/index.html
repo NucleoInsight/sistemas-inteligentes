@@ -293,27 +293,26 @@
             });
         };
 
-        async function cadastrarCliente(nome, contato, mrr, diaVencimento, nicho, cor, status) {
-            try {
-                const user = auth.currentUser;
-                if (!user) return;
-                const linkParametrizado = `index.html?nicho=${nicho}&cor=${encodeURIComponent(cor)}`;
-                await addDoc(collection(db, "clients"), {
-                    ownerId: user.uid,
-                    nome: nome,
-                    contato: contato,
-                    mrr: parseFloat(mrr || 0),
-                    diaVencimento: diaVencimento,
-                    nicho: nicho,
-                    cor: cor,
-                    linkDemo: linkParametrizado,
-                    status: status,
-                    dataCriacao: new Date().toISOString()
-                });
-                alert("Salvo com sucesso!");
-                carregarClientes();
-            } catch (e) { console.error(e); }
-        }
+        async function cadastrarCliente(nome, contato, mrr, diaVencimento, nicho, cor, status, senhaMestra) {
+                try {
+                    const user = auth.currentUser;
+                    if (!user) return;
+                    await addDoc(collection(db, "clients"), {
+                        ownerId: user.uid,
+                        nome: nome,
+                        contato: contato,
+                        mrr: parseFloat(mrr || 0),
+                        diaVencimento: diaVencimento,
+                        nicho: nicho,
+                        cor: cor,
+                        status: status,
+                        senhaMestra: senhaMestra,
+                        dataCriacao: new Date().toISOString()
+                    });
+                    alert("Salvo com sucesso!");
+                    carregarClientes();
+                } catch (e) { console.error(e); }
+            }
 
         async function carregarClientes() {
             const lista = document.getElementById("tabela-clientes");
