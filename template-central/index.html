@@ -158,6 +158,21 @@
         }
 
         window.addEventListener('DOMContentLoaded', inicializarCentralDinamica);
+
+    window.logarAdmin = function() {
+            const senhaDigitada = document.getElementById('senhaInput').value;
+            // Valida com a senhaMestra vinda do banco (configCliente ou dadosCliente)
+            // Como configCliente busca o Template, usaremos a senha que está em dadosCliente
+            // Para isso, precisamos tornar dadosCliente global ou buscá-la aqui
+            if(senhaDigitada === window.senhaMestraCorreta) {
+                document.getElementById('loginOverlay').style.display = 'none';
+                alert("Acesso liberado ao Painel Administrativo!");
+                // Aqui você abriria sua área administrativa
+            } else {
+                alert("Senha incorreta.");
+            }
+        };
+    
     </script>
 </body>
 </html>
