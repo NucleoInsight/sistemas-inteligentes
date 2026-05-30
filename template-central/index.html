@@ -241,6 +241,24 @@
                 alert("Erro ao salvar notificação.");
             }
         };
+
+    window.salvarTreino = async (id, feedback) => {
+    try {
+        // Usa o ID que você recebe pela URL (?cid=...)
+        const docRef = doc(db, "clients", id);
+        await updateDoc(docRef, {
+            "treinoDiario": {
+                feedback: feedback,
+                data: new Date().toISOString(),
+                status: "Concluído"
+            }
+        });
+        alert("✅ Treino registrado com sucesso!");
+    } catch (e) {
+        console.error("Erro ao salvar:", e);
+    }
+};
+    
     </script>
 </body>
 </html>
