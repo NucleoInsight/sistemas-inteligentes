@@ -482,29 +482,28 @@
 
         window.resgatarTemplate = async (id) => {
             if(!id) return;
-            const snap = await getDoc(doc(db, "templates", id));
-            if(snap.exists()) {
-                const d = snap.data();
-                document.getElementById("tpl-nome").value = d.nome || "";
-                document.getElementById("tpl-cor").value = d.cor || "#FFD700";
-                document.getElementById("tpl-logo").value = d.logo || "";
-                document.getElementById("tpl-apresentacao").value = d.apresentacao || "";
-                document.getElementById("tpl-campos").value = d.campos || "";
+            // Tenta buscar na coleção templates (bases) primeiro
+            let snap = await getDoc(doc(db, "templates", id));
+            
+            // Se não achou na base, tenta buscar como um cliente (snapshot)
+            if(!snap.exists()) {
+                snap = await getDoc(doc(db, "clients", id));
             }
-        };window.resgatarTemplate = async (id) => {
-            if(!id) return;
-            const snap = await getDoc(doc(db, "templates", id));
+
             if(snap.exists()) {
                 const d = snap.data();
+                // Verifica se é cliente (que tem configuracaoPersonalizada) ou base
+                const config = d.configuracaoPersonalizada || d;
+                
                 document.getElementById("tpl-nome").value = d.nome || "";
                 
-                // Força o preenchimento da cor no input de tipo 'color'
                 const corHex = d.cor || "#FFD700";
                 document.getElementById("tpl-cor").value = corHex;
+                document.getElementById("tpl-cor-texto").value = corHex;
                 
-                document.getElementById("tpl-logo").value = d.logo || "";
-                document.getElementById("tpl-apresentacao").value = d.apresentacao || "";
-                document.getElementById("tpl-campos").value = d.campos || "";
+                document.getElementById("tpl-logo").value = config.logo || "";
+                document.getElementById("tpl-apresentacao").value = config.apresentacao || "";
+                document.getElementById("tpl-campos").value = config.campos || "";
             }
         };
 
@@ -517,14 +516,33 @@
         document.getElementById("form-template")?.addEventListener("submit", async (e) => {
             e.preventDefault();
             const id = document.getElementById("tpl-id").value.trim();
+            if (!id) return alert("Defina um ID!");
+
+            const dadosTemplate = {
+                nome: document.getElementById("tpl-nome").value,
+                cor: document.getElementById("tpl-cor").value,
+                logo: document.getElementById("tpl-logo").value,
+                apresentacao: document.getElementById("tpl-apresentacao").value,
+                campos: document.getElementById("tpl-campos").value
+            };
             
             if (id.endsWith("_base")) {
-                // SALVA NA COLEÇÃO GABARITOS (bases)
-                await setDoc(doc(db, "templates", id), {
-                    nome: document.getElementById("tpl-nome").value,
-                    cor: document.getElementById("tpl-cor").value,
-                    logo: document.getElementById("tpl-logo").value,
-                    apresentacao: document.getElementById("tpl-apresentacao").value,
+                await setDoc(doc(db, "templates", id), dadosTemplate);
+                alert("✅ Gabarito Base Salvo com sucesso!");
+            } else {
+                await updateDoc(doc(db, "clients", id), {
+                    nome: dadosTemplate.nome,
+                    cor: dadosTemplate.cor,
+                    configuracaoPersonalizada: {
+                        logo: dadosTemplate.logo,
+                        apresentacao: dadosTemplate.apresentacao,
+                        campos: dadosTemplate.campos
+                    }
+                });
+                alert("✅ Configuração do Cliente atualizada com sucesso!");
+                carregarClientes();
+            }
+        });
                     campos: document.getElementById("tpl-campos").value
                 });
                 alert("✅ Gabarito Base Salvo com sucesso!");
