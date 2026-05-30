@@ -533,8 +533,8 @@
                 campos: document.getElementById("tpl-campos").value
             };
             
-            // DEFINIÇÃO DINÂMICA DA COLEÇÃO
-            const colecaoDestino = id.endsWith("_base") ? "templates" : "clients";
+           // DEFINIÇÃO DINÂMICA DA COLEÇÃO
+            const colecaoDestino = id.includes("_base") ? "templates" : "clients";
             
             try {
                 if (colecaoDestino === "templates") {
