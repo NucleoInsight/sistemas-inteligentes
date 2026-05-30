@@ -197,6 +197,33 @@
             // Se não for demonstração, submete o formulário
             document.getElementById("form-dinamico-cliente").submit();
         };
+
+    window.carregarModuloEspecifico = function(nicho) {
+            const container = document.getElementById("area-conteudo-dinamico");
+            
+            if (nicho === "personal") {
+                document.getElementById("titulo-formulario").innerText = "Meu Treino do Dia";
+                container.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="bg-gray-800 p-4 rounded-lg flex justify-between items-center">
+                            <div>
+                                <p class="font-bold">Supino Reto</p>
+                                <p class="text-[10px] text-gray-400">3 séries de 12 repetições</p>
+                            </div>
+                            <button onclick="alert('Treino concluído!')" class="bg-green-600 px-3 py-1 rounded text-[10px] font-bold">FEITO</button>
+                        </div>
+                        <div class="bg-gray-800 p-4 rounded-lg flex justify-between items-center">
+                            <div>
+                                <p class="font-bold">Crucifixo</p>
+                                <p class="text-[10px] text-gray-400">3 séries de 15 repetições</p>
+                            </div>
+                            <button onclick="alert('Treino concluído!')" class="bg-green-600 px-3 py-1 rounded text-[10px] font-bold">FEITO</button>
+                        </div>
+                    </div>
+                `;
+            }
+        };
+    
     </script>
 </body>
 </html>
