@@ -650,7 +650,7 @@ async function cadastrarCliente() {
             }
         };
 
-        window.automatizarBotaoSalvar = async () => {
+        async function runAutomacao() {
             if (!confirm("Isso vai adicionar o botão de salvar em TODOS os templates da base. Continuar?")) return;
 
             const btnHtml = `
@@ -665,16 +665,17 @@ async function cadastrarCliente() {
 
             for (const docSnap of snap.docs) {
                 const dados = docSnap.data();
-                // Verifica se já tem o botão para não duplicar
                 if (dados.campos && !dados.campos.includes("window.salvarDadosAutomaticos()")) {
                     await updateDoc(doc(db, "templates", docSnap.id), {
-                        campos: dados.campos + btnHtml
+                        campos: (dados.campos || "") + btnHtml
                     });
                     contagem++;
                 }
             }
             alert(`✅ Sucesso! Botão adicionado em ${contagem} templates.`);
-        };
+        }
+
+        window.automatizarBotaoSalvar = runAutomacao;
     </script>
         
 </body>
