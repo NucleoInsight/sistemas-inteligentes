@@ -176,6 +176,28 @@
 
     // --- COMANDO PARA DISPARAR O MOTOR ---
     inicializarCentralDinamica();
+
+    window.salvarDadosAutomaticos = async () => {
+            const params = new URLSearchParams(window.location.search);
+            const cid = params.get('cid');
+            if (!cid) return alert("Erro: ID do cliente não encontrado.");
+
+            const inputs = document.querySelectorAll('#container-dinamico input, #container-dinamico select, #container-dinamico textarea');
+            let dados = {};
+            inputs.forEach(input => {
+                if (input.id) {
+                    dados[input.id] = input.type === 'checkbox' ? input.checked : input.value;
+                }
+            });
+            
+            try {
+                await setDoc(doc(db, "clients", cid, "dados", "ficha"), dados, { merge: true });
+                alert("✅ Dados salvos com sucesso!");
+            } catch (e) {
+                console.error("Erro ao salvar:", e);
+                alert("Erro ao salvar os dados.");
+            }
+        };
     </script>
 
     <script>
