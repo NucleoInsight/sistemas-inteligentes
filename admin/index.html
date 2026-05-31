@@ -649,6 +649,32 @@ async function cadastrarCliente() {
                 console.warn("Elemento container-video não encontrado na página.");
             }
         };
+
+        window.automatizarBotaoSalvar = async () => {
+            if (!confirm("Isso vai adicionar o botão de salvar em TODOS os templates da base. Continuar?")) return;
+
+            const btnHtml = `
+<div class="mt-8">
+    <button type="button" onclick="window.salvarDadosAutomaticos()" class="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-black py-4 rounded-lg uppercase tracking-widest text-sm hover:from-blue-500 hover:to-cyan-500 transition-all shadow-lg">
+        Salvar Cadastro
+    </button>
+</div>`;
+
+            const snap = await getDocs(collection(db, "templates"));
+            let contagem = 0;
+
+            for (const docSnap of snap.docs) {
+                const dados = docSnap.data();
+                // Verifica se já tem o botão para não duplicar
+                if (dados.campos && !dados.campos.includes("window.salvarDadosAutomaticos()")) {
+                    await updateDoc(doc(db, "templates", docSnap.id), {
+                        campos: dados.campos + btnHtml
+                    });
+                    contagem++;
+                }
+            }
+            alert(`✅ Sucesso! Botão adicionado em ${contagem} templates.`);
+        };
     </script>
         
 </body>
