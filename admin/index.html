@@ -650,33 +650,36 @@ window.exibirVideo = (url) => {
             }
         };
 
-        window.atualizarBotaoInteligente = async () => {
-            if (!confirm("Isso vai ATUALIZAR os botões de todos os templates para a nova função 'acaoInteligente'. Continuar?")) return;
+       window.manutencaoGeral = async () => {
+            if (!confirm("ATENÇÃO: Este script vai varrer TODA a base (Templates e Clientes). Continuar?")) return;
 
-            // O novo formato do botão
-            const novoBotao = `
-<div class="mt-8">
-    <button type="button" onclick="window.acaoInteligente('salvar')" class="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-black py-4 rounded-lg uppercase tracking-widest text-sm hover:from-blue-500 hover:to-cyan-500 transition-all shadow-lg">
-        Salvar Cadastro
-    </button>
-</div>`;
-
-            const snap = await getDocs(collection(db, "templates"));
+            const novoBotao = `<div class="mt-8"><button type="button" onclick="window.acaoInteligente('salvar')" class="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-black py-4 rounded-lg uppercase tracking-widest text-sm hover:from-blue-500 hover:to-cyan-500 transition-all shadow-lg">Salvar Cadastro</button></div>`;
             let contagem = 0;
 
-            for (const docSnap of snap.docs) {
-                const dados = docSnap.data();
-                if (dados.campos) {
-                    // Substitui o onclick antigo pelo novo
-                    let novoHtml = dados.campos.replace(/onclick="window\.salvarDadosAutomaticos\(\)"/g, "onclick=\"window.acaoInteligente('salvar')\"");
-                    
-                    await updateDoc(doc(db, "templates", docSnap.id), {
-                        campos: novoHtml
+            // 1. Atualiza Gabaritos
+            const snapTpl = await getDocs(collection(db, "templates"));
+            for (const docSnap of snapTpl.docs) {
+                let d = docSnap.data();
+                if (d.campos && d.campos.includes("salvarDadosAutomaticos")) {
+                    let novoHtml = d.campos.replace(/onclick="window\.salvarDadosAutomaticos\(\)"/g, "onclick=\"window.acaoInteligente('salvar')\"");
+                    await updateDoc(doc(db, "templates", docSnap.id), { campos: novoHtml });
+                    contagem++;
+                }
+            }
+
+            // 2. Atualiza Clientes (para garantir que os que já foram fabricados também mudem)
+            const snapCli = await getDocs(collection(db, "clients"));
+            for (const docSnap of snapCli.docs) {
+                let d = docSnap.data();
+                if (d.configuracaoPersonalizada?.campos && d.configuracaoPersonalizada.campos.includes("salvarDadosAutomaticos")) {
+                    let novoHtml = d.configuracaoPersonalizada.campos.replace(/onclick="window\.salvarDadosAutomaticos\(\)"/g, "onclick=\"window.acaoInteligente('salvar')\"");
+                    await updateDoc(doc(db, "clients", docSnap.id), { 
+                        "configuracaoPersonalizada.campos": novoHtml 
                     });
                     contagem++;
                 }
             }
-            alert(`✅ Sucesso! Botões atualizados em ${contagem} templates.`);
+            alert(`✅ Manutenção finalizada! Botões atualizados em ${contagem} registros totais.`);
         };
     </script>
         
