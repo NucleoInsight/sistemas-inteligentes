@@ -387,11 +387,11 @@ async function cadastrarCliente() {
             alert("Dados salvos com sucesso!");
         };
         async function carregarClientes() {
-            const lista = document.getElementById("tabela-clientes");
+            const lista = document.getElementById("lista-clientes");
             if (!lista) return; lista.innerHTML = "";
             const user = auth.currentUser; if (!user) return;
 
-            let totalMRR = 0; let totalAtivos = 0; let totalDemos = 0; let totalContador = 0;
+            let totalMRR = 0; let totalAtivos = 0; let totalDemos = 0;
 
             try {
                 const q = query(collection(db, "clients"), where("ownerId", "==", user.uid));
@@ -400,7 +400,6 @@ async function cadastrarCliente() {
                 querySnapshot.forEach((docSnapshot) => {
                     const dados = docSnapshot.data();
                     const id = docSnapshot.id;
-                    totalContador++;
                     const valorMRR = Number(dados.mrr || 0);
 
                     if(dados.status.includes("Ativo") || dados.status === "Ativo - Pago") {
@@ -416,30 +415,21 @@ async function cadastrarCliente() {
                     const corSegura = dados.cor || "#3B82F6";
 
                     lista.innerHTML += `
-                        <tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition text-xs">
-                            <td class="px-4 py-3.5 font-bold text-white">${dados.nome}</td>
-                            <td class="px-4 py-3.5 text-right font-mono">R$ ${valorMRR.toFixed(2)}</td>
-                            <td class="px-4 py-3.5 text-center">
-                            
-                            <select onchange="window.atualizarStatus('${id}', this.value)" class="bg-[#171A21] text-[11px] font-semibold border border-gray-800 rounded px-2 py-1 cursor-pointer ${badgeClass}">
-                            <option value="Demonstração" ${dados.status === 'Demonstração' ? 'selected' : ''}>Demonstração</option>
-                            <option value="Ativo" ${dados.status === 'Ativo' ? 'selected' : ''}>Contrato Ativo</option>
-                            <option value="Bloqueado" ${dados.status === 'Bloqueado' ? 'selected' : ''}>Bloqueado</option>
-                            </select>
-                            
-                            </td>
-                          <td class="px-4 py-3.5 text-center flex justify-center gap-2">
-                                <div class="flex flex-col gap-1">
-                                <button onclick="window.copiarLink('${id}')" class="bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 text-blue-400 px-3 py-1 rounded text-[11px] font-bold transition cursor-pointer">🔗 Link</button>
-                                <button onclick="window.copiarGatilho('preview', '${dados.nome}', 'template-central/index.html?nicho=${nichoSeguro}&cor=${encodeURIComponent(corSegura)}&id=${id}', ${valorMRR}, '${dados.contato}')" class="bg-green-500/10 border border-green-500/20 hover:bg-green-500/20 text-green-400 px-3 py-1 rounded text-[11px] font-bold transition cursor-pointer">📋 Texto</button>
-                                <button onclick="window.migrarTemplate('${id}')" class="bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 text-purple-400 px-3 py-1 rounded text-[11px] font-bold transition cursor-pointer">🔄 Migrar</button>
-                                </div>
-                            </td>
-                            <td class="px-4 py-3.5 text-center">
-                                <button onclick="window.editarCliente('${id}')" class="text-blue-400 hover:text-blue-300 transition mr-3">Editar</button>
-<button onclick="if(confirm('Remover?')) { window.remover('${id}') }" class="text-gray-600 hover:text-red-400 transition">Deletar</button>
-                            </td>
-                        </tr>
+                        <div class="cliente-item bg-gray-800/20 p-4 rounded-lg border border-gray-700/50 flex justify-between items-center text-xs">
+                            <div class="flex-1">
+                                <p class="font-bold text-white">${dados.nome}</p>
+                                <p class="text-gray-400 font-mono">R$ ${valorMRR.toFixed(2)}</p>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <select onchange="window.atualizarStatus('${id}', this.value)" class="bg-[#171A21] text-[11px] font-semibold border border-gray-800 rounded px-2 py-1 cursor-pointer ${badgeClass}">
+                                    <option value="Demonstração" ${dados.status === 'Demonstração' ? 'selected' : ''}>Demonstração</option>
+                                    <option value="Ativo" ${dados.status === 'Ativo' ? 'selected' : ''}>Ativo</option>
+                                    <option value="Bloqueado" ${dados.status === 'Bloqueado' ? 'selected' : ''}>Bloqueado</option>
+                                </select>
+                                <button onclick="window.copiarLink('${id}')" class="text-blue-400 hover:underline">🔗 Link</button>
+                                <button onclick="window.editarCliente('${id}')" class="text-gray-400 hover:text-white">Editar</button>
+                            </div>
+                        </div>
                     `;
                 });
 
