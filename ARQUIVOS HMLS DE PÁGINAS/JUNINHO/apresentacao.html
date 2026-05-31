@@ -1,1 +1,59 @@
 
+<div class="space-y-6">
+    <!-- DADOS CADASTRAIS -->
+    <div class="border-b border-gray-800 pb-2 mb-4"><h3 class="text-gray-500 font-bold uppercase tracking-widest text-[10px]">Dados Cadastrais</h3></div>
+    <div class="grid grid-cols-2 gap-4">
+        <input type="text" id="alunoNome" placeholder="Nome Completo" class="col-span-2 w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <input type="text" id="alunoApelido" placeholder="Apelido" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <input type="date" id="alunoNasc" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <input type="text" id="alunoNatural" placeholder="Naturalidade" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <input type="text" id="alunoNacio" placeholder="Nacionalidade" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <input type="text" id="alunoIdentidade" placeholder="Nº Identidade" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <input type="text" id="alunoCpf" placeholder="CPF" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <input type="text" id="alunoEscolaridade" placeholder="Escolaridade / Curso" class="col-span-2 w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <input type="text" id="alunoProfissao" placeholder="Profissão" class="col-span-2 w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <input type="text" id="alunoEndereco" placeholder="Endereço Completo" class="col-span-2 w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <input type="text" id="alunoBairro" placeholder="Bairro" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <input type="text" id="alunoCep" placeholder="CEP" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <input type="tel" id="alunoTel1" placeholder="Tel 1" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <input type="tel" id="alunoTel2" placeholder="Tel 2" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+    </div>
+
+    <!-- DADOS FAMILIARES -->
+    <div class="border-b border-gray-800 pb-2 mb-4"><h3 class="text-gray-500 font-bold uppercase tracking-widest text-[10px]">Dados Familiares</h3></div>
+    <div class="grid grid-cols-1 gap-2">
+        <input type="text" id="nomePai" placeholder="Nome do Pai" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <input type="text" id="nomeMae" placeholder="Nome da Mãe" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <input type="text" id="irmaosQtd" placeholder="Tem irmãos? Quantos?" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <select id="relacaoFamiliar" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+            <option>Relação com família: Ótima</option><option>Boa</option><option>Regular</option><option>Ruim</option>
+        </select>
+    </div>
+
+    <!-- CAPOEIRA -->
+    <div class="border-b border-gray-800 pb-2 mb-4"><h3 class="text-gray-500 font-bold uppercase tracking-widest text-[10px]">Histórico na Capoeira</h3></div>
+    <textarea id="historicoCapoeira" placeholder="Já treinou antes? Qual grupo e Mestre? Porque saiu?" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white" rows="3"></textarea>
+    <textarea id="objetivoCapoeira" placeholder="Qual seu objetivo na Capoeira?" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white" rows="2"></textarea>
+    <select id="graduacaoAtual" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <option>Graduação: Iniciante</option><option>Crua</option><option>Amarela</option><option>Laranja</option><option>Azul</option><option>Verde</option><option>Roxa</option><option>Marrom</option><option>Vermelha</option>
+    </select>
+
+    <!-- SAÚDE -->
+    <div class="border-b border-gray-800 pb-2 mb-4"><h3 class="text-gray-500 font-bold uppercase tracking-widest text-[10px]">Dados de Saúde</h3></div>
+    <textarea id="saudeDetalhes" placeholder="Problemas de saúde? Articulações? Faz uso de medicamentos? Cirurgias?" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white" rows="4"></textarea>
+    <div class="grid grid-cols-1 gap-1 text-[10px] text-gray-400">
+        <label><input type="checkbox" id="dorPeito"> Sente dor no peito em esforço?</label>
+        <label><input type="checkbox" id="tontura"> Sente tontura em esforço?</label>
+        <label><input type="checkbox" id="faltaAr"> Sente falta de ar em esforço?</label>
+        <label><input type="checkbox" id="riscoCardio"> Fatores de risco cardíaco na família?</label>
+    </div>
+    
+    <!-- DADOS TREINO -->
+    <div class="border-b border-gray-800 pb-2 mb-4"><h3 class="text-gray-500 font-bold uppercase tracking-widest text-[10px]">Inscrição</h3></div>
+    <div class="grid grid-cols-2 gap-2">
+        <input type="date" id="dataInicio" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <input type="text" id="professorResponsavel" placeholder="Professor" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <input type="text" id="diasTreino" placeholder="Dias de treino" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <input type="text" id="horarioTreino" placeholder="Horário" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+    </div>
+</div>
