@@ -1,0 +1,39 @@
+<div class="space-y-6">
+    <!-- Dados Cadastrais -->
+    <div class="border-b border-gray-800 pb-2"><h3 class="text-gray-500 font-bold uppercase tracking-widest text-[10px]">Dados Cadastrais</h3></div>
+    <div class="grid grid-cols-2 gap-4">
+        <input type="text" id="alunoNome" placeholder="Nome Completo" class="col-span-2 w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <input type="text" id="alunoApelido" placeholder="Apelido" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <input type="text" id="alunoNacionalidade" placeholder="Nacionalidade" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <input type="text" id="alunoCpf" placeholder="CPF" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+    </div>
+
+    <!-- Dados Familiares -->
+    <div class="border-b border-gray-800 pb-2"><h3 class="text-gray-500 font-bold uppercase tracking-widest text-[10px]">Dados Familiares</h3></div>
+    <div class="grid grid-cols-1 gap-2">
+        <input type="text" id="nomePai" placeholder="Nome do Pai" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <input type="text" id="nomeMae" placeholder="Nome da Mãe" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+        <select id="relacaoPais" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white">
+            <option>Relação com pais/irmãos: Ótima</option>
+            <option>Relação com pais/irmãos: Boa</option>
+            <option>Relação com pais/irmãos: Regular</option>
+            <option>Relação com pais/irmãos: Ruim</option>
+        </select>
+    </div>
+
+    <!-- Relação com Capoeira -->
+    <div class="border-b border-gray-800 pb-2"><h3 class="text-gray-500 font-bold uppercase tracking-widest text-[10px]">Histórico Capoeira</h3></div>
+    <textarea id="historicoCapoeira" placeholder="Já treinou antes? Qual grupo e Mestre? Por que saiu?" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white" rows="3"></textarea>
+    <textarea id="objetivoCapoeira" placeholder="O que é a capoeira pra você e qual seu objetivo?" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white" rows="2"></textarea>
+
+    <!-- Saúde -->
+    <div class="border-b border-gray-800 pb-2"><h3 class="text-gray-500 font-bold uppercase tracking-widest text-[10px]">Dados de Saúde</h3></div>
+    <textarea id="saudeDetalhada" placeholder="Problemas de saúde, articulações, cirurgias, medicamentos?" class="w-full bg-[#0F1115] border border-gray-800 rounded p-2 text-white" rows="4"></textarea>
+    
+    <!-- Checklist de Saúde -->
+    <div class="grid grid-cols-1 gap-2 text-[10px] text-gray-400">
+        <label><input type="checkbox" id="dorPeito"> Sente dor no peito em esforço?</label>
+        <label><input type="checkbox" id="tontura"> Sente tontura em esforço?</label>
+        <label><input type="checkbox" id="faltaAr"> Sente falta de ar em esforço?</label>
+    </div>
+</div>
