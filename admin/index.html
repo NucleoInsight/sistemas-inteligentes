@@ -638,7 +638,7 @@ async function cadastrarCliente() {
             document.getElementById('tpl-cor-texto').value = this.value;
         });
 
-      window.exibirVideo = (url) => {
+window.exibirVideo = (url) => {
             if (!url) return;
             const videoId = url.split('v=')[1] || url.split('/').pop();
             const embedUrl = `https://www.youtube.com/embed/${videoId}`;
@@ -650,8 +650,7 @@ async function cadastrarCliente() {
             }
         };
 
-        // Função de automação definida explicitamente para o escopo global
-        window.automatizarBotaoSalvar = async () => {
+        async function runAutomacao() {
             if (!confirm("Isso vai adicionar o botão de salvar em TODOS os templates da base. Continuar?")) return;
 
             const btnHtml = `
@@ -674,7 +673,9 @@ async function cadastrarCliente() {
                 }
             }
             alert(`✅ Sucesso! Botão adicionado em ${contagem} templates.`);
-        };
+        }
+
+        window.automatizarBotaoSalvar = runAutomacao;
     </script>
         
 </body>
