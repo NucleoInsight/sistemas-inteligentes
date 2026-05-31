@@ -177,19 +177,18 @@
     // --- COMANDO PARA DISPARAR O MOTOR ---
     inicializarCentralDinamica();
 
-    window.salvarDadosAutomaticos = async () => {
-            const params = new URLSearchParams(window.location.search);
-            const cid = params.get('cid');
-            if (!cid) return alert("Erro: ID do cliente não encontrado.");
+    // MOTOR INTELIGENTE CENTRALIZADO
+    window.acaoInteligente = async (tipo) => {
+        const params = new URLSearchParams(window.location.search);
+        const cid = params.get('cid');
+        if (!cid) return alert("Erro: ID do cliente não encontrado.");
+        
+        // Pega todos os dados preenchidos
+        const inputs = document.querySelectorAll('#container-dinamico input, #container-dinamico select, #container-dinamico textarea');
+        let dados = {};
+        inputs.forEach(i => { if (i.id) dados[i.id] = i.type === 'checkbox' ? i.checked : i.value; });
 
-            const inputs = document.querySelectorAll('#container-dinamico input, #container-dinamico select, #container-dinamico textarea');
-            let dados = {};
-            inputs.forEach(input => {
-                if (input.id) {
-                    dados[input.id] = input.type === 'checkbox' ? input.checked : input.value;
-                }
-            });
-            
+        if (tipo === 'salvar') {
             try {
                 await setDoc(doc(db, "clients", cid, "dados", "ficha"), dados, { merge: true });
                 alert("✅ Dados salvos com sucesso!");
@@ -197,7 +196,18 @@
                 console.error("Erro ao salvar:", e);
                 alert("Erro ao salvar os dados.");
             }
-        };
+        } 
+        
+        else if (tipo === 'whatsapp') {
+            const nome = dados.alunoNome || "Cliente";
+            const msg = `Olá! Me chamo ${nome} e gostaria de falar sobre meu cadastro.`;
+            window.open(`https://wa.me/5575999999999?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+        
+        else if (tipo === 'agendar') {
+            alert("Abrindo agenda personalizada...");
+        }
+    };
     </script>
 
     <script>
