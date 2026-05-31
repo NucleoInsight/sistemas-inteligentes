@@ -145,24 +145,15 @@
                 </form>
             </div>
 
-            <div class="bg-bgCard p-5 rounded-xl border border-gray-800 lg:col-span-2 flex flex-col">
-                <h2 class="text-xs font-black mb-4 flex items-center gap-2 uppercase text-gray-400 tracking-wider">
-                    <span>📊</span> Monitoramento de Esteira e Copys de Venda
-                </h2>
-                <div class="overflow-x-auto flex-1 custom-scrollbar">
-                    <table class="w-full text-left text-xs whitespace-nowrap">
-                       <thead>
-                            <tr class="text-textoSecundario border-b border-gray-800 text-[10px] uppercase tracking-wider">
-                                <th class="px-4 py-3">Empreendedor</th>
-                                <th class="px-4 py-3 text-right">Mensalidade</th>
-                                <th class="px-4 py-3 text-center">Status</th>
-                                <th class="px-4 py-3 text-center">Ações Rápidas de Venda</th>
-                                <th class="px-4 py-3 text-center">Controle</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabela-clientes" class="divide-y divide-gray-800/40">
-                        </tbody>
-                    </table>
+            <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-800 lg:col-span-2">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-white font-bold text-xs uppercase tracking-wider">📊 MONITORAMENTO DE ESTEIRA E COPYS DE VENDA</h2>
+                    <input type="text" id="filtro-cliente" onkeyup="window.filtrarTabela()" placeholder="Buscar cliente..." class="bg-gray-800 text-white px-4 py-2 rounded-lg text-xs border border-gray-700 focus:outline-none focus:border-blue-500">
+                </div>
+                
+                <div class="custom-scrollbar" style="max-height: 600px; overflow-y: auto;">
+                    <div id="lista-clientes" class="space-y-4">
+                        </div>
                 </div>
             </div>
         </div>
