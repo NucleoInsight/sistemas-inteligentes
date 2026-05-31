@@ -650,12 +650,13 @@ window.exibirVideo = (url) => {
             }
         };
 
-        async function runAutomacao() {
-            if (!confirm("Isso vai adicionar o botão de salvar em TODOS os templates da base. Continuar?")) return;
+        window.atualizarBotaoInteligente = async () => {
+            if (!confirm("Isso vai ATUALIZAR os botões de todos os templates para a nova função 'acaoInteligente'. Continuar?")) return;
 
-            const btnHtml = `
+            // O novo formato do botão
+            const novoBotao = `
 <div class="mt-8">
-    <button type="button" onclick="window.salvarDadosAutomaticos()" class="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-black py-4 rounded-lg uppercase tracking-widest text-sm hover:from-blue-500 hover:to-cyan-500 transition-all shadow-lg">
+    <button type="button" onclick="window.acaoInteligente('salvar')" class="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-black py-4 rounded-lg uppercase tracking-widest text-sm hover:from-blue-500 hover:to-cyan-500 transition-all shadow-lg">
         Salvar Cadastro
     </button>
 </div>`;
@@ -665,17 +666,18 @@ window.exibirVideo = (url) => {
 
             for (const docSnap of snap.docs) {
                 const dados = docSnap.data();
-                if (dados.campos && !dados.campos.includes("window.salvarDadosAutomaticos()")) {
+                if (dados.campos) {
+                    // Substitui o onclick antigo pelo novo
+                    let novoHtml = dados.campos.replace(/onclick="window\.salvarDadosAutomaticos\(\)"/g, "onclick=\"window.acaoInteligente('salvar')\"");
+                    
                     await updateDoc(doc(db, "templates", docSnap.id), {
-                        campos: (dados.campos || "") + btnHtml
+                        campos: novoHtml
                     });
                     contagem++;
                 }
             }
-            alert(`✅ Sucesso! Botão adicionado em ${contagem} templates.`);
-        }
-
-        window.automatizarBotaoSalvar = runAutomacao;
+            alert(`✅ Sucesso! Botões atualizados em ${contagem} templates.`);
+        };
     </script>
         
 </body>
