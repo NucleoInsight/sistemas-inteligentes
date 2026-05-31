@@ -492,19 +492,9 @@ async function cadastrarCliente() {
         };
         document.getElementById("form-cliente")?.addEventListener("submit", (e) => {
             e.preventDefault();
-            cadastrarCliente(
-                document.getElementById("cli-nome").value,
-                document.getElementById("cli-contato").value,
-                document.getElementById("cli-mrr").value,
-                document.getElementById("cli-vencimento").value,
-                document.getElementById("cli-nicho").value,
-                document.getElementById("cli-cor").value,
-                document.getElementById("cli-status").value,
-                document.getElementById("cli-senha").value
-            );
+            cadastrarCliente();
             e.target.reset();
         });
-
         // 📸 MOTOR DE UPLOAD DE IMAGEM (Extraído do Eterno Amor)
         window.subirLogo = async function(input) {
             const file = input.files[0];
