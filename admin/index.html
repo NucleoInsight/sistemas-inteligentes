@@ -681,6 +681,22 @@ window.exibirVideo = (url) => {
             }
             alert(`✅ Manutenção finalizada! Botões atualizados em ${contagem} registros totais.`);
         };
+
+        window.filtrarTabela = () => {
+            const input = document.getElementById('filtro-cliente');
+            const filtro = input.value.toUpperCase();
+            const lista = document.getElementById('lista-clientes');
+            const itens = lista.getElementsByClassName('cliente-item'); // Certifique-se de que seus itens tenham essa classe
+
+            for (let i = 0; i < itens.length; i++) {
+                const nome = itens[i].textContent || itens[i].innerText;
+                if (nome.toUpperCase().indexOf(filtro) > -1) {
+                    itens[i].style.display = "";
+                } else {
+                    itens[i].style.display = "none";
+                }
+            }
+        };
     </script>
         
 </body>
