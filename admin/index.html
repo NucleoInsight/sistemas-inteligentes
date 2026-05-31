@@ -352,32 +352,35 @@
             });
         };
 
-        async function cadastrarCliente(nome, contato, mrr, diaVencimento, nicho, cor, status, senhaMestra) {
+async function cadastrarCliente() {
             try {
                 const user = auth.currentUser;
                 if (!user) return;
-                
-                // Busca o modelo atual do template
+
+                // Coleta dados fixos
+                const nicho = document.getElementById("cli-nicho").value;
                 const snap = await getDoc(doc(db, "templates", nicho));
                 const templateDados = snap.exists() ? snap.data() : {};
 
-                await addDoc(collection(db, "clients"), {
+                // Cria o objeto com os dados básicos
+                const novoCliente = {
                     ownerId: user.uid,
-                    nome: nome,
-                    contato: contato,
-                    mrr: parseFloat(mrr || 0),
-                    diaVencimento: diaVencimento,
+                    nome: document.getElementById("cli-nome").value,
+                    contato: document.getElementById("cli-contato").value,
+                    mrr: parseFloat(document.getElementById("cli-mrr").value || 0),
+                    diaVencimento: document.getElementById("cli-vencimento").value,
                     nicho: nicho,
-                    cor: cor,
-                    status: status,
-                    senhaMestra: senhaMestra,
-                    // SALVA O SNAPSHOT AQUI:
-                    configuracaoPersonalizada: templateDados, 
+                    cor: document.getElementById("cli-cor").value,
+                    status: document.getElementById("cli-status").value,
+                    senhaMestra: document.getElementById("cli-senha").value,
+                    configuracaoPersonalizada: templateDados,
                     dataCriacao: new Date().toISOString()
-                });
-                alert("Salvo com sucesso com Snapshot do Template!");
+                };
+
+                await addDoc(collection(db, "clients"), novoCliente);
+                alert("✅ Cliente cadastrado com sucesso!");
                 carregarClientes();
-            } catch (e) { console.error(e); }
+            } catch (e) { console.error(e); alert("Erro ao salvar."); }
         }
         async function carregarClientes() {
             const lista = document.getElementById("tabela-clientes");
