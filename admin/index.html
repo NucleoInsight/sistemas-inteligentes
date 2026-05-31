@@ -357,12 +357,11 @@ async function cadastrarCliente() {
                 const user = auth.currentUser;
                 if (!user) return;
 
-                // Coleta dados fixos
                 const nicho = document.getElementById("cli-nicho").value;
                 const snap = await getDoc(doc(db, "templates", nicho));
                 const templateDados = snap.exists() ? snap.data() : {};
 
-                // Cria o objeto com os dados básicos
+                // Cria o objeto base com os campos administrativos
                 const novoCliente = {
                     ownerId: user.uid,
                     nome: document.getElementById("cli-nome").value,
@@ -382,6 +381,20 @@ async function cadastrarCliente() {
                 carregarClientes();
             } catch (e) { console.error(e); alert("Erro ao salvar."); }
         }
+
+        // FUNÇÃO LEITORA AUTOMÁTICA (Para ser usada no template-central/index.html)
+        // Você deve copiar esta função para o arquivo do template do cliente
+        window.salvarDadosAutomaticos = async (cid) => {
+            const inputs = document.querySelectorAll('input, select, textarea');
+            let dados = {};
+            inputs.forEach(input => {
+                if (input.id) {
+                    dados[input.id] = input.type === 'checkbox' ? input.checked : input.value;
+                }
+            });
+            await setDoc(doc(db, "clients", cid, "dados", "ficha"), dados, { merge: true });
+            alert("Dados salvos com sucesso!");
+        };
         async function carregarClientes() {
             const lista = document.getElementById("tabela-clientes");
             if (!lista) return; lista.innerHTML = "";
