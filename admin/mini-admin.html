@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bem-vindo ao seu Sistema</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#0F1115] text-white font-sans">
+
+    <div id="painel-container" class="p-6">
+        <div class="flex flex-col items-center justify-center min-h-screen text-center">
+            <h1 class="text-2xl font-black mb-4">Carregando seu ambiente...</h1>
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        
+        // ... (Coloque aqui a mesma config do seu firebaseConfig do admin/index.html) ...
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function carregarMiniAdmin() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const cid = urlParams.get('cid');
+            if (!cid) return document.body.innerHTML = "Link inválido.";
+
+            const docSnap = await getDoc(doc(db, "clients", cid));
+            if (docSnap.exists()) {
+                const dados = docSnap.data();
+                const config = dados.configuracaoPersonalizada || {};
+                
+                // Se o cliente não estiver logado com a senha, exibe a tela de boas vindas
+                if (!sessionStorage.getItem('logado_' + cid)) {
+                    document.getElementById('painel-container').innerHTML = `
+                        <div class="space-y-6">
+                            <h1 class="text-3xl font-black text-blue-500">Olá, ${dados.nome}!</h1>
+                            <p>Este é o seu sistema inteligente. Clique abaixo para fixá-lo no seu celular.</p>
+                            <button onclick="alert('No iPhone: Compartilhar > Adicionar à Tela de Início. No Android: 3 pontinhos > Instalar App.')" class="bg-blue-600 p-4 rounded-xl w-full font-bold">📥 Instalar no Celular</button>
+                            <input type="password" id="senha-input" placeholder="Digite sua senha..." class="w-full p-3 bg-gray-800 rounded-lg text-center">
+                            <button onclick="verificarSenha('${dados.senhaMestra}', '${cid}')" class="bg-green-600 p-3 rounded-lg w-full">Acessar Painel</button>
+                        </div>
+                    `;
+                } else {
+                    // Se já estiver logado, injeta o Mini-Admin do banco
+                    document.getElementById('painel-container').innerHTML = config.miniAdmin || "Painel ainda em configuração.";
+                }
+            }
+        }
+
+        window.verificarSenha = (senhaCerta, cid) => {
+            const senhaDigitada = document.getElementById('senha-input').value;
+            if (senhaDigitada === senhaCerta) {
+                sessionStorage.setItem('logado_' + cid, 'true');
+                location.reload();
+            } else {
+                alert("Senha incorreta!");
+            }
+        };
+
+        carregarMiniAdmin();
+    </script>
+</body>
+</html>
