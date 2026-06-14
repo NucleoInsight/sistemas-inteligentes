@@ -664,6 +664,7 @@ window.exibirVideo = (url) => {
             }
         };
 
+       // MOTOR DE EXECUÇÃO (O que faz o trabalho sujo no banco)
        window.manutencaoGeral = async () => {
             if (!confirm("ATENÇÃO: Este script vai varrer TODA a base (Templates e Clientes). Continuar?")) return;
 
@@ -696,6 +697,25 @@ window.exibirVideo = (url) => {
             alert(`✅ Manutenção finalizada! Botões atualizados em ${contagem} registros totais.`);
         };
 
+        // INTERFACE DE SEGURANÇA (O que pede a senha e avisa)
+        window.iniciarManutencaoSegura = async () => {
+            const aviso = `⚠️ ATENÇÃO: MANUTENÇÃO DE SISTEMA\n\n` +
+                          `Esta ação varrerá TODA a base (Templates e Clientes) para atualizar botões obsoletos ` +
+                          `da função 'salvarDadosAutomaticos' para o novo motor 'acaoInteligente'.\n\n` +
+                          `Deseja prosseguir?`;
+            
+            if (!confirm(aviso)) return;
+
+            const senhaConfirmacao = prompt("Para autorizar a manutenção, digite sua Senha Mestra:");
+            
+            if (senhaConfirmacao !== "9859") {
+                alert("❌ Senha incorreta. Manutenção cancelada.");
+                return;
+            }
+
+            await window.manutencaoGeral();
+        };
+        
         window.filtrarTabela = () => {
             const input = document.getElementById('filtro-cliente');
             const filtro = input.value.toUpperCase();
