@@ -554,7 +554,7 @@ async function cadastrarCliente() {
             } catch (e) { console.error("Erro ao carregar:", e); }
         };
 
-        window.resgatarTemplate = async (id) => {
+       window.resgatarTemplate = async (id) => {
             if(!id) return;
             let snap = await getDoc(doc(db, "templates", id));
             if(!snap.exists()) snap = await getDoc(doc(db, "clients", id));
@@ -570,6 +570,7 @@ async function cadastrarCliente() {
                 document.getElementById("tpl-logo").value = config.logo || "";
                 document.getElementById("tpl-apresentacao").value = config.apresentacao || "";
                 document.getElementById("tpl-campos").value = config.campos || "";
+                document.getElementById("tpl-mini-admin").value = config.miniAdmin || "";
             }
         };
 
