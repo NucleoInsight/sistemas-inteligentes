@@ -708,6 +708,24 @@ window.exibirVideo = (url) => {
                 }
             }
         };
+        window.atualizarTodosMiniAdmins = async () => {
+    if (!confirm("Isso vai definir o Painel do Gestor em TODOS os clientes. Continuar?")) return;
+    
+    const snapCli = await getDocs(collection(db, "clients"));
+    let contagem = 0;
+    
+    for (const docSnap of snapCli.docs) {
+        let d = docSnap.data();
+        // Define um painel padrão para quem não tem
+        const novoMiniAdmin = `<div class='p-6'>Painel operacional configurado.</div>`;
+        
+        await updateDoc(doc(db, "clients", docSnap.id), { 
+            "configuracaoPersonalizada.miniAdmin": d.configuracaoPersonalizada?.miniAdmin || novoMiniAdmin 
+        });
+        contagem++;
+    }
+    alert(`✅ ${contagem} clientes atualizados com a estrutura de Painel!`);
+};
     </script>
         
 </body>
