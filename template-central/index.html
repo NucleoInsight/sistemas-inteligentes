@@ -130,9 +130,15 @@
             document.getElementById("custom-nome").innerText = dados.nome;
             document.getElementById("custom-logo").src = config.logo || "";
             
-            // Injeta o HTML da Apresentação e dos Campos vindos da Fábrica
+            // Injeta o HTML vindo da Fábrica
             document.getElementById("container-apresentacao").innerHTML = config.apresentacao || "";
             document.getElementById("container-dinamico").innerHTML = config.campos || "";
+            
+            // NOVO: Injeta o Painel do Gestor (escondido inicialmente)
+            const painelGestor = document.getElementById("container-painel-gestor");
+            if(config.miniAdmin) {
+                painelGestor.innerHTML = config.miniAdmin;
+            }
 
             document.getElementById("loading").classList.add("hidden");
             document.getElementById("interface-dinamica").classList.remove("hidden");
