@@ -243,18 +243,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, query, where, doc, deleteDoc, updateDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-       // Expor todas as funções vitais para o console global
-        Object.assign(window, {
-            db,
-            auth,
-            collection,
-            getDocs,
-            getDoc,
-            doc,
-            updateDoc,
-            setDoc,
-            addDoc
-        });
         
         const firebaseConfig = {
             apiKey: "AIzaSyAMYE7ZLM4jtoVnshqowLSaSL-mYCW1lhI",
