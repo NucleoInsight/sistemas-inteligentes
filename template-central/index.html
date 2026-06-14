@@ -216,6 +216,20 @@
             alert("Abrindo agenda personalizada...");
         }
     };
+
+    // NOVO: GATILHO PARA ALUNOS
+    window.copiarGatilhoAluno = (nomeAluno, linkFormulario) => {
+    const texto = `*🚀 ACESSE O FORMULÁRIO DE CADASTRO*\n\n` +
+                  `Olá, ${nomeAluno || 'aluno(a)'}!\n\n` +
+                  `Para finalizar sua matrícula e ter acesso ao nosso sistema, clique no link abaixo:\n\n` +
+                  `${linkFormulario}\n\n` +
+                  `Qualquer dúvida, estou à disposição!`;
+    
+    // Copia para o clipboard
+    navigator.clipboard.writeText(texto).then(() => {
+        alert("✅ Texto copiado! Agora é só colar no WhatsApp do aluno.");
+    });
+};
     </script>
 
     <script>
