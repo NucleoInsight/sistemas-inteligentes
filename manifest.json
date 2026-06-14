@@ -1,0 +1,15 @@
+{
+  "name": "Borges Soluções",
+  "short_name": "Borges",
+  "start_url": "mini-admin.html",
+  "display": "standalone",
+  "background_color": "#0F1115",
+  "theme_color": "#0F1115",
+  "icons": [
+    {
+      "src": "https://img.icons8.com/color/96/000000/b-logo.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    }
+  ]
+}
