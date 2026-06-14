@@ -43,14 +43,12 @@
                 miniAdmin: document.getElementById('miniAdminNicho').value // <-- NOVA LINHA
             };
 
-           // Substitua o try/catch por este trecho:
-try {
-    console.log("DEBUG: Tentando salvar na coleção 'templates' com o ID:", id);
-    await setDoc(doc(db, "templates", id), data);
-    alert("Template salvo com sucesso na coleção TEMPLATES!");
-} catch (e) {
-    alert("Erro ao salvar: " + e.message);
-}
+           try {
+                await setDoc(doc(db, "templates", id), data);
+                alert("Template salvo com sucesso!");
+            } catch (e) {
+                alert("Erro ao salvar: " + e.message);
+            }
         };
     </script>
 </body>
