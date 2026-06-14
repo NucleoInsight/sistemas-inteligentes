@@ -329,12 +329,14 @@
                 alert("✅ Link copiado! Envie para o seu cliente:\n" + link);
             });
         };
-       window.copiarLinkEntrega = (cid) => {
+      window.copiarLinkEntrega = (cid) => {
             const link = `https://nucleoinsight.github.io/sistemas-inteligentes/mini-admin.html?cid=${cid}`;
-            const texto = `*🚀 BEM-VINDO À BORGES SOLUÇÕES DIGITAIS*\n\nOlá! É um prazer ter você conosco. Estamos entregando hoje o seu *Sistema Inteligente* exclusivo.\n\nEste painel foi configurado para otimizar sua gestão e economizar seu tempo.\n\n👉 *ACESSE SEU PAINEL AQUI:* \n${link}\n\n*💡 PASSO A PASSO PARA O SUCESSO:*\n1. Clique no link acima.\n2. Assim que abrir, instale o sistema na tela inicial do seu celular (igual um aplicativo).\n3. Digite sua senha de acesso e comece a utilizar.\n\nQualquer dúvida, nossa equipe está à disposição. Vamos transformar seus resultados!`;
+            const senhaPadrao = "Borges@123456";
+            
+            const texto = `*🚀 BEM-VINDO À BORGES SOLUÇÕES DIGITAIS*\n\nOlá! É um prazer ter você conosco. Estamos entregando hoje o seu *Sistema Inteligente* exclusivo.\n\nEste painel foi configurado para otimizar sua gestão e economizar seu tempo.\n\n👉 *ACESSE SEU PAINEL AQUI:*\n${link}\n\n*💡 PASSO A PASSO PARA O SUCESSO:*\n1. Clique no link acima.\n2. Assim que abrir, instale o sistema na tela inicial do seu celular (igual um aplicativo).\n3. Digite sua senha de acesso e comece a utilizar.\n4. Sua senha de acesso é: *${senhaPadrao}* (Esta senha é padrão do sistema por questões de segurança e não pode ser alterada).\n\nQualquer dúvida, nossa equipe está à disposição. Vamos transformar seus resultados!`;
             
             navigator.clipboard.writeText(texto).then(() => {
-                alert("✅ Texto de Boas-Vindas profissional copiado! Agora é só colar no WhatsApp do cliente.");
+                alert("✅ Link e instruções com a senha padrão copiados com sucesso!");
             });
         };
         window.copiarGatilho = (tipo, nome, linkFixo, valor, contato) => {
