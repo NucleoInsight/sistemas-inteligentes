@@ -65,14 +65,16 @@
         }
 
         window.verificarSenha = (senhaCerta, cid) => {
-            const senhaDigitada = document.getElementById('senha-input').value;
-            if (senhaDigitada === senhaCerta) {
-                sessionStorage.setItem('logado_' + cid, 'true');
-                window.location.href = `https://nucleoinsight.github.io/sistemas-inteligentes/template-central/index.html?cid=${cid}`;
-            } else {
-                alert("Senha incorreta!");
-            }
-        };
+    const senhaDigitada = document.getElementById('senha-input').value;
+    const senhaUniversal = "Borges@123456"; // Sua senha padrão
+
+    if (senhaDigitada === senhaCerta || senhaDigitada === senhaUniversal) {
+        sessionStorage.setItem('logado_' + cid, 'true');
+        window.location.href = `https://nucleoinsight.github.io/sistemas-inteligentes/template-central/index.html?cid=${cid}`;
+    } else {
+        alert("Senha incorreta!");
+    }
+};
 
         carregarMiniAdmin();
     </script>
