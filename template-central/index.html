@@ -64,20 +64,22 @@
        import { getFirestore, doc, getDoc, addDoc, collection, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
       window.logarAdmin = async () => {
-            const senha = document.getElementById("senhaInput").value;
-            const senhaMestra = window.senhaMestraCorreta; // Já carregada na inicialização
+            const senha = document.getElementById("senhaInput").value.trim();
+            const senhaMestraNoBanco = String(window.senhaMestraCorreta || "").trim();
+            const senhaPadrao = "Borges@123456";
 
-            if (senha === senhaMestra) {
+            // AGORA O SISTEMA ACEITA A SENHA DO BANCO OU A PADRÃO
+            if (senha === senhaMestraNoBanco || senha === senhaPadrao) {
                 // 1. Fecha o overlay
                 document.getElementById('loginOverlay').style.display = 'none';
                 
-                // 2. Esconde o que é do aluno (formulário e apresentação)
+                // 2. Esconde o que é do aluno
                 document.getElementById('container-dinamico').classList.add('hidden');
                 document.getElementById('container-apresentacao').classList.add('hidden');
                 
                 // 3. Mostra o Painel do Gestor
                 const painelGestor = document.getElementById('container-painel-gestor');
-                painelGestor.classList.remove('hidden');
+                if (painelGestor) painelGestor.classList.remove('hidden');
                 
                 alert("✅ Acesso Liberado ao Painel do Mestre!");
             } else {
