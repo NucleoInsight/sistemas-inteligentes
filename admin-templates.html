@@ -39,12 +39,13 @@
                 logo: document.getElementById('logoNicho').value,
                 senhaMestra: document.getElementById('senhaMestra').value,
                 apresentacao: document.getElementById('apresentacaoNicho').value,
-                campos: document.getElementById('camposNicho').value
+                campos: document.getElementById('camposNicho').value,
+                miniAdmin: document.getElementById('miniAdminNicho').value // <-- NOVA LINHA
             };
 
             try {
                 await setDoc(doc(db, "templates", id), data);
-                alert("Template salvo com sucesso! Já está disponível na plataforma.");
+                alert("Template salvo com sucesso!");
             } catch (e) {
                 alert("Erro ao salvar: " + e.message);
             }
