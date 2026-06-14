@@ -1,4 +1,21 @@
-<script type="module">
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso ao Sistema</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#0F1115] text-white font-sans">
+
+    <div id="painel-container" class="p-6">
+        <div class="flex flex-col items-center justify-center min-h-screen text-center">
+            <h1 class="text-2xl font-black mb-4">Carregando seu ambiente...</h1>
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        </div>
+    </div>
+
+    <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         
@@ -59,3 +76,5 @@
 
         carregarMiniAdmin();
     </script>
+</body>
+</html>
