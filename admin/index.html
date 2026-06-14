@@ -329,6 +329,12 @@
                 alert("✅ Link copiado! Envie para o seu cliente:\n" + link);
             });
         };
+        window.copiarLinkEntrega = (cid) => {
+            const link = `https://nucleoinsight.github.io/sistemas-inteligentes/mini-admin.html?cid=${cid}`;
+            navigator.clipboard.writeText(link).then(() => {
+                alert("✅ Link de Boas-Vindas copiado para envio:\n" + link);
+            });
+        };
         window.copiarGatilho = (tipo, nome, linkFixo, valor, contato) => {
             const numeroLimpo = contato.replace(/\D/g, "");
             let caminhoFinal = linkFixo.trim();
