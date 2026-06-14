@@ -63,20 +63,23 @@
        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
        import { getFirestore, doc, getDoc, addDoc, collection, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-       window.logarAdmin = async () => {
+      window.logarAdmin = async () => {
             const senha = document.getElementById("senhaInput").value;
-            const senhaMestra = window.senhaMestraCorreta; // A senha cadastrada no banco para aquele cliente
-            const urlParams = new URLSearchParams(window.location.search);
-            const cid = urlParams.get('cid');
+            const senhaMestra = window.senhaMestraCorreta; // Já carregada na inicialização
 
             if (senha === senhaMestra) {
-                alert("✅ Acesso Liberado ao Painel de Gestão!");
+                // 1. Fecha o overlay
                 document.getElementById('loginOverlay').style.display = 'none';
                 
-                // IMPORTANTE: Aqui você direciona para o painel de gestão DO CLIENTE
-                // Se você tiver um arquivo separado para o cliente (ex: painel-cliente.html)
-                // Ou se usar o mesmo admin, o 'cid' é o que vai filtrar os dados dele.
-                window.location.href = `../admin/index.html?cid=${cid}`;
+                // 2. Esconde o que é do aluno (formulário e apresentação)
+                document.getElementById('container-dinamico').classList.add('hidden');
+                document.getElementById('container-apresentacao').classList.add('hidden');
+                
+                // 3. Mostra o Painel do Gestor
+                const painelGestor = document.getElementById('container-painel-gestor');
+                painelGestor.classList.remove('hidden');
+                
+                alert("✅ Acesso Liberado ao Painel do Mestre!");
             } else {
                 alert("❌ Senha incorreta.");
             }
