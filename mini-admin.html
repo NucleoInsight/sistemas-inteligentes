@@ -82,24 +82,33 @@
         carregarMiniAdmin();
     </script>
     <script>
-        // Lógica para mostrar o botão de instalação apenas se o navegador permitir
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('btn-instalar').classList.remove('hidden');
-        });
+    // Usamos um observador simples para garantir que o botão exista antes de tentar acessá-lo
+    function setupInstalacao() {
+        const btnInstalar = document.getElementById('btn-instalar');
+        const instrucaoIphone = document.getElementById('instrucao-iphone');
 
-        document.getElementById('btn-instalar').addEventListener('click', (e) => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-            }
-        });
-        
-        // Detecta iPhone e mostra instrução especial
-        if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
-            document.getElementById('instrucao-iphone').classList.remove('hidden');
+        if (btnInstalar) {
+            let deferredPrompt;
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                btnInstalar.classList.remove('hidden');
+            });
+
+            btnInstalar.addEventListener('click', (e) => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                }
+            });
         }
-    </script>
+
+        if (instrucaoIphone && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
+            instrucaoIphone.classList.remove('hidden');
+        }
+    }
+
+    // Executa a configuração após um pequeno atraso para garantir que o carregarMiniAdmin terminou
+    setTimeout(setupInstalacao, 1000);
+</script>
 </body>
 </html>
