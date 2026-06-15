@@ -191,20 +191,23 @@
     inicializarCentralDinamica();
 
     // MOTOR INTELIGENTE CENTRALIZADO
-    window.acaoInteligente = async (tipo) => {
+    // MOTOR INTELIGENTE CENTRALIZADO (VERSÃO BLINDADA)
+    window.acaoInteligente = async (tipo, subcolecao = 'ficha') => {
         const params = new URLSearchParams(window.location.search);
         const cid = params.get('cid');
         if (!cid) return alert("Erro: ID do cliente não encontrado.");
         
-        // Pega todos os dados preenchidos
-        const inputs = document.querySelectorAll('#container-dinamico input, #container-dinamico select, #container-dinamico textarea');
+        // Pega dados de qualquer container (deixa de ser fixo no container-dinamico)
+        const container = document.querySelector('#container-dinamico') || document.body;
+        const inputs = container.querySelectorAll('input, select, textarea');
         let dados = {};
         inputs.forEach(i => { if (i.id) dados[i.id] = i.type === 'checkbox' ? i.checked : i.value; });
 
         if (tipo === 'salvar') {
             try {
-                await setDoc(doc(db, "clients", cid, "dados", "ficha"), dados, { merge: true });
-                alert("✅ Dados salvos com sucesso!");
+                // A mágica: agora ele salva no 'subcolecao' que você enviar!
+                await setDoc(doc(db, "clients", cid, "dados", subcolecao), dados, { merge: true });
+                alert(`✅ Dados salvos com sucesso em: ${subcolecao}!`);
             } catch (e) {
                 console.error("Erro ao salvar:", e);
                 alert("Erro ao salvar os dados.");
