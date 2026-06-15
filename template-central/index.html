@@ -225,6 +225,33 @@
         }
     };
 
+    // MOTOR DE CARREGAMENTO UNIVERSAL
+    window.carregarDados = async (subcolecao = 'ficha') => {
+        const params = new URLSearchParams(window.location.search);
+        const cid = params.get('cid');
+        if (!cid) return;
+
+        try {
+            const docRef = doc(db, "clients", cid, "dados", subcolecao);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const dados = docSnap.data();
+                // Preenche os campos automaticamente baseando-se nos IDs
+                Object.keys(dados).forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        if (el.type === 'checkbox') el.checked = dados[id];
+                        else el.value = dados[id];
+                    }
+                });
+                console.log(`✅ Dados carregados de: ${subcolecao}`);
+            }
+        } catch (e) {
+            console.error("Erro ao carregar dados:", e);
+        }
+    };
+    
     // NOVO: GATILHO PARA ALUNOS
     window.copiarGatilhoAluno = (nomeAluno, linkFormulario) => {
     const texto = `*🚀 ACESSE O FORMULÁRIO DE CADASTRO*\n\n` +
