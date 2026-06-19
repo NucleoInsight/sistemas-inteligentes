@@ -84,22 +84,16 @@
                 // LOGIN DO ALUNO
                 document.getElementById('loginOverlay').style.display = 'none';
                 
-                // Oculta o que é só do mestre
-                document.getElementById('container-painel-gestor')?.classList.add('hidden');
+                // Chama o motor para renderizar a interface do Aluno no palco principal
+             // Chama o motor para renderizar a interface do Aluno no palco principal
+                window.renderizarPagina('aluno', { alunoNome: 'Aluno' });
                 
-                // Abre a "Área do Aluno" (que vamos criar)
-                const areaAluno = document.getElementById('interface-aluno');
-                if (areaAluno) {
-                    areaAluno.classList.remove('hidden');
-                    alert("✅ Bem-vindo à sua Área!");
-                } else {
-                    alert("⚠️ Área do Aluno em construção, mas login reconhecido!");
-                }
+                alert("✅ Bem-vindo à sua Área!");
             } 
             else {
                 alert("❌ Senha incorreta.");
             }
-        };
+        }; // <--- ESTA CHAVE FECHA A FUNÇÃO DE LOGIN INTEIRA
         const firebaseConfig = {
             apiKey: "AIzaSyAMYE7ZLM4jtoVnshqowLSaSL-mYCW1lhI",
             authDomain: "sistemas-inteligentes-38cdc.firebaseapp.com",
