@@ -57,6 +57,8 @@
                         `;
                     } else {
                         document.getElementById('painel-container').innerHTML = config.miniAdmin || "Painel ainda em configuração.";
+                        // Esta linha liga o motor de KPIs apenas quando o painel for exibido:
+                        window.atualizarDashboard(); 
                     }
                 } else {
                     document.getElementById('painel-container').innerHTML = "Cliente não localizado.";
