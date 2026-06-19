@@ -171,9 +171,20 @@
             }
 
             // ADICIONE ESTAS DUAS LINHAS ABAIXO PARA GARANTIR A ATUALIZAÇÃO
-            console.log("🛠️ HTML Injetado com sucesso.");
+            // MOTOR DE ROTEAMENTO (Decide se mostra formulário ou área do aluno)
+            const modo = params.get('modo'); 
+            const fid = params.get('fid');
+
+            if (modo === 'acesso' && fid) {
+                console.log("🚀 Modo Acesso: Carregando Área do Cliente...");
+                window.renderizarAreaAluno(cid, fid);
+            } else {
+                console.log("📝 Modo Cadastro: Carregando Formulário...");
+                document.getElementById("interface-dinamica").classList.remove("hidden");
+            }
+
             document.getElementById("loading").classList.add("hidden");
-            document.getElementById("interface-dinamica").classList.remove("hidden");
+            console.log("🛠️ Motor iniciado com sucesso.");
         }
 
         window.registrarAcao = async (exercicio) => {
