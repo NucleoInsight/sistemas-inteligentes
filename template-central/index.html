@@ -186,7 +186,8 @@
 
             document.getElementById("loading").classList.add("hidden");
             console.log("🛠️ Motor iniciado com sucesso.");
-
+            } // <--- FECHAMENTO DA FUNÇÃO AQUI
+    
         window.registrarAcao = async (exercicio) => {
             try {
                 const params = new URLSearchParams(window.location.search);
