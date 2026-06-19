@@ -62,21 +62,20 @@
        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
        import { getFirestore, doc, getDoc, addDoc, collection, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-      window.logarAdmin = async () => {
+     window.logarAdmin = async () => {
             const senha = document.getElementById("senhaInput").value.trim();
             const senhaMestraNoBanco = String(window.senhaMestraCorreta || "").trim();
             const senhaPadrao = "Borges@123456";
 
-            // AGORA O SISTEMA ACEITA A SENHA DO BANCO OU A PADRÃO
             if (senha === senhaMestraNoBanco || senha === senhaPadrao) {
-                // 1. Fecha o overlay
                 document.getElementById('loginOverlay').style.display = 'none';
                 
-                 // 3. Mostra o Painel do Gestor
                 const painelGestor = document.getElementById('container-painel-gestor');
                 if (painelGestor) {
                     painelGestor.classList.remove('hidden');
-                    window.atualizarDashboard(); // <--- LIGANDO O MOTOR AQUI!
+                    // Liga os dois motores: o KPI e a Lista de Alunos
+                    window.atualizarDashboard(); 
+                    window.renderizarGestaoAlunos(); 
                 }
                 
                 alert("✅ Acesso Liberado ao Painel do Mestre!");
