@@ -67,6 +67,25 @@
             }
         }
 
+        // --- NOVO MOTOR DE KPIs (COLE ESTA FUNÇÃO ABAIXO DE carregarMiniAdmin) ---
+window.atualizarDashboard = async () => {
+    try {
+        const { collection, getCountFromServer } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+        
+        // 1. Conta quantos clientes existem
+        const snapshot = await getCountFromServer(collection(db, "clients"));
+        const totalAlunos = snapshot.data().count;
+        
+        // 2. Atualiza o HTML (se o elemento existir)
+        const elAlunos = document.getElementById('kpi-total-alunos');
+        if (elAlunos) elAlunos.innerText = totalAlunos;
+        
+        console.log("✅ Dashboard Atualizado: " + totalAlunos + " alunos.");
+    } catch (e) {
+        console.error("Erro ao atualizar KPIs:", e);
+    }
+};
+        
         window.verificarSenha = (senhaCerta, cid) => {
     const senhaDigitada = document.getElementById('senha-input').value;
     const senhaUniversal = "Borges@123456"; // Sua senha padrão
