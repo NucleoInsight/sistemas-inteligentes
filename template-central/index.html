@@ -403,15 +403,24 @@
         }
     };
     window.copiarGatilhoParaAluno = () => {
-    const link = window.location.href;
-    const msg = `*🚀 ACESSE SUA ÁREA DE TREINO INTELIGENTE*\n\n` +
-                `Olá! Liberei seu acesso ao sistema.\n\n` +
-                `👉 *ACESSE AQUI:* ${link}\n` +
-                `🔑 *SUA SENHA:* Cliente@123456\n\n` +
+    const baseUrl = window.location.origin + window.location.pathname;
+    const cid = new URLSearchParams(window.location.search).get('cid');
+    
+    // Link 1: Cadastro (Formulário)
+    const linkCadastro = `${baseUrl}?cid=${cid}&modo=preencher`;
+    
+    // Link 2: Área do Cliente (Direto para o conteúdo)
+    const linkAreaCliente = `${baseUrl}?cid=${cid}&modo=acesso&fid=ID_DA_FICHA`;
+
+    const msg = `*🚀 ACESSE SEU PORTAL INTELIGENTE*\n\n` +
+                `Olá! Escolha uma das opções abaixo para seguir:\n\n` +
+                `1️⃣ *PARA SE CADASTRAR/PREENCHER FICHA:*\n${linkCadastro}\n\n` +
+                `2️⃣ *PARA ACESSAR SUA ÁREA DE TREINO/CONTEÚDO:*\n${linkAreaCliente}\n` +
+                `🔑 *SENHA:* Cliente@123456\n\n` +
                 `Qualquer dúvida, estou à disposição!`;
     
     navigator.clipboard.writeText(msg).then(() => {
-        alert("✅ Mensagem de entrega copiada para o WhatsApp do aluno!");
+        alert("✅ Mensagem com DOIS LINKS copiada para o WhatsApp!");
     });
 };
 
