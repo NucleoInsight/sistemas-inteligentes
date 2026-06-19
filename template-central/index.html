@@ -283,51 +283,40 @@ window.renderizarPagina = async (tipo, dados = null) => {
         }
     };
 
-    // MOTOR DE GESTÃO DE ALUNOS (ATUALIZADO)
-    window.renderizarGestaoAlunos = async () => {
-    const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-    const params = new URLSearchParams(window.location.search);
-    const cid = params.get('cid');
+   window.renderizarPagina = async (tipo, dados = null) => {
+    const palco = document.getElementById('palco-principal');
     
-    const snapshot = await getDocs(collection(db, "clients", cid, "dados"));
-    const painel = document.getElementById('container-painel-gestor');
-    
-    let listaArea = document.getElementById('area-lista-alunos');
-    if (!listaArea) {
-        listaArea = document.createElement('div');
-        listaArea.id = 'area-lista-alunos';
-        painel.appendChild(listaArea);
-    }
-    
-    let alunos = [];
-    snapshot.forEach(doc => alunos.push({ id: doc.id, ...doc.data() }));
+    // 1. Limpeza total do palco para evitar conflitos
+    palco.innerHTML = '<div class="text-white p-10 text-center">Carregando interface...</div>';
 
-    const html = `
-        <div class="mt-6 bg-[#171A21] p-4 rounded-xl border border-gray-700">
-            <h3 class="text-white font-bold mb-4 uppercase text-xs">Lista de Alunos (${alunos.length})</h3>
-            <input type="text" id="buscaAluno" placeholder="🔍 Pesquisar nome..." 
-                class="w-full bg-gray-900 border border-gray-800 rounded p-2 text-white text-xs mb-3"
-                onkeyup="window.filtrarAlunos()">
-            <div id="lista-alunos-scroll" class="space-y-2 overflow-y-auto custom-scrollbar pr-2" style="max-height: 400px;">
-                ${alunos.map(d => `
-                    <div class="aluno-item flex justify-between items-center bg-gray-900 p-3 rounded border ${d.statusPagamento === 'Debito' ? 'border-red-500/50' : 'border-gray-800'} text-xs">
-                        <div class="flex flex-col">
-                            <span class="nome-aluno text-gray-300 font-bold">${d.alunoNome || 'Sem Nome'}</span>
-                            <span class="text-[9px] ${d.statusPagamento === 'Debito' ? 'text-red-500' : 'text-emerald-500'} font-black uppercase">
-                                ${d.statusPagamento === 'Debito' ? '🔴 Em Débito' : '🟢 Em Dia'}
-                            </span>
-                        </div>
-                        <div class="flex gap-2">
-                            ${d.statusPagamento === 'Debito' ? `<button type="button" onclick="window.registrarPagamento('${d.id}', 'Pago')" class="bg-emerald-900/30 text-emerald-400 px-2 py-1 rounded border border-emerald-500/20">Pagar</button>` : ''}
-                            <button type="button" onclick="window.carregarDados('${d.id}')" class="text-blue-400 underline">Editar</button>
-                            <button type="button" onclick="window.gerarLinkAcesso('${d.id}', '${d.alunoNome || 'Aluno'}')" class="bg-blue-900/30 text-blue-400 px-2 py-1 rounded border border-blue-500/20">📤 Enviar</button>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-        </div>`;
-    
-    listaArea.innerHTML = html;
+    // 2. Lógica de renderização por injeção
+    if (tipo === 'gestao') {
+        // Injeta a estrutura do painel do professor
+        palco.innerHTML = `
+            <div id="container-painel-gestor" class="w-full">
+                <div id="area-lista-alunos"></div>
+            </div>`;
+        
+        // Dispara as funções de busca de dados
+        await window.atualizarDashboard();
+        await window.renderizarGestaoAlunos();
+    } 
+    else if (tipo === 'aluno') {
+        // Injeta a estrutura da área do aluno
+        palco.innerHTML = `
+            <div id="interface-aluno" class="p-6 bg-[#171A21] rounded-xl text-white">
+                <h1 id="aluno-nome-display" class="text-2xl font-bold mb-4"></h1>
+                <div id="container-video-aluno"></div>
+            </div>`;
+        
+        // Injeta os dados se eles foram passados
+        if (dados) {
+            document.getElementById('aluno-nome-display').innerText = dados.alunoNome || "Olá, Cliente!";
+            if (dados.linkVideoTreino) {
+                window.exibirVideoParaAluno(dados.linkVideoTreino);
+            }
+        }
+    }
 };
 
     window.filtrarAlunos = () => {
