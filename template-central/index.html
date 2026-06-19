@@ -423,44 +423,25 @@
     });
 };
 
-    window.renderizarAreaAluno = async (cid, idFicha) => {
+   window.renderizarAreaAluno = async (cid, idFicha) => {
     console.log("🛠️ Tentando renderizar área do aluno para:", idFicha);
-    
-    // 1. Esconde a gestão e mostra a área do aluno
     const interfaceDinamica = document.getElementById('interface-dinamica');
     const interfaceAluno = document.getElementById('interface-aluno');
-    
-    // USO DE STYLE.DISPLAY PARA FORÇAR EXIBIÇÃO
     if (interfaceDinamica) interfaceDinamica.style.display = 'none';
     if (interfaceAluno) {
         interfaceAluno.style.display = 'block'; 
         interfaceAluno.classList.remove('hidden'); 
     } else {
-        console.error("❌ ERRO: DIV 'interface-aluno' não encontrada no HTML!");
+        console.error("❌ ERRO: DIV 'interface-aluno' não encontrada!");
     }
-
-    // 2. Busca os dados do aluno no banco
     const docRef = window.doc(window.db, "clients", cid, "dados", idFicha);
     const docSnap = await window.getDoc(docRef);
-    
     if (docSnap.exists()) {
         const dados = docSnap.data();
-        console.log("✅ Dados recebidos pelo renderizador:", dados);
-        
-        // Atualiza nome
-        try {
-            document.getElementById('aluno-nome-display').innerText = dados.alunoNome || "Olá, Cliente!";
-        } catch(e) { console.error("❌ Erro ao atualizar nome:", e); }
-        
-        // 3. Exibe o vídeo se existir
+        try { document.getElementById('aluno-nome-display').innerText = dados.alunoNome || "Olá, Cliente!"; } catch(e) { console.error(e); }
         if (dados.linkVideoTreino) {
-            console.log("📹 Vídeo encontrado, exibindo...");
             window.exibirVideoParaAluno(dados.linkVideoTreino);
-        } else {
-            console.warn("⚠️ Nenhum vídeo cadastrado nesta ficha.");
         }
-    } else {
-        console.error("❌ ERRO: O documento não existe no momento da renderização!");
     }
 };
 
@@ -472,6 +453,7 @@ window.exibirVideoParaAluno = (url) => {
     `;
 };
 
+// EXPORTAÇÕES (OBRIGATÓRIAS PARA O ONCLICK FUNCIONAR)
 window.logarAdmin = logarAdmin;
 window.renderizarAreaAluno = renderizarAreaAluno;
 window.exibirVideoParaAluno = exibirVideoParaAluno;
@@ -479,7 +461,8 @@ window.filtrarAlunos = filtrarAlunos;
 window.registrarPagamento = registrarPagamento;
 window.gerarLinkAcesso = gerarLinkAcesso;
 window.exibirVideo = exibirVideo;
-}
+window.inicializarCentralDinamica = inicializarCentralDinamica;
+</script>
     
 </script>
 </body>
