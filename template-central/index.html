@@ -74,14 +74,12 @@
             if (senha === senhaMestraNoBanco || senha === senhaPadraoAdmin) {
                 // LOGIN DO MESTRE/ADMIN
                 document.getElementById('loginOverlay').style.display = 'none';
-                const painelGestor = document.getElementById('container-painel-gestor');
-                if (painelGestor) {
-                    painelGestor.classList.remove('hidden');
-                    window.atualizarDashboard(); 
-                    window.renderizarGestaoAlunos(); 
-                }
+
+                // Chama o novo motor para injetar o painel de gestão no palco
+                window.renderizarPagina('gestao');
+
                 alert("✅ Acesso Liberado ao Painel do Mestre!");
-            } 
+            }
             else if (senha === senhaPadraoAluno) {
                 // LOGIN DO ALUNO
                 document.getElementById('loginOverlay').style.display = 'none';
