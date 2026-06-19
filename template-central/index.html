@@ -295,8 +295,13 @@
     const snapshot = await getDocs(collection(db, "clients", cid, "dados"));
     const painel = document.getElementById('container-painel-gestor');
     
-    // LIMPEZA FORÇADA: Remove o conteúdo anterior antes de renderizar
-    painel.innerHTML = ""; 
+    // Identifica ou cria a área específica da LISTA para não apagar o resto do painel
+    let listaArea = document.getElementById('area-lista-alunos');
+    if (!listaArea) {
+        listaArea = document.createElement('div');
+        listaArea.id = 'area-lista-alunos';
+        painel.appendChild(listaArea);
+    }
     
     let alunos = [];
     snapshot.forEach(doc => alunos.push({ id: doc.id, ...doc.data() }));
@@ -307,7 +312,7 @@
             <input type="text" id="buscaAluno" placeholder="🔍 Pesquisar nome..." 
                 class="w-full bg-gray-900 border border-gray-800 rounded p-2 text-white text-xs mb-3"
                 onkeyup="window.filtrarAlunos()">
-            <div id="lista-alunos-scroll" class="space-y-2 overflow-y-auto custom-scrollbar pr-2" style="height: 80vh;">
+            <div id="lista-alunos-scroll" class="space-y-2 overflow-y-auto custom-scrollbar pr-2" style="height: 60vh;">
                 ${alunos.map(d => `
                     <div class="aluno-item flex justify-between items-center bg-gray-900 p-3 rounded border ${d.statusPagamento === 'Debito' ? 'border-red-500/50' : 'border-gray-800'} text-xs">
                         <div class="flex flex-col">
@@ -327,8 +332,8 @@
             </div>
         </div>`;
     
-    painel.insertAdjacentHTML('beforeend', html);
-    console.log("✅ Painel re-renderizado com sucesso.");
+    listaArea.innerHTML = html;
+    console.log("✅ Lista de alunos re-renderizada (Painel mantido).");
 };
     
     window.filtrarAlunos = () => {
