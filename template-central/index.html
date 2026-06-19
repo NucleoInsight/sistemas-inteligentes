@@ -180,19 +180,24 @@ if (modo === 'acesso' && fid) {
     }
 }
 
-            // MOTOR DE ROTEAMENTO UNIFICADO
-            const modo = params.get('modo'); 
-            const fid = params.get('fid');
+            // LÓGICA INTELIGENTE DE ROTEAMENTO
+const modo = params.get('modo'); 
+const fid = params.get('fid');
 
-            if (modo === 'acesso' && fid) {
-                console.log("🚀 Modo Acesso: Carregando Área do Cliente...");
-                window.renderizarAreaAluno(cid, fid);
-            } else {
-                console.log("📝 Modo Cadastro: Carregando Formulário...");
-                document.getElementById("interface-dinamica").classList.remove("hidden");
-            }
-
-            document.getElementById("loading").classList.add("hidden");
+if (modo === 'acesso' && fid) {
+    console.log("🚀 Modo Acesso: Carregando Área do Cliente...");
+    document.getElementById("container-apresentacao").innerHTML = "";
+    document.getElementById("container-dinamico").innerHTML = ""; 
+    document.getElementById("container-painel-gestor").innerHTML = "";
+    window.renderizarAreaAluno(cid, fid);
+} else {
+    console.log("📝 Modo Cadastro: Injetando formulário...");
+    document.getElementById("container-apresentacao").innerHTML = config.apresentacao || "";
+    document.getElementById("container-dinamico").innerHTML = config.campos || "";
+    const painelGestor = document.getElementById("container-painel-gestor");
+    if(config.miniAdmin) painelGestor.innerHTML = config.miniAdmin;
+    document.getElementById("interface-dinamica").classList.remove("hidden");
+}
             console.log("🛠️ Motor iniciado com sucesso.");
         }
 
