@@ -424,22 +424,38 @@
 };
 
     window.renderizarAreaAluno = async (cid, idFicha) => {
+    console.log("🛠️ Tentando renderizar área do aluno para:", idFicha);
+    
     // 1. Esconde a gestão e mostra a área do aluno
-    document.getElementById('interface-dinamica').classList.add('hidden');
-    document.getElementById('interface-aluno').classList.remove('hidden');
+    const interfaceDinamica = document.getElementById('interface-dinamica');
+    const interfaceAluno = document.getElementById('interface-aluno');
+    
+    if (interfaceDinamica) interfaceDinamica.classList.add('hidden');
+    if (interfaceAluno) interfaceAluno.classList.remove('hidden');
+    else console.error("❌ ERRO: DIV 'interface-aluno' não encontrada no HTML!");
 
     // 2. Busca os dados do aluno no banco
-    const docRef = doc(db, "clients", cid, "dados", idFicha);
-    const docSnap = await getDoc(docRef);
+    const docRef = window.doc(window.db, "clients", cid, "dados", idFicha);
+    const docSnap = await window.getDoc(docRef);
     
     if (docSnap.exists()) {
         const dados = docSnap.data();
-        document.getElementById('aluno-nome-display').innerText = dados.alunoNome || "Olá, Aluno!";
+        console.log("✅ Dados recebidos pelo renderizador:", dados);
+        
+        // Atualiza nome (usando try/catch para não quebrar se o elemento sumir)
+        try {
+            document.getElementById('aluno-nome-display').innerText = dados.alunoNome || "Olá, Cliente!";
+        } catch(e) { console.error("❌ Erro ao atualizar nome:", e); }
         
         // 3. Exibe o vídeo se existir
         if (dados.linkVideoTreino) {
+            console.log("📹 Vídeo encontrado, exibindo...");
             window.exibirVideoParaAluno(dados.linkVideoTreino);
+        } else {
+            console.warn("⚠️ Nenhum vídeo cadastrado nesta ficha.");
         }
+    } else {
+        console.error("❌ ERRO: O documento não existe no momento da renderização!");
     }
 };
 
