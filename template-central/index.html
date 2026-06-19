@@ -142,51 +142,24 @@
             } catch (e) { console.error("Erro ao configurar cliente:", e); }
         }
 
-    async function inicializarCentralDinamica() {
-            const params = new URLSearchParams(window.location.search);
-            const cid = params.get('cid'); 
-            if (!cid) return;
-            
-            const clienteSnap = await getDoc(doc(db, "clients", cid));
-            if (!clienteSnap.exists()) return;
+    
+window.renderizarPagina = async (tipo, dados = null) => {
+    const palco = document.getElementById('palco-principal');
+    palco.innerHTML = '<div class="text-white">Carregando...</div>'; // Feedback visual
 
-            const dados = clienteSnap.data();
-            window.senhaMestraCorreta = dados.senhaMestra;
-            window.statusCliente = dados.status;
-
-            const config = dados.configuracaoPersonalizada || {};
-            
-            document.title = `${dados.nome} — Central`;
-            document.getElementById("custom-nome").innerText = dados.nome;
-            document.getElementById("custom-logo").src = config.logo || "";
-            
-        // MOTOR DE ROTEAMENTO UNIFICADO E DEFINITIVO
-            const modo = params.get('modo');
-            const fid = params.get('fid');
-
-            if (modo === 'acesso' && fid) {
-                console.log("🚀 Modo Acesso: Preparando área limpa e renderizando aluno...");
-                document.getElementById("container-apresentacao").innerHTML = "";
-                document.getElementById("container-dinamico").innerHTML = ""; 
-                document.getElementById("container-painel-gestor").innerHTML = "";
-                
-                // Roda a renderização do aluno
-                window.renderizarAreaAluno(cid, fid);
-            } else {
-                console.log("📝 Modo Cadastro: Injetando formulário...");
-                document.getElementById("container-apresentacao").innerHTML = config.apresentacao || "";
-                document.getElementById("container-dinamico").innerHTML = config.campos || "";
-                
-                const painelGestor = document.getElementById("container-painel-gestor");
-                if(config.miniAdmin) {
-                    painelGestor.innerHTML = config.miniAdmin;
-                }
-                document.getElementById("interface-dinamica").classList.remove("hidden");
-            }
-
-            document.getElementById("loading").classList.add("hidden");
-            console.log("🛠️ Motor iniciado com sucesso.");
-            } // <--- FECHAMENTO DA FUNÇÃO AQUI
+    if (tipo === 'gestao') {
+        // Desenha a interface do Professor
+        palco.innerHTML = `<div>... código do painel do professor ...</div>`;
+        await window.atualizarDashboard();
+        await window.renderizarGestaoAlunos();
+    } 
+    else if (tipo === 'aluno') {
+        // Desenha a interface do Aluno
+        palco.innerHTML = `<div id="interface-aluno">... interface do treino ...</div>`;
+        // Aqui você injeta os dados do aluno diretamente
+        document.getElementById('aluno-nome-display').innerText = dados.alunoNome;
+    }
+};
     
         window.registrarAcao = async (exercicio) => {
             try {
