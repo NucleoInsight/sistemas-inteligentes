@@ -251,6 +251,22 @@
             console.error("Erro ao carregar dados:", e);
         }
     };
+
+    // --- MOTOR DE KPIs (COLE ISSO) ---
+    window.atualizarDashboard = async () => {
+        try {
+            const { collection, getCountFromServer } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+            
+            // Conta total de clientes (ou alunos)
+            const snapshot = await getCountFromServer(collection(db, "clients"));
+            const elAlunos = document.getElementById('kpi-total-alunos');
+            if (elAlunos) elAlunos.innerText = snapshot.data().count;
+            
+            console.log("✅ KPIs atualizados.");
+        } catch (e) {
+            console.error("Erro ao atualizar KPIs:", e);
+        }
+    };
     
     // NOVO: GATILHO PARA ALUNOS
     window.copiarGatilhoAluno = (nomeAluno, linkFormulario) => {
