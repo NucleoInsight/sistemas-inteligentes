@@ -160,46 +160,32 @@
             document.getElementById("custom-nome").innerText = dados.nome;
             document.getElementById("custom-logo").src = config.logo || "";
             
-           // LÓGICA INTELIGENTE: Só injeta o formulário se NÃO estivermos no modo de acesso
-const modo = params.get('modo');
-const fid = params.get('fid');
+        // MOTOR DE ROTEAMENTO UNIFICADO E DEFINITIVO
+            const modo = params.get('modo');
+            const fid = params.get('fid');
 
-if (modo === 'acesso' && fid) {
-    console.log("🚀 Modo Acesso detectado: Preparando área limpa...");
-    document.getElementById("container-apresentacao").innerHTML = "";
-    document.getElementById("container-dinamico").innerHTML = ""; 
-    document.getElementById("container-painel-gestor").innerHTML = "";
-} else {
-    console.log("📝 Modo Cadastro: Injetando formulário...");
-    document.getElementById("container-apresentacao").innerHTML = config.apresentacao || "";
-    document.getElementById("container-dinamico").innerHTML = config.campos || "";
-    
-    const painelGestor = document.getElementById("container-painel-gestor");
-    if(config.miniAdmin) {
-        painelGestor.innerHTML = config.miniAdmin;
-    }
-}
+            if (modo === 'acesso' && fid) {
+                console.log("🚀 Modo Acesso: Preparando área limpa e renderizando aluno...");
+                document.getElementById("container-apresentacao").innerHTML = "";
+                document.getElementById("container-dinamico").innerHTML = ""; 
+                document.getElementById("container-painel-gestor").innerHTML = "";
+                
+                // Roda a renderização do aluno
+                window.renderizarAreaAluno(cid, fid);
+            } else {
+                console.log("📝 Modo Cadastro: Injetando formulário...");
+                document.getElementById("container-apresentacao").innerHTML = config.apresentacao || "";
+                document.getElementById("container-dinamico").innerHTML = config.campos || "";
+                
+                const painelGestor = document.getElementById("container-painel-gestor");
+                if(config.miniAdmin) {
+                    painelGestor.innerHTML = config.miniAdmin;
+                }
+                document.getElementById("interface-dinamica").classList.remove("hidden");
+            }
 
-            // LÓGICA INTELIGENTE DE ROTEAMENTO
-const modo = params.get('modo'); 
-const fid = params.get('fid');
-
-if (modo === 'acesso' && fid) {
-    console.log("🚀 Modo Acesso: Carregando Área do Cliente...");
-    document.getElementById("container-apresentacao").innerHTML = "";
-    document.getElementById("container-dinamico").innerHTML = ""; 
-    document.getElementById("container-painel-gestor").innerHTML = "";
-    window.renderizarAreaAluno(cid, fid);
-} else {
-    console.log("📝 Modo Cadastro: Injetando formulário...");
-    document.getElementById("container-apresentacao").innerHTML = config.apresentacao || "";
-    document.getElementById("container-dinamico").innerHTML = config.campos || "";
-    const painelGestor = document.getElementById("container-painel-gestor");
-    if(config.miniAdmin) painelGestor.innerHTML = config.miniAdmin;
-    document.getElementById("interface-dinamica").classList.remove("hidden");
-}
+            document.getElementById("loading").classList.add("hidden");
             console.log("🛠️ Motor iniciado com sucesso.");
-        }
 
         window.registrarAcao = async (exercicio) => {
             try {
