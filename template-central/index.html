@@ -333,6 +333,30 @@
             item.style.display = nome.includes(termo) ? 'flex' : 'none';
         });
     };
+
+    window.registrarPagamento = async (idFicha, status) => {
+        const params = new URLSearchParams(window.location.search);
+        const cid = params.get('cid');
+        if (!cid) return;
+
+        try {
+            await updateDoc(doc(db, "clients", cid, "dados", idFicha), { statusPagamento: status });
+            alert("✅ Status atualizado!");
+            
+            // Recarrega o painel e os KPIs para refletir a mudança na hora
+            window.atualizarDashboard();
+            
+            // Limpa o painel e renderiza novamente a lista atualizada
+            const painel = document.getElementById('container-painel-gestor');
+            const lista = painel.querySelector('.mt-6');
+            if (lista) lista.remove();
+            window.renderizarGestaoAlunos();
+            
+        } catch (e) {
+            console.error("Erro ao registrar pagamento:", e);
+            alert("Erro ao atualizar status.");
+        }
+    };
     
     // NOVO: GATILHO PARA ALUNOS
     window.copiarGatilhoAluno = (nomeAluno, linkFormulario) => {
