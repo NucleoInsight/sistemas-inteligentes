@@ -282,22 +282,36 @@
         const snapshot = await getDocs(collection(db, "clients", cid, "dados"));
         const painel = document.getElementById('container-painel-gestor');
         
-        let listaHTML = `
-            <div class="mt-6 bg-[#171A21] p-4 rounded-xl border border-gray-700">
-                <h3 class="text-white font-bold mb-4 uppercase text-xs">Lista de Alunos</h3>
-                <div class="space-y-2">`;
+        // Define a lista de alunos
+        let alunos = [];
+        snapshot.forEach(doc => alunos.push({ id: doc.id, ...doc.data() }));
 
-        snapshot.forEach(doc => {
-            const d = doc.data();
-            listaHTML += `
-                <div class="flex justify-between items-center bg-gray-900 p-3 rounded border border-gray-800 text-xs">
-                    <span class="text-gray-300 font-bold">${d.alunoNome || 'Sem Nome'}</span>
-                    <button onclick="window.carregarDados('${doc.id}')" class="text-blue-400 underline">Editar</button>
-                </div>`;
-        });
+        const html = `
+            <div class="mt-6 bg-[#171A21] p-4 rounded-xl border border-gray-700">
+                <h3 class="text-white font-bold mb-4 uppercase text-xs">Lista de Alunos (${alunos.length})</h3>
+                <input type="text" id="buscaAluno" placeholder="🔍 Pesquisar nome..." 
+                    class="w-full bg-gray-900 border border-gray-800 rounded p-2 text-white text-xs mb-3"
+                    onkeyup="window.filtrarAlunos()">
+                <div id="lista-alunos-scroll" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar pr-2">
+                    ${alunos.map(d => `
+                        <div class="aluno-item flex justify-between items-center bg-gray-900 p-3 rounded border border-gray-800 text-xs">
+                            <span class="nome-aluno text-gray-300 font-bold">${d.alunoNome || 'Sem Nome'}</span>
+                            <button onclick="window.carregarDados('${d.id}')" class="text-blue-400 underline">Editar</button>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>`;
         
-        listaHTML += `</div></div>`;
-        painel.insertAdjacentHTML('beforeend', listaHTML);
+        painel.insertAdjacentHTML('beforeend', html);
+    };
+
+    window.filtrarAlunos = () => {
+        const termo = document.getElementById('buscaAluno').value.toLowerCase();
+        const itens = document.querySelectorAll('.aluno-item');
+        itens.forEach(item => {
+            const nome = item.querySelector('.nome-aluno').innerText.toLowerCase();
+            item.style.display = nome.includes(termo) ? 'flex' : 'none';
+        });
     };
     
     // NOVO: GATILHO PARA ALUNOS
