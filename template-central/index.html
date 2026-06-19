@@ -77,9 +77,12 @@
                 document.getElementById('container-dinamico').classList.add('hidden');
                 document.getElementById('container-apresentacao').classList.add('hidden');
                 
-                // 3. Mostra o Painel do Gestor
+                 // 3. Mostra o Painel do Gestor
                 const painelGestor = document.getElementById('container-painel-gestor');
-                if (painelGestor) painelGestor.classList.remove('hidden');
+                if (painelGestor) {
+                    painelGestor.classList.remove('hidden');
+                    window.atualizarDashboard(); // <--- LIGANDO O MOTOR AQUI!
+                }
                 
                 alert("✅ Acesso Liberado ao Painel do Mestre!");
             } else {
