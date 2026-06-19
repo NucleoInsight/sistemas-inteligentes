@@ -41,7 +41,8 @@
                 const docSnap = await getDoc(doc(db, "clients", cid));
                 if (docSnap.exists()) {
                     const dados = docSnap.data();
-                    const config = dados.configuracaoPersonalizada || {};
+                    // O código vai buscar no "configuracaoPersonalizada" (se existir) OU diretamente no documento (se estiver solto)
+                    const config = dados.configuracaoPersonalizada || dados;
                     
                     if (!sessionStorage.getItem('logado_' + cid)) {
                         document.getElementById('painel-container').innerHTML = `
