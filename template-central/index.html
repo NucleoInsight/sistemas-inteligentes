@@ -65,21 +65,37 @@
      window.logarAdmin = async () => {
             const senha = document.getElementById("senhaInput").value.trim();
             const senhaMestraNoBanco = String(window.senhaMestraCorreta || "").trim();
-            const senhaPadrao = "Borges@123456";
+            const senhaPadraoAdmin = "Borges@123456";
+            const senhaPadraoAluno = "Cliente@123456"; // Senha do Aluno
 
-            if (senha === senhaMestraNoBanco || senha === senhaPadrao) {
+            if (senha === senhaMestraNoBanco || senha === senhaPadraoAdmin) {
+                // LOGIN DO MESTRE/ADMIN
                 document.getElementById('loginOverlay').style.display = 'none';
-                
                 const painelGestor = document.getElementById('container-painel-gestor');
                 if (painelGestor) {
                     painelGestor.classList.remove('hidden');
-                    // Liga os dois motores: o KPI e a Lista de Alunos
                     window.atualizarDashboard(); 
                     window.renderizarGestaoAlunos(); 
                 }
-                
                 alert("✅ Acesso Liberado ao Painel do Mestre!");
-            } else {
+            } 
+            else if (senha === senhaPadraoAluno) {
+                // LOGIN DO ALUNO
+                document.getElementById('loginOverlay').style.display = 'none';
+                
+                // Oculta o que é só do mestre
+                document.getElementById('container-painel-gestor')?.classList.add('hidden');
+                
+                // Abre a "Área do Aluno" (que vamos criar)
+                const areaAluno = document.getElementById('interface-aluno');
+                if (areaAluno) {
+                    areaAluno.classList.remove('hidden');
+                    alert("✅ Bem-vindo à sua Área de Treino!");
+                } else {
+                    alert("⚠️ Área do Aluno em construção, mas login reconhecido!");
+                }
+            } 
+            else {
                 alert("❌ Senha incorreta.");
             }
         };
