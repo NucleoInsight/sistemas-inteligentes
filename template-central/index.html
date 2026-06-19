@@ -255,20 +255,30 @@
     // --- MOTOR DE KPIs CORRIGIDO ---
     window.atualizarDashboard = async () => {
         try {
-            const { collection, getCountFromServer } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+            const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
             const params = new URLSearchParams(window.location.search);
             const cid = params.get('cid');
             if (!cid) return;
 
-            // Conta as fichas dentro da subcoleção 'dados' do cliente logado
-            const snapshot = await getCountFromServer(collection(db, "clients", cid, "dados"));
+            const snapshot = await getDocs(collection(db, "clients", cid, "dados"));
+            
+            let total = 0;
+            let debito = 0;
+
+            snapshot.forEach(doc => {
+                total++;
+                if (doc.data().statusPagamento === 'Debito') {
+                    debito++;
+                }
+            });
+
             const elAlunos = document.getElementById('kpi-total-alunos');
+            const elInad = document.getElementById('kpi-inadimplentes');
             
-            if (elAlunos) {
-                elAlunos.innerText = snapshot.data().count;
-            }
+            if (elAlunos) elAlunos.innerText = total;
+            if (elInad) elInad.innerText = debito;
             
-            console.log("✅ KPIs atualizados com sucesso para o cliente:", cid);
+            console.log(`✅ KPIs atualizados: Total=${total}, Débitos=${debito}`);
         } catch (e) {
             console.error("Erro ao atualizar KPIs:", e);
         }
