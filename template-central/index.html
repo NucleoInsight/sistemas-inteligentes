@@ -203,9 +203,12 @@
 
         if (tipo === 'salvar') {
             try {
-                // A mágica: agora ele salva no 'subcolecao' que você enviar!
-                await setDoc(doc(db, "clients", cid, "dados", subcolecao), dados, { merge: true });
-                alert(`✅ Dados salvos com sucesso em: ${subcolecao}!`);
+                // Se existir CPF no formulário, usamos ele como ID da ficha, se não, usamos 'ficha-geral'
+                const cpf = dados.alunoCpf ? dados.alunoCpf.replace(/\D/g, '') : null;
+                const idFicha = cpf ? `ficha-${cpf}` : `ficha-${Date.now()}`;
+                
+                await setDoc(doc(db, "clients", cid, "dados", idFicha), dados, { merge: true });
+                alert(`✅ Ficha salva com sucesso! ID: ${idFicha}`);
             } catch (e) {
                 console.error("Erro ao salvar:", e);
                 alert("Erro ao salvar os dados.");
