@@ -116,7 +116,8 @@
                 };
             } catch (e) { console.error("Erro ao configurar cliente:", e); }
         }
-        async function inicializarCentralDinamica() {
+
+    async function inicializarCentralDinamica() {
             const params = new URLSearchParams(window.location.search);
             const cid = params.get('cid'); 
             if (!cid) return;
@@ -138,12 +139,14 @@
             document.getElementById("container-apresentacao").innerHTML = config.apresentacao || "";
             document.getElementById("container-dinamico").innerHTML = config.campos || "";
             
-            // NOVO: Injeta o Painel do Gestor (escondido inicialmente)
+            // NOVO: Força a exibição do Painel do Gestor se ele estiver configurado
             const painelGestor = document.getElementById("container-painel-gestor");
             if(config.miniAdmin) {
                 painelGestor.innerHTML = config.miniAdmin;
             }
 
+            // ADICIONE ESTAS DUAS LINHAS ABAIXO PARA GARANTIR A ATUALIZAÇÃO
+            console.log("🛠️ HTML Injetado com sucesso.");
             document.getElementById("loading").classList.add("hidden");
             document.getElementById("interface-dinamica").classList.remove("hidden");
         }
