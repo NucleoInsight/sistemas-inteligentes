@@ -430,9 +430,14 @@
     const interfaceDinamica = document.getElementById('interface-dinamica');
     const interfaceAluno = document.getElementById('interface-aluno');
     
-    if (interfaceDinamica) interfaceDinamica.classList.add('hidden');
-    if (interfaceAluno) interfaceAluno.classList.remove('hidden');
-    else console.error("❌ ERRO: DIV 'interface-aluno' não encontrada no HTML!");
+    // USO DE STYLE.DISPLAY PARA FORÇAR EXIBIÇÃO
+    if (interfaceDinamica) interfaceDinamica.style.display = 'none';
+    if (interfaceAluno) {
+        interfaceAluno.style.display = 'block'; 
+        interfaceAluno.classList.remove('hidden'); 
+    } else {
+        console.error("❌ ERRO: DIV 'interface-aluno' não encontrada no HTML!");
+    }
 
     // 2. Busca os dados do aluno no banco
     const docRef = window.doc(window.db, "clients", cid, "dados", idFicha);
@@ -442,7 +447,7 @@
         const dados = docSnap.data();
         console.log("✅ Dados recebidos pelo renderizador:", dados);
         
-        // Atualiza nome (usando try/catch para não quebrar se o elemento sumir)
+        // Atualiza nome
         try {
             document.getElementById('aluno-nome-display').innerText = dados.alunoNome || "Olá, Cliente!";
         } catch(e) { console.error("❌ Erro ao atualizar nome:", e); }
