@@ -394,6 +394,35 @@
         alert("✅ Mensagem de entrega copiada para o WhatsApp do aluno!");
     });
 };
+
+    window.renderizarAreaAluno = async (cid, idFicha) => {
+    // 1. Esconde a gestão e mostra a área do aluno
+    document.getElementById('interface-dinamica').classList.add('hidden');
+    document.getElementById('interface-aluno').classList.remove('hidden');
+
+    // 2. Busca os dados do aluno no banco
+    const docRef = doc(db, "clients", cid, "dados", idFicha);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+        const dados = docSnap.data();
+        document.getElementById('aluno-nome-display').innerText = dados.alunoNome || "Olá, Aluno!";
+        
+        // 3. Exibe o vídeo se existir
+        if (dados.linkVideoTreino) {
+            window.exibirVideoParaAluno(dados.linkVideoTreino);
+        }
+    }
+};
+
+window.exibirVideoParaAluno = (url) => {
+    const videoId = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('/').pop();
+    document.getElementById('container-video-aluno').innerHTML = `
+        <h3 class="text-white font-bold text-xs uppercase mb-3">Vídeo do Treino</h3>
+        <iframe class="w-full h-56 rounded-lg" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+    `;
+};
+    
 </script>
 </body>
 </html>
