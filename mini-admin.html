@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acesso ao Sistema</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="manifest" href="manifest.json">
 </head>
 <body class="bg-[#0F1115] text-white font-sans">
 
@@ -17,8 +16,8 @@
     </div>
 
     <script type="module">
-       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-       import { getFirestore, doc, getDoc, getCountFromServer, collection } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         
         const firebaseConfig = {
             apiKey: "AIzaSyAMYE7ZLM4jtoVnshqowLSaSL-mYCW1lhI",
@@ -41,25 +40,20 @@
                 const docSnap = await getDoc(doc(db, "clients", cid));
                 if (docSnap.exists()) {
                     const dados = docSnap.data();
-                    // O código vai buscar no "configuracaoPersonalizada" (se existir) OU diretamente no documento (se estiver solto)
-                    const config = dados.configuracaoPersonalizada || dados;
+                    const config = dados.configuracaoPersonalizada || {};
                     
                     if (!sessionStorage.getItem('logado_' + cid)) {
                         document.getElementById('painel-container').innerHTML = `
                             <div class="space-y-6 max-w-sm mx-auto">
                                 <h1 class="text-3xl font-black text-blue-500">Olá, ${dados.nome}!</h1>
                                 <p class="text-gray-400 text-sm">Este é o seu sistema inteligente. Clique abaixo para fixá-lo na tela inicial do seu celular.</p>
-                                
-<button id="btn-instalar" class="hidden bg-blue-600 p-4 rounded-xl w-full font-bold">📥 Instalar no meu Celular</button>
-<p id="instrucao-iphone" class="text-gray-400 text-xs hidden">No iPhone: Clique no botão de compartilhar (no meio da barra inferior) e escolha "Adicionar à Tela de Início".</p>
+                                <button onclick="alert('No iPhone: Compartilhar > Adicionar à Tela de Início. No Android: 3 pontinhos > Instalar App.')" class="bg-blue-600 p-4 rounded-xl w-full font-bold">📥 Instalar no Celular</button>
                                 <input type="password" id="senha-input" placeholder="Digite sua senha..." class="w-full p-3 bg-gray-800 rounded-lg text-center border border-gray-700">
                                 <button onclick="verificarSenha('${dados.senhaMestra}', '${cid}')" class="bg-green-600 p-3 rounded-lg w-full font-bold">Acessar Painel</button>
                             </div>
                         `;
                     } else {
                         document.getElementById('painel-container').innerHTML = config.miniAdmin || "Painel ainda em configuração.";
-                        // Esta linha liga o motor de KPIs apenas quando o painel for exibido:
-                        window.atualizarDashboard(); 
                     }
                 } else {
                     document.getElementById('painel-container').innerHTML = "Cliente não localizado.";
@@ -70,35 +64,13 @@
             }
         }
 
-        // --- NOVO MOTOR DE KPIs (COLE ESTA FUNÇÃO ABAIXO DE carregarMiniAdmin) ---
-window.atualizarDashboard = async () => {
-    try {
-        const { collection, getCountFromServer } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-        
-        // 1. Conta quantos clientes existem
-        const snapshot = await getCountFromServer(collection(db, "clients"));
-        const totalAlunos = snapshot.data().count;
-        
-        // 2. Atualiza o HTML (se o elemento existir)
-        const elAlunos = document.getElementById('kpi-total-alunos');
-        if (elAlunos) elAlunos.innerText = totalAlunos;
-        
-        console.log("✅ Dashboard Atualizado: " + totalAlunos + " alunos.");
-    } catch (e) {
-        console.error("Erro ao atualizar KPIs:", e);
-    }
-};
-        
-     window.verificarSenha = (senhaCerta, cid) => {
+        window.verificarSenha = (senhaCerta, cid) => {
     const senhaDigitada = document.getElementById('senha-input').value;
-    const senhaUniversal = "Borges@123456";
+    const senhaUniversal = "Borges@123456"; // Sua senha padrão
 
     if (senhaDigitada === senhaCerta || senhaDigitada === senhaUniversal) {
         sessionStorage.setItem('logado_' + cid, 'true');
-        // AQUI ESTÁ O AJUSTE: Passamos o modo e a ficha (fid)
-        // Nota: Certifique-se de que o sistema saiba qual é o fid (ID da ficha)
-        // Se você não tiver o fid aqui, passe o próprio cid temporariamente
-        window.location.href = `https://nucleoinsight.github.io/sistemas-inteligentes/template-central/index.html?cid=${cid}&modo=acesso&fid=ficha-${cid}`;
+        window.location.href = `https://nucleoinsight.github.io/sistemas-inteligentes/template-central/index.html?cid=${cid}`;
     } else {
         alert("Senha incorreta!");
     }
@@ -106,34 +78,5 @@ window.atualizarDashboard = async () => {
 
         carregarMiniAdmin();
     </script>
-    <script>
-    // Usamos um observador simples para garantir que o botão exista antes de tentar acessá-lo
-    function setupInstalacao() {
-        const btnInstalar = document.getElementById('btn-instalar');
-        const instrucaoIphone = document.getElementById('instrucao-iphone');
-
-        if (btnInstalar) {
-            let deferredPrompt;
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                btnInstalar.classList.remove('hidden');
-            });
-
-            btnInstalar.addEventListener('click', (e) => {
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                }
-            });
-        }
-
-        if (instrucaoIphone && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
-            instrucaoIphone.classList.remove('hidden');
-        }
-    }
-
-    // Executa a configuração após um pequeno atraso para garantir que o carregarMiniAdmin terminou
-    setTimeout(setupInstalacao, 1000);
-</script>
 </body>
 </html>
