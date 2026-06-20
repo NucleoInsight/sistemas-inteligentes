@@ -382,6 +382,16 @@
         alert("✅ Texto copiado! Agora é só colar no WhatsApp do aluno.");
     });
 };
+
+    window.copiarLinkDoInput = () => {
+    const input = document.getElementById('link-acesso-aluno');
+    navigator.clipboard.writeText(input.value).then(() => {
+        alert("✅ Link copiado com sucesso!");
+    }).catch(err => {
+        console.error('Erro ao copiar: ', err);
+        alert("Erro ao copiar o link.");
+    });
+};
     </script>
 
     <script>
