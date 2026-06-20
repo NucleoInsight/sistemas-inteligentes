@@ -183,10 +183,11 @@ window.renderizarPagina = async (tipo, dados = null) => {
         }
     };
 
-    // --- DISPARO DO NOVO MOTOR ---
-// Substitua o gatilho antigo pela chamada do novo motor:
-window.renderizarPagina('gestao');
-
+   // --- DISPARO SEGURO DO MOTOR ---
+    window.onload = async () => {
+        // Inicializa o motor de renderização automaticamente ao carregar a página
+        await window.renderizarPagina('gestao');
+    };
     // MOTOR INTELIGENTE CENTRALIZADO
     // MOTOR INTELIGENTE CENTRALIZADO (VERSÃO BLINDADA)
     window.acaoInteligente = async (tipo, subcolecao = 'ficha') => {
