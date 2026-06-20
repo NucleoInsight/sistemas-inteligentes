@@ -77,7 +77,31 @@
     }
 };
 
-        carregarMiniAdmin();
+       let deferredPrompt;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        const btn = document.getElementById('btnInstalar');
+        btn.classList.remove('hidden');
+        btn.addEventListener('click', () => {
+            deferredPrompt.prompt();
+        });
+    });
+
+    // Lógica para iPhone (iOS)
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+        const btnIphone = document.getElementById('btnInstalar');
+        const txtIphone = document.getElementById('instrucaoIphone');
+        btnIphone.innerText = "📤 Compartilhar";
+        btnIphone.classList.remove('hidden');
+        txtIphone.classList.remove('hidden');
+        btnIphone.onclick = () => {
+            alert("Toque no ícone de COMPARTILHAR do Safari e escolha 'Adicionar à Tela de Início'.");
+        };
+    }
+
+    carregarMiniAdmin();
     </script>
 </body>
 </html>
