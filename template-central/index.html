@@ -306,18 +306,29 @@ window.renderizarGestaoAlunos = async () => {
         }
     };
 
-  window.renderizarPagina = async (tipo, dados = null) => {
+ window.renderizarPagina = async (tipo, dados = null) => {
     const palco = document.getElementById('palco-principal');
     const interfaceDinamica = document.getElementById('interface-dinamica');
+    const loading = document.getElementById('loading');
     
-    interfaceDinamica.classList.remove('hidden');
-    interfaceDinamica.style.display = 'block';
+    // 1. Força de visibilidade absoluta
+    if (interfaceDinamica) {
+        interfaceDinamica.classList.remove('hidden');
+        interfaceDinamica.style.display = 'block';
+    }
 
+    // 2. Limpeza
+    palco.innerHTML = '<div class="text-white p-10 text-center">Carregando sistema...</div>';
+
+    // 3. Lógica de Gestão
     if (tipo === 'gestao') {
+        // Define termos dinâmicos (usando o objeto dados ou padrão)
+        const termo = dados?.termo || 'Registros';
+        
         palco.innerHTML = `
             <div class="grid grid-cols-2 gap-4 mb-6">
                 <div class="bg-blue-600/10 p-4 rounded-xl border border-blue-500/20">
-                    <p class="text-blue-400 text-[10px] uppercase">Total de ${dados?.termo || 'Registros'}</p>
+                    <p class="text-blue-400 text-[10px] uppercase">Total de ${termo}</p>
                     <h3 class="text-2xl font-bold" id="kpi-total-alunos">0</h3>
                 </div>
                 <div class="bg-red-600/10 p-4 rounded-xl border border-red-500/20">
@@ -326,9 +337,20 @@ window.renderizarGestaoAlunos = async () => {
                 </div>
             </div>
             <div id="area-lista-alunos"></div>`;
+        
         await window.atualizarDashboard();
         await window.renderizarGestaoAlunos();
+    } 
+    // 4. Lógica de Aluno/Cliente
+    else if (tipo === 'aluno') {
+        palco.innerHTML = `
+            <div id="interface-aluno-ativo" class="p-6 bg-[#171A21] rounded-xl text-white">
+                <h1 id="aluno-nome-display" class="text-2xl font-bold mb-4">${dados?.alunoNome || 'Olá, Cliente!'}</h1>
+                <div id="container-video-aluno"></div>
+            </div>`;
     }
+
+    if (loading) loading.classList.add('hidden');
 };
 
     window.filtrarAlunos = () => {
