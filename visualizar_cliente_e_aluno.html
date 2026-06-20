@@ -30,58 +30,59 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    async function carregarDadosAluno() {
+    async function carregarVisualizacao() {
         const params = new URLSearchParams(window.location.search);
-        const cid = params.get('cid'); // ID do dono do sistema
-        const aid = params.get('aid'); // ID do aluno específico
+        const cid = params.get('cid');
+        const aid = params.get('aid');
 
-        if (!cid || !aid) {
-            document.getElementById('app').innerHTML = "Link inválido.";
+        if (!cid || !aid) return;
+
+        const [clienteSnap, alunoSnap] = await Promise.all([
+            getDoc(doc(db, "clients", cid)),
+            getDoc(doc(db, "clients", cid, "dados", aid))
+        ]);
+
+        if (!clienteSnap.exists() || !alunoSnap.exists()) {
+            document.getElementById('app').innerHTML = "Dados não encontrados.";
             return;
         }
 
-        try {
-            // Busca na subcoleção de dados do cliente (a estrutura que usamos é 'dados')
-            const docRef = doc(db, "clients", cid, "dados", aid);
-            const snap = await getDoc(docRef);
+        const config = clienteSnap.data().configuracaoPersonalizada;
+        const dados = alunoSnap.data();
 
-            if (snap.exists()) {
-                const d = snap.data();
-                
-                // Aqui estamos desenhando a interface de forma simples
-                // Você pode substituir este bloco pelo "HTML de Campos" que falamos antes
-                document.getElementById('app').innerHTML = `
-                    <div class="bg-[#171A21] p-6 rounded-xl border border-gray-800">
-                        <h2 class="text-2xl font-black uppercase mb-4">${d.alunoNome || 'Sem Nome'}</h2>
-                        <div class="space-y-4">
-                            <div><label class="text-[10px] text-gray-500 uppercase">Profissão</label><p>${d.alunoProfissao || 'Não informado'}</p></div>
-                            <div><label class="text-[10px] text-gray-500 uppercase">Objetivo</label><p>${d.objetivoCapoeira || 'Nenhum'}</p></div>
-                            
-                            <div class="mt-8 border-t border-gray-800 pt-6">
-                                <h3 class="text-xs font-bold uppercase mb-3">Vídeo de Treino</h3>
-                                <div id="video-container" class="w-full aspect-video bg-black rounded-lg overflow-hidden">
-                                    <iframe id="video-frame" class="w-full h-full" src="" frameborder="0" allowfullscreen></iframe>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
+        // 1. Injeta o design completo do cliente
+        document.getElementById('app').innerHTML = config.campos;
 
-                // Lógica do vídeo
-                const videoId = d.linkVideoTreino ? d.linkVideoTreino.split('v=')[1]?.substring(0,11) : null;
-                if (videoId) {
-                    document.getElementById('video-frame').src = `https://www.youtube.com/embed/${videoId}`;
-                } else {
-                    document.getElementById('video-container').innerHTML = "<p class='p-4 text-center text-xs'>Nenhum vídeo disponível.</p>";
-                }
+        // 2. BLOQUEIO E REMOÇÃO DE BOTÕES ADMINISTRATIVOS
+        document.querySelectorAll('input, select, textarea, button').forEach(el => {
+            if(el.tagName === 'BUTTON') {
+                el.remove();
             } else {
-                document.getElementById('app').innerHTML = "Ficha não encontrada.";
+                el.disabled = true;
+                el.classList.add('opacity-70');
             }
-        } catch (e) {
-            console.error(e);
-            document.getElementById('app').innerHTML = "Erro ao carregar dados.";
+        });
+
+        // 3. PREENCHIMENTO DOS DADOS
+        Object.keys(dados).forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.type === 'checkbox' ? el.checked = dados[id] : el.value = dados[id];
+            }
+        });
+
+        // 4. MOTOR DE VÍDEOS (Agora com suporte a múltiplos)
+        const linkTreino = dados.linkVideoTreino;
+        const containerVideo = document.getElementById('container-video');
+        if (containerVideo && linkTreino) {
+            const links = linkTreino.split(',');
+            containerVideo.innerHTML = links.map(url => `
+                <div class="mb-4">
+                    <iframe class="w-full h-64 rounded-xl border border-gray-800" src="https://www.youtube.com/embed/${url.trim().split('v=')[1]?.substring(0,11)}" frameborder="0" allowfullscreen></iframe>
+                </div>
+            `).join('');
         }
     }
 
-    carregarDadosAluno();
+    carregarVisualizacao();
 </script>
