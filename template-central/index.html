@@ -325,20 +325,6 @@ window.renderizarGestaoAlunos = async () => {
         await window.atualizarDashboard();
         await window.renderizarGestaoAlunos();
     } 
-    else if (tipo === 'aluno') {
-        palco.innerHTML = `
-            <div id="interface-aluno" class="p-6 bg-[#171A21] rounded-xl text-white">
-                <h1 id="aluno-nome-display" class="text-2xl font-bold mb-4"></h1>
-                <div id="container-video-aluno"></div>
-            </div>`;
-        
-        if (dados) {
-            document.getElementById('aluno-nome-display').innerText = dados.alunoNome || "Olá, Cliente!";
-            if (dados.linkVideoTreino) {
-                window.exibirVideoParaAluno(dados.linkVideoTreino);
-            }
-        }
-    }
 
     // 3. COMANDO FINAL: Esconde a tela de loading
     if (loading) loading.classList.add('hidden');
