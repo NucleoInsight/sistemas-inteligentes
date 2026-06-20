@@ -257,18 +257,11 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // TORNA AS FERRAMENTAS GLOBAIS
+        // INICIALIZAÇÃO E EXPOSIÇÃO GLOBAL
         window.db = db;
         window.auth = auth;
-        window.getDocs = getDocs;
-        window.getDoc = getDoc;
-        window.collection = collection;
-        window.doc = doc;
-        window.setDoc = setDoc;
-        window.updateDoc = updateDoc;
-        window.addDoc = addDoc;
-        window.query = query;
-        window.where = where;
+        // Funções Firestore/Auth globais
+        Object.assign(window, { getDocs, getDoc, collection, doc, setDoc, updateDoc, addDoc, query, where });
 
         async function buscarDadosDoCliente(cid) {
             try {
