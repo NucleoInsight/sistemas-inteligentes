@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Ficha - Portal do Cliente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#0F1115] text-white p-4 font-sans">
+
+    <div id="app" class="max-w-xl mx-auto">
+        <div class="text-center py-10">
+            <h1 class="text-xl font-black">Carregando informações...</h1>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAMYE7ZLM4jtoVnshqowLSaSL-mYCW1lhI",
+            projectId: "sistemas-inteligentes-38cdc",
+            // ... (Use a mesma config que você já tem)
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function carregarDadosAluno() {
+            const params = new URLSearchParams(window.location.search);
+            const cid = params.get('cid'); // ID do dono do sistema
+            const aid = params.get('aid'); // ID do aluno específico
+
+            if (!cid || !aid) {
+                document.getElementById('app').innerHTML = "Link inválido.";
+                return;
+            }
+
+            try {
+                // Busca na subcoleção de alunos do cliente
+                const docRef = doc(db, "clients", cid, "alunos", aid);
+                const snap = await getDoc(docRef);
+
+                if (snap.exists()) {
+                    const d = snap.data();
+                    document.getElementById('app').innerHTML = `
+                        <div class="bg-[#171A21] p-6 rounded-xl border border-gray-800">
+                            <h2 class="text-2xl font-black uppercase mb-4">${d.alunoNome}</h2>
+                            <p class="text-gray-400 text-sm mb-6">Portal de Acompanhamento</p>
+                            
+                            <div class="space-y-4">
+                                <div><label class="text-[10px] text-gray-500 uppercase">Profissão</label><p>${d.alunoProfissao || 'Não informado'}</p></div>
+                                <div><label class="text-[10px] text-gray-500 uppercase">Objetivo</label><p>${d.objetivoCapoeira || 'Nenhum'}</p></div>
+                                
+                                <div class="mt-8 border-t border-gray-800 pt-6">
+                                    <h3 class="text-xs font-bold uppercase mb-3">Vídeo de Treino</h3>
+                                    <div id="video-container" class="w-full aspect-video bg-black rounded-lg overflow-hidden">
+                                        <iframe id="video-frame" class="w-full h-full" src="" frameborder="0" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    // Lógica do vídeo
+                    const videoId = d.linkVideoTreino ? d.linkVideoTreino.split('v=')[1]?.substring(0,11) : null;
+                    if (videoId) {
+                        document.getElementById('video-frame').src = `https://www.youtube.com/embed/${videoId}`;
+                    } else {
+                        document.getElementById('video-container').innerHTML = "<p class='p-4 text-center text-xs'>Nenhum vídeo disponível.</p>";
+                    }
+                }
+            } catch (e) {
+                document.getElementById('app').innerHTML = "Erro ao carregar dados.";
+            }
+        }
+
+        carregarDadosAluno();
+    </script>
+</body>
+</html>
