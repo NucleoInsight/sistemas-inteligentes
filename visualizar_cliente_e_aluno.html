@@ -58,15 +58,16 @@
                 document.getElementById('app').innerHTML = `
                     <div class="space-y-8">
                         <div class="text-center space-y-2">
-                            <div class="w-24 h-24 mx-auto bg-gray-800 rounded-full overflow-hidden border-2 border-blue-500 mb-4">
-                                <img id="aluno-foto" src="${dados.alunoFoto || 'https://via.placeholder.com/150'}" class="w-full h-full object-cover">
-                            </div>
-                            <h1 class="text-2xl font-black text-white uppercase">Olá, ${dados.alunoNome || 'Aluno'}!</h1>
-                            <p class="text-blue-400 font-mono text-xs uppercase tracking-widest">Bem-vindo à sua Área Exclusiva</p>
-                        </div>
-                        <div class="opacity-90">${config.campos}</div>
-                    </div>
-                `;
+                            // 3. BLOQUEIO INTELIGENTE (Trava tudo menos o botão de upload de foto)
+            document.querySelectorAll('input, select, textarea, button').forEach(el => {
+                // Não removemos botões, apenas desabilitamos se não forem de upload
+                if (el.id !== 'upload-foto-aluno' && el.tagName === 'BUTTON') {
+                    el.remove();
+                } else if (el.id !== 'upload-foto-aluno') {
+                    el.disabled = true;
+                    el.classList.add('opacity-70');
+                }
+            });
 
                 // 2. BLOQUEIO E REMOÇÃO DE BOTÕES
                 document.querySelectorAll('input, select, textarea, button').forEach(el => {
