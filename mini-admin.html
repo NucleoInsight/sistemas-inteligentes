@@ -65,9 +65,9 @@
             }
         }
 
-        window.verificarSenha = (senhaCerta, cid) => {
+       window.verificarSenha = (senhaCerta, cid) => {
     const senhaDigitada = document.getElementById('senha-input').value;
-    const senhaUniversal = "Borges@123456"; // Sua senha padrão
+    const senhaUniversal = "Borges@123456";
 
     if (senhaDigitada === senhaCerta || senhaDigitada === senhaUniversal) {
         sessionStorage.setItem('logado_' + cid, 'true');
@@ -77,32 +77,31 @@
     }
 };
 
- let deferredPrompt;
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+});
 
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-    });
-
+// Esta função garante que o botão só será buscado quando existir na tela
+window.configurarBotaoInstalar = () => {
     const btn = document.getElementById('btnInstalar');
-    const txtIphone = document.getElementById('instrucaoIphone');
+    if (!btn) return;
 
     btn.addEventListener('click', () => {
-        // Se for iPhone/iOS
         if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
-            alert("No iPhone: Toque no botão de COMPARTILHAR (ícone de quadrado com seta) no rodapé do Safari e selecione 'Adicionar à Tela de Início'.");
-        } 
-        // Se for Android e o evento estiver disponível
-        else if (deferredPrompt) {
+            alert("No iPhone: Toque no botão de COMPARTILHAR (ícone de quadrado com seta) e selecione 'Adicionar à Tela de Início'.");
+        } else if (deferredPrompt) {
             deferredPrompt.prompt();
-        } 
-        // Se for Android mas não disparou o evento (já instalado ou navegador não suporta)
-        else {
+        } else {
             alert("No Android: Toque nos 3 pontinhos do menu do Chrome e selecione 'Instalar aplicativo' ou 'Adicionar à tela de início'.");
         }
     });
+};
 
-    carregarMiniAdmin();
+carregarMiniAdmin();
+// Chama a configuração do botão logo após carregar o mini admin
+setTimeout(window.configurarBotaoInstalar, 500);
     </script>
 </body>
 </html>
