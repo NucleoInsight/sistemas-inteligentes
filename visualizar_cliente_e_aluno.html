@@ -54,25 +54,29 @@
                 const config = clienteSnap.data().configuracaoPersonalizada;
                 const dados = alunoSnap.data();
 
-                // 1. Estrutura do Portal + Injeção do template
+                // 1. Área Premium (Casca do Portal)
                 document.getElementById('app').innerHTML = `
                     <div class="space-y-8">
                         <div class="text-center space-y-2">
-                            <div class="w-24 h-24 mx-auto bg-gray-800 rounded-full overflow-hidden border-2 border-blue-500 mb-4">
-                                <img id="aluno-foto-display" src="${dados.alunoFoto || 'https://via.placeholder.com/150'}" class="w-full h-full object-cover">
+                            <div class="relative w-24 h-24 mx-auto group">
+                                <div class="w-24 h-24 bg-gray-800 rounded-full overflow-hidden border-2 border-blue-500 mb-4">
+                                    <img id="aluno-foto-display" src="${dados.alunoFoto || 'https://via.placeholder.com/150'}" class="w-full h-full object-cover">
+                                </div>
+                                <input type="file" id="upload-foto-aluno" accept="image/*" class="hidden" onchange="window.subirFoto(this)">
+                                <button type="button" onclick="document.getElementById('upload-foto-aluno').click()" class="absolute bottom-4 right-0 bg-blue-600 p-2 rounded-full text-white shadow-lg text-[10px] hover:bg-blue-500 transition-all">📷</button>
                             </div>
                             <h1 class="text-2xl font-black text-white uppercase">${dados.alunoNome || 'Bem-vindo'}</h1>
-                            <p class="text-blue-400 font-mono text-xs uppercase tracking-widest">Área Exclusiva do Aluno</p>
+                            <p class="text-blue-400 font-mono text-xs uppercase tracking-widest">Área Exclusiva</p>
                         </div>
                         <div class="opacity-95">${config.campos}</div>
                     </div>
                 `;
 
-                // 2. BLOQUEIO INTELIGENTE (Trava tudo menos o botão de upload)
+                // 2. BLOQUEIO INTELIGENTE
                 document.querySelectorAll('input, select, textarea, button').forEach(el => {
-                    if (el.id !== 'upload-foto-aluno' && el.tagName === 'BUTTON') {
+                    if (el.id !== 'upload-foto-aluno' && el.tagName === 'BUTTON' && !el.onclick?.toString().includes('upload-foto-aluno')) {
                         el.remove();
-                    } else if (el.id !== 'upload-foto-aluno') {
+                    } else if (el.id !== 'upload-foto-aluno' && el.tagName !== 'BUTTON') {
                         el.disabled = true;
                         el.classList.add('opacity-70');
                     }
@@ -103,7 +107,6 @@
             }
         }
 
-        // Função para subir foto
         window.subirFoto = async function(input) {
             const file = input.files[0];
             if (!file) return;
@@ -127,6 +130,14 @@
                     alert("✅ Foto atualizada!");
                 }
             } catch (e) { alert("Erro no upload."); } finally { preview.style.opacity = '1'; }
+        };
+
+        window.exibirVideo = function(url) {
+            const container = document.getElementById('container-video');
+            if (container) {
+                const videoId = url.includes('youtu.be/') ? url.split('/').pop() : url.split('v=')[1]?.substring(0,11);
+                container.innerHTML = `<iframe class="w-full h-64 rounded-xl border border-gray-800" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
+            }
         };
 
         carregarVisualizacao();
