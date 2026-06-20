@@ -89,13 +89,16 @@ window.atualizarDashboard = async () => {
     }
 };
         
-        window.verificarSenha = (senhaCerta, cid) => {
+     window.verificarSenha = (senhaCerta, cid) => {
     const senhaDigitada = document.getElementById('senha-input').value;
-    const senhaUniversal = "Borges@123456"; // Sua senha padrão
+    const senhaUniversal = "Borges@123456";
 
     if (senhaDigitada === senhaCerta || senhaDigitada === senhaUniversal) {
         sessionStorage.setItem('logado_' + cid, 'true');
-        window.location.href = `https://nucleoinsight.github.io/sistemas-inteligentes/template-central/index.html?cid=${cid}`;
+        // AQUI ESTÁ O AJUSTE: Passamos o modo e a ficha (fid)
+        // Nota: Certifique-se de que o sistema saiba qual é o fid (ID da ficha)
+        // Se você não tiver o fid aqui, passe o próprio cid temporariamente
+        window.location.href = `https://nucleoinsight.github.io/sistemas-inteligentes/template-central/index.html?cid=${cid}&modo=acesso&fid=ficha-${cid}`;
     } else {
         alert("Senha incorreta!");
     }
