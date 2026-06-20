@@ -159,24 +159,7 @@ window.renderizarGestaoAlunos = async () => {
             </div>
         </div>`;
 };
-window.renderizarPagina = async (tipo, dados = null) => {
-    const palco = document.getElementById('palco-principal');
-    palco.innerHTML = '<div class="text-white">Carregando...</div>'; // Feedback visual
 
-    if (tipo === 'gestao') {
-        // Desenha a interface do Professor
-        palco.innerHTML = `<div>... código do painel do professor ...</div>`;
-        await window.atualizarDashboard();
-        await window.renderizarGestaoAlunos();
-    } 
-    else if (tipo === 'aluno') {
-        // Desenha a interface do Aluno
-        palco.innerHTML = `<div id="interface-aluno">... interface do treino ...</div>`;
-        // Aqui você injeta os dados do aluno diretamente
-        document.getElementById('aluno-nome-display').innerText = dados.alunoNome;
-    }
-};
-    
         window.registrarAcao = async (exercicio) => {
             try {
                 const params = new URLSearchParams(window.location.search);
