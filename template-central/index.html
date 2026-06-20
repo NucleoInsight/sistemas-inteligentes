@@ -307,26 +307,42 @@ window.renderizarGestaoAlunos = async () => {
     };
 
   window.renderizarPagina = async (tipo, dados = null) => {
-    const palco = document.getElementById('palco-principal');
-    const loading = document.getElementById('loading');
-    
-    // 1. Limpeza total do palco para evitar conflitos
-    palco.innerHTML = '<div class="text-white p-10 text-center">Carregando interface...</div>';
-
-    // 2. Lógica de renderização por injeção
-    if (tipo === 'gestao') {
-        palco.innerHTML = `
-            <div id="container-painel-gestor" class="w-full">
-                <div id="area-lista-alunos"></div>
-            </div>`;
+        const palco = document.getElementById('palco-principal');
+        const interfaceDinamica = document.getElementById('interface-dinamica');
+        const loading = document.getElementById('loading');
         
-        await window.atualizarDashboard();
-        await window.renderizarGestaoAlunos();
-    } 
+        // Garante que a interface esteja visível
+        if (interfaceDinamica) {
+            interfaceDinamica.classList.remove('hidden');
+            interfaceDinamica.style.display = 'block';
+        }
 
-    // 3. COMANDO FINAL: Esconde a tela de loading
-    if (loading) loading.classList.add('hidden');
-};
+        // Limpeza do palco
+        palco.innerHTML = '<div class="text-white p-10 text-center">Carregando interface...</div>';
+
+        // Lógica de GESTÃO
+        if (tipo === 'gestao') {
+            palco.innerHTML = `
+                <div id="container-painel-gestor" class="w-full">
+                    <div id="area-lista-alunos"></div>
+                </div>`;
+            await window.atualizarDashboard();
+            await window.renderizarGestaoAlunos();
+        } 
+        // Lógica de ALUNO
+        else if (tipo === 'aluno') {
+            palco.innerHTML = `
+                <div id="interface-aluno-ativo" class="p-6 bg-[#171A21] rounded-xl text-white">
+                    <h1 id="aluno-nome-display" class="text-2xl font-bold mb-4">${dados?.alunoNome || 'Olá, Aluno!'}</h1>
+                    <div id="container-video-aluno"></div>
+                </div>`;
+            // Se você tiver um método para buscar o link do vídeo, chame aqui:
+            // if (dados?.link) window.exibirVideoParaAluno(dados.link);
+        }
+
+        // Esconde o loading
+        if (loading) loading.classList.add('hidden');
+    };
 
     window.filtrarAlunos = () => {
         const termo = document.getElementById('buscaAluno').value.toLowerCase();
