@@ -308,39 +308,29 @@ window.renderizarGestaoAlunos = async () => {
         }
     };
 
- window.renderizarPagina = async (tipo, dados = null) => {
-    const palco = document.getElementById('palco-principal');
-    const interfaceDinamica = document.getElementById('interface-dinamica');
-    const headerFixo = document.getElementById('custom-header');
+window.renderizarPagina = async (tipo, dados = null) => {
     const params = new URLSearchParams(window.location.search);
-    const modo = params.get('modo'); 
-    
-    // 1. Força a visibilidade
-    interfaceDinamica.classList.remove('hidden');
-    interfaceDinamica.style.display = 'block';
-
-    // 2. Busca configuração no Firebase
     const cid = params.get('cid');
-    let config = { apresentacao: '', campos: '', miniAdmin: '' };
+    const modo = params.get('modo');
     
+    // Busca configuração no Firebase
+    let config = { apresentacao: '', campos: '', miniAdmin: '' };
     if (cid) {
         const docSnap = await window.getDoc(window.doc(window.db, "clients", cid));
-        if (docSnap.exists()) {
-            config = docSnap.data().configuracaoPersonalizada || {};
-        }
+        if (docSnap.exists()) config = docSnap.data().configuracaoPersonalizada || {};
     }
 
-    // 3. Renderização Dinâmica baseada no Modo ou Tipo
+    // Limpa a tela antes de injetar
+    document.body.innerHTML = '<div id="palco-principal" class="p-4"></div>';
+    const palco = document.getElementById('palco-principal');
+
     if (modo === 'preencher') {
-        if (headerFixo) headerFixo.style.display = 'flex';
-        palco.innerHTML = `<div id="container-dinamico">${config.campos || 'Aguardando campos...'}</div>`;
+        palco.innerHTML = `<div>${config.apresentacao || ''}<div class="mt-6">${config.campos || ''}</div></div>`;
     } 
     else if (modo === 'acesso') {
-        if (headerFixo) headerFixo.style.display = 'none';
         await window.renderizarAreaAluno(cid, params.get('fid'));
     } 
     else if (tipo === 'gestao') {
-        if (headerFixo) headerFixo.style.display = 'flex';
         palco.innerHTML = config.miniAdmin || `<div class="p-6 text-center">Painel não configurado.</div>`;
         await window.atualizarDashboard();
         await window.renderizarGestaoAlunos();
