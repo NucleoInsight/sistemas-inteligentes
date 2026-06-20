@@ -312,46 +312,38 @@ window.renderizarGestaoAlunos = async () => {
     const palco = document.getElementById('palco-principal');
     const interfaceDinamica = document.getElementById('interface-dinamica');
     const headerFixo = document.getElementById('custom-header');
+    const params = new URLSearchParams(window.location.search);
+    const modo = params.get('modo'); 
     
     // 1. Força a visibilidade
     interfaceDinamica.classList.remove('hidden');
     interfaceDinamica.style.display = 'block';
 
-    // 2. Busca configuração no Firebase (se for modo aluno/acesso)
-    const params = new URLSearchParams(window.location.search);
+    // 2. Busca configuração no Firebase
     const cid = params.get('cid');
     let config = { apresentacao: '', campos: '', miniAdmin: '' };
     
     if (cid) {
         const docSnap = await window.getDoc(window.doc(window.db, "clients", cid));
         if (docSnap.exists()) {
-            const clientData = docSnap.data();
-            config = clientData.configuracaoPersonalizada || {};
+            config = docSnap.data().configuracaoPersonalizada || {};
         }
     }
 
-    // 3. Renderização Dinâmica
-    if (tipo === 'gestao') {
+    // 3. Renderização Dinâmica baseada no Modo ou Tipo
+    if (modo === 'preencher') {
+        if (headerFixo) headerFixo.style.display = 'flex';
+        palco.innerHTML = `<div id="container-dinamico">${config.campos || 'Aguardando campos...'}</div>`;
+    } 
+    else if (modo === 'acesso') {
+        if (headerFixo) headerFixo.style.display = 'none';
+        await window.renderizarAreaAluno(cid, params.get('fid'));
+    } 
+    else if (tipo === 'gestao') {
         if (headerFixo) headerFixo.style.display = 'flex';
         palco.innerHTML = config.miniAdmin || `<div class="p-6 text-center">Painel não configurado.</div>`;
         await window.atualizarDashboard();
-    } 
-    else if (tipo === 'aluno') {
-        if (headerFixo) headerFixo.style.display = 'none';
-        
-        // Aqui o motor injeta o HTML que você salvou no banco!
-        palco.innerHTML = `
-            ${config.apresentacao}
-            <div id="container-form-aluno" class="mt-6">${config.campos}</div>
-        `;
-        
-        // Preenche os campos se houver dados do aluno
-        if (dados) {
-            Object.keys(dados).forEach(key => {
-                const el = document.getElementById(key);
-                if (el) el.value = dados[key];
-            });
-        }
+        await window.renderizarGestaoAlunos();
     }
 };
     window.filtrarAlunos = () => {
