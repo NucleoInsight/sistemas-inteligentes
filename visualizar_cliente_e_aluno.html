@@ -10,94 +10,115 @@
 
     <div id="app" class="max-w-xl mx-auto">
         <div class="text-center py-10">
-            <h1 class="text-xl font-black">Carregando informações...</h1>
+            <h1 class="text-xl font-black">Conectando ao portal...</h1>
         </div>
     </div>
 
     <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyAMYE7ZLM4jtoVnshqowLSaSL-mYCW1lhI",
-        authDomain: "sistemas-inteligentes-38cdc.firebaseapp.com",
-        projectId: "sistemas-inteligentes-38cdc",
-        storageBucket: "sistemas-inteligentes-38cdc.firebasestorage.app",
-        messagingSenderId: "632476998816",
-        appId: "1:632476998816:web:3cb6936a5e3517b09dbdc5"
-    };
+        const firebaseConfig = {
+            apiKey: "AIzaSyAMYE7ZLM4jtoVnshqowLSaSL-mYCW1lhI",
+            authDomain: "sistemas-inteligentes-38cdc.firebaseapp.com",
+            projectId: "sistemas-inteligentes-38cdc",
+            storageBucket: "sistemas-inteligentes-38cdc.firebasestorage.app",
+            messagingSenderId: "632476998816",
+            appId: "1:632476998816:web:3cb6936a5e3517b09dbdc5"
+        };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-   async function carregarVisualizacao() {
-        const params = new URLSearchParams(window.location.search);
-        const cid = params.get('cid');
-        const aid = params.get('aid');
+        async function carregarVisualizacao() {
+            const params = new URLSearchParams(window.location.search);
+            const cid = params.get('cid');
+            const aid = params.get('aid');
 
-        if (!cid || !aid) {
-            document.getElementById('app').innerHTML = "Link inválido.";
-            return;
-        }
-
-        try {
-            // 1. Busca Template do Cliente + Dados do Aluno
-            const [clienteSnap, alunoSnap] = await Promise.all([
-                getDoc(doc(db, "clients", cid)),
-                getDoc(doc(db, "clients", cid, "dados", aid))
-            ]);
-
-            if (!clienteSnap.exists() || !alunoSnap.exists()) {
-                document.getElementById('app').innerHTML = "Dados não encontrados.";
+            if (!cid || !aid) {
+                document.getElementById('app').innerHTML = "Link inválido.";
                 return;
             }
 
-            const config = clienteSnap.data().configuracaoPersonalizada;
-            const dados = alunoSnap.data();
+            try {
+                const [clienteSnap, alunoSnap] = await Promise.all([
+                    getDoc(doc(db, "clients", cid)),
+                    getDoc(doc(db, "clients", cid, "dados", aid))
+                ]);
 
-            // 2. Injeta o design completo do cliente
-            document.getElementById('app').innerHTML = config.campos;
-
-            // 3. BLOQUEIO E REMOÇÃO DE BOTÕES ADMINISTRATIVOS
-            document.querySelectorAll('input, select, textarea, button').forEach(el => {
-                if(el.tagName === 'BUTTON') {
-                    el.remove();
-                } else {
-                    el.disabled = true;
-                    el.classList.add('opacity-70');
+                if (!clienteSnap.exists() || !alunoSnap.exists()) {
+                    document.getElementById('app').innerHTML = "Dados não encontrados.";
+                    return;
                 }
-            });
 
-            // 4. PREENCHIMENTO DOS DADOS
-            Object.keys(dados).forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.type === 'checkbox' ? el.checked = dados[id] : el.value = dados[id];
+                const config = clienteSnap.data().configuracaoPersonalizada;
+                const dados = alunoSnap.data();
+
+                // 1. Área Premium (Casca do Portal) + Injeção do Template
+                document.getElementById('app').innerHTML = `
+                    <div class="space-y-8">
+                        <div class="text-center space-y-2">
+                            <div class="w-24 h-24 mx-auto bg-gray-800 rounded-full overflow-hidden border-2 border-blue-500 mb-4">
+                                <img id="aluno-foto" src="${dados.alunoFoto || 'https://via.placeholder.com/150'}" class="w-full h-full object-cover">
+                            </div>
+                            <h1 class="text-2xl font-black text-white uppercase">Olá, ${dados.alunoNome || 'Aluno'}!</h1>
+                            <p class="text-blue-400 font-mono text-xs uppercase tracking-widest">Bem-vindo à sua Área Exclusiva</p>
+                        </div>
+                        <div class="opacity-90">${config.campos}</div>
+                    </div>
+                `;
+
+                // 2. BLOQUEIO E REMOÇÃO DE BOTÕES
+                document.querySelectorAll('input, select, textarea, button').forEach(el => {
+                    if(el.tagName === 'BUTTON') {
+                        el.remove();
+                    } else {
+                        el.disabled = true;
+                        el.classList.add('opacity-70');
+                    }
+                });
+
+                // 3. PREENCHIMENTO DOS DADOS
+                Object.keys(dados).forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.type === 'checkbox' ? el.checked = dados[id] : el.value = dados[id];
+                    }
+                });
+
+                // 4. MOTOR DE VÍDEOS PREMIUM
+                const linkTreino = dados.linkVideoTreino;
+                const containerVideo = document.getElementById('container-video');
+                if (containerVideo && linkTreino) {
+                    const links = linkTreino.split(',');
+                    containerVideo.innerHTML = `
+                        <div class="mt-10 mb-6">
+                            <h3 class="text-sm font-bold text-white uppercase mb-4 tracking-widest">📺 O que temos para você</h3>
+                            <p class="text-xs text-gray-400 mb-4">Clique no play e veja o conteúdo exclusivo:</p>
+                            ${links.map(url => {
+                                const u = url.trim();
+                                const videoId = u.includes('youtu.be/') ? u.split('/').pop() : u.split('v=')[1]?.substring(0,11);
+                                return `<div class="mb-6"><iframe class="w-full h-64 rounded-xl border border-gray-800 shadow-2xl" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe></div>`;
+                            }).join('')}
+                        </div>
+                    `;
                 }
-            });
-
-            // 5. MOTOR DE VÍDEOS (Suporte a múltiplos links)
-            // Substitua o bloco do "MOTOR DE VÍDEOS" no seu arquivo por este:
-const linkTreino = dados.linkVideoTreino;
-const containerVideo = document.getElementById('container-video');
-if (containerVideo && linkTreino) {
-    const links = linkTreino.split(',');
-    containerVideo.innerHTML = links.map(url => {
-        const u = url.trim();
-        // Lógica blindada: pega o ID tanto de youtu.be quanto de youtube.com/watch?v=
-        const videoId = u.includes('youtu.be/') ? u.split('/').pop() : u.split('v=')[1]?.substring(0,11);
-        return `
-            <div class="mb-4">
-                <iframe class="w-full h-64 rounded-xl border border-gray-800" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
-            </div>
-        `;
-    }).join('');
-}
-        } catch (e) {
-            console.error(e);
-            document.getElementById('app').innerHTML = "Erro ao carregar dados.";
+            } catch (e) {
+                console.error(e);
+                document.getElementById('app').innerHTML = "Erro ao carregar dados.";
+            }
         }
-    }
 
-    carregarVisualizacao();
-</script>
+        // Função global para o "Testar" funcionar caso algo ainda esteja no HTML injetado
+        window.exibirVideo = function(url) {
+            const container = document.getElementById('container-video');
+            if (container) {
+                const videoId = url.includes('youtu.be/') ? url.split('/').pop() : url.split('v=')[1]?.substring(0,11);
+                container.innerHTML = `<iframe class="w-full h-64 rounded-xl border border-gray-800" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
+            }
+        };
+
+        carregarVisualizacao();
+    </script>
+</body>
+</html>
