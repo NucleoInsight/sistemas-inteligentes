@@ -240,7 +240,7 @@
 
             if (docSnap.exists()) {
                 const dados = docSnap.data();
-                // Preenche os campos automaticamente baseando-se nos IDs
+                // Preenche os campos automaticamente
                 Object.keys(dados).forEach(id => {
                     const el = document.getElementById(id);
                     if (el) {
@@ -248,7 +248,15 @@
                         else el.value = dados[id];
                     }
                 });
-                console.log(`✅ Dados carregados de: ${subcolecao}`);
+
+                // NOVO: Preenche automaticamente o link de acesso, se o campo existir
+                const elLink = document.getElementById('link-acesso-aluno');
+                if (elLink) {
+                    const cid = new URLSearchParams(window.location.search).get('cid');
+                    elLink.value = `https://nucleoinsight.github.io/sistemas-inteligentes/visualizar_cliente_e_aluno.html?cid=${cid}&aid=${subcolecao}`;
+                }
+                
+                console.log(`✅ Dados carregados e Link gerado para: ${subcolecao}`);
             }
         } catch (e) {
             console.error("Erro ao carregar dados:", e);
