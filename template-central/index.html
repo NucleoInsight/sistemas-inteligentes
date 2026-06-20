@@ -309,51 +309,49 @@ window.renderizarGestaoAlunos = async () => {
  window.renderizarPagina = async (tipo, dados = null) => {
     const palco = document.getElementById('palco-principal');
     const interfaceDinamica = document.getElementById('interface-dinamica');
-    const loading = document.getElementById('loading');
+    const headerFixo = document.getElementById('custom-header');
     
-    // Força a interface a aparecer
-    if (interfaceDinamica) {
-        interfaceDinamica.classList.remove('hidden');
-        interfaceDinamica.style.display = 'block';
+    // 1. Força a visibilidade
+    interfaceDinamica.classList.remove('hidden');
+    interfaceDinamica.style.display = 'block';
+
+    // 2. Busca configuração no Firebase (se for modo aluno/acesso)
+    const params = new URLSearchParams(window.location.search);
+    const cid = params.get('cid');
+    let config = { apresentacao: '', campos: '', miniAdmin: '' };
+    
+    if (cid) {
+        const docSnap = await window.getDoc(window.doc(window.db, "clients", cid));
+        if (docSnap.exists()) {
+            const clientData = docSnap.data();
+            config = clientData.configuracaoPersonalizada || {};
+        }
     }
 
-    // Limpeza
-    palco.innerHTML = '<div class="text-white p-10 text-center">Carregando sistema...</div>';
-
-    // Dicionário Dinâmico: Se você não passar nada, ele assume "Registros/Cliente"
-    const termos = {
-        titulo: dados?.termo || 'Registros',
-        usuario: dados?.usuario || 'Cliente'
-    };
-
+    // 3. Renderização Dinâmica
     if (tipo === 'gestao') {
-        palco.innerHTML = `
-            <div class="grid grid-cols-2 gap-4 mb-6">
-                <div class="bg-blue-600/10 p-4 rounded-xl border border-blue-500/20">
-                    <p class="text-blue-400 text-[10px] uppercase">Total de ${termos.titulo}</p>
-                    <h3 class="text-2xl font-bold" id="kpi-total-alunos">0</h3>
-                </div>
-                <div class="bg-red-600/10 p-4 rounded-xl border border-red-500/20">
-                    <p class="text-red-400 text-[10px] uppercase">Pendentes</p>
-                    <h3 class="text-2xl font-bold" id="kpi-inadimplentes">0</h3>
-                </div>
-            </div>
-            <div id="area-lista-alunos"></div>`;
-        
+        if (headerFixo) headerFixo.style.display = 'flex';
+        palco.innerHTML = config.miniAdmin || `<div class="p-6 text-center">Painel não configurado.</div>`;
         await window.atualizarDashboard();
-        await window.renderizarGestaoAlunos();
     } 
     else if (tipo === 'aluno') {
+        if (headerFixo) headerFixo.style.display = 'none';
+        
+        // Aqui o motor injeta o HTML que você salvou no banco!
         palco.innerHTML = `
-            <div id="interface-aluno-ativo" class="p-6 bg-[#171A21] rounded-xl text-white">
-                <h1 id="aluno-nome-display" class="text-2xl font-bold mb-4">Olá, ${dados?.alunoNome || termos.usuario}!</h1>
-                <div id="container-video-aluno"></div>
-            </div>`;
+            ${config.apresentacao}
+            <div id="container-form-aluno" class="mt-6">${config.campos}</div>
+        `;
+        
+        // Preenche os campos se houver dados do aluno
+        if (dados) {
+            Object.keys(dados).forEach(key => {
+                const el = document.getElementById(key);
+                if (el) el.value = dados[key];
+            });
+        }
     }
-
-    if (loading) loading.classList.add('hidden');
 };
-
     window.filtrarAlunos = () => {
         const termo = document.getElementById('buscaAluno').value.toLowerCase();
         const itens = document.querySelectorAll('.aluno-item');
