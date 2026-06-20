@@ -77,16 +77,22 @@
             });
 
             // 5. MOTOR DE VÍDEOS (Suporte a múltiplos links)
-            const linkTreino = dados.linkVideoTreino;
-            const containerVideo = document.getElementById('container-video');
-            if (containerVideo && linkTreino) {
-                const links = linkTreino.split(',');
-                containerVideo.innerHTML = links.map(url => `
-                    <div class="mb-4">
-                        <iframe class="w-full h-64 rounded-xl border border-gray-800" src="https://www.youtube.com/embed/${url.trim().split('v=')[1]?.substring(0,11)}" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                `).join('');
-            }
+            // Substitua o bloco do "MOTOR DE VÍDEOS" no seu arquivo por este:
+const linkTreino = dados.linkVideoTreino;
+const containerVideo = document.getElementById('container-video');
+if (containerVideo && linkTreino) {
+    const links = linkTreino.split(',');
+    containerVideo.innerHTML = links.map(url => {
+        const u = url.trim();
+        // Lógica blindada: pega o ID tanto de youtu.be quanto de youtube.com/watch?v=
+        const videoId = u.includes('youtu.be/') ? u.split('/').pop() : u.split('v=')[1]?.substring(0,11);
+        return `
+            <div class="mb-4">
+                <iframe class="w-full h-64 rounded-xl border border-gray-800" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+            </div>
+        `;
+    }).join('');
+}
         } catch (e) {
             console.error(e);
             document.getElementById('app').innerHTML = "Erro ao carregar dados.";
