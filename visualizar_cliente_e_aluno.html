@@ -30,57 +30,66 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    async function carregarVisualizacao() {
+   async function carregarVisualizacao() {
         const params = new URLSearchParams(window.location.search);
         const cid = params.get('cid');
         const aid = params.get('aid');
 
-        if (!cid || !aid) return;
-
-        const [clienteSnap, alunoSnap] = await Promise.all([
-            getDoc(doc(db, "clients", cid)),
-            getDoc(doc(db, "clients", cid, "dados", aid))
-        ]);
-
-        if (!clienteSnap.exists() || !alunoSnap.exists()) {
-            document.getElementById('app').innerHTML = "Dados não encontrados.";
+        if (!cid || !aid) {
+            document.getElementById('app').innerHTML = "Link inválido.";
             return;
         }
 
-        const config = clienteSnap.data().configuracaoPersonalizada;
-        const dados = alunoSnap.data();
+        try {
+            // 1. Busca Template do Cliente + Dados do Aluno
+            const [clienteSnap, alunoSnap] = await Promise.all([
+                getDoc(doc(db, "clients", cid)),
+                getDoc(doc(db, "clients", cid, "dados", aid))
+            ]);
 
-        // 1. Injeta o design completo do cliente
-        document.getElementById('app').innerHTML = config.campos;
-
-        // 2. BLOQUEIO E REMOÇÃO DE BOTÕES ADMINISTRATIVOS
-        document.querySelectorAll('input, select, textarea, button').forEach(el => {
-            if(el.tagName === 'BUTTON') {
-                el.remove();
-            } else {
-                el.disabled = true;
-                el.classList.add('opacity-70');
+            if (!clienteSnap.exists() || !alunoSnap.exists()) {
+                document.getElementById('app').innerHTML = "Dados não encontrados.";
+                return;
             }
-        });
 
-        // 3. PREENCHIMENTO DOS DADOS
-        Object.keys(dados).forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.type === 'checkbox' ? el.checked = dados[id] : el.value = dados[id];
+            const config = clienteSnap.data().configuracaoPersonalizada;
+            const dados = alunoSnap.data();
+
+            // 2. Injeta o design completo do cliente
+            document.getElementById('app').innerHTML = config.campos;
+
+            // 3. BLOQUEIO E REMOÇÃO DE BOTÕES ADMINISTRATIVOS
+            document.querySelectorAll('input, select, textarea, button').forEach(el => {
+                if(el.tagName === 'BUTTON') {
+                    el.remove();
+                } else {
+                    el.disabled = true;
+                    el.classList.add('opacity-70');
+                }
+            });
+
+            // 4. PREENCHIMENTO DOS DADOS
+            Object.keys(dados).forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.type === 'checkbox' ? el.checked = dados[id] : el.value = dados[id];
+                }
+            });
+
+            // 5. MOTOR DE VÍDEOS (Suporte a múltiplos links)
+            const linkTreino = dados.linkVideoTreino;
+            const containerVideo = document.getElementById('container-video');
+            if (containerVideo && linkTreino) {
+                const links = linkTreino.split(',');
+                containerVideo.innerHTML = links.map(url => `
+                    <div class="mb-4">
+                        <iframe class="w-full h-64 rounded-xl border border-gray-800" src="https://www.youtube.com/embed/${url.trim().split('v=')[1]?.substring(0,11)}" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                `).join('');
             }
-        });
-
-        // 4. MOTOR DE VÍDEOS (Agora com suporte a múltiplos)
-        const linkTreino = dados.linkVideoTreino;
-        const containerVideo = document.getElementById('container-video');
-        if (containerVideo && linkTreino) {
-            const links = linkTreino.split(',');
-            containerVideo.innerHTML = links.map(url => `
-                <div class="mb-4">
-                    <iframe class="w-full h-64 rounded-xl border border-gray-800" src="https://www.youtube.com/embed/${url.trim().split('v=')[1]?.substring(0,11)}" frameborder="0" allowfullscreen></iframe>
-                </div>
-            `).join('');
+        } catch (e) {
+            console.error(e);
+            document.getElementById('app').innerHTML = "Erro ao carregar dados.";
         }
     }
 
