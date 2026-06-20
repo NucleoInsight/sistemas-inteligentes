@@ -288,16 +288,7 @@
 
         // Inicializa o filtro de segurança
         carregarDados();
-        window.buscarDadosDoCliente = buscarDadosDoCliente;
-        window.getDocs = getDocs;
-        window.getDoc = getDoc;
-        window.collection = collection;
-        window.doc = doc;
-        window.setDoc = setDoc;
-        window.updateDoc = updateDoc;
-        window.addDoc = addDoc;
-        window.query = query;
-        window.where = where;
+       
 
         onAuthStateChanged(auth, async (user) => {
             const telaLogin = document.getElementById("tela-login");
