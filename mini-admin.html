@@ -77,29 +77,30 @@
     }
 };
 
-       let deferredPrompt;
+ let deferredPrompt;
 
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        const btn = document.getElementById('btnInstalar');
-        btn.classList.remove('hidden');
-        btn.addEventListener('click', () => {
-            deferredPrompt.prompt();
-        });
     });
 
-    // Lógica para iPhone (iOS)
-    if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
-        const btnIphone = document.getElementById('btnInstalar');
-        const txtIphone = document.getElementById('instrucaoIphone');
-        btnIphone.innerText = "📤 Compartilhar";
-        btnIphone.classList.remove('hidden');
-        txtIphone.classList.remove('hidden');
-        btnIphone.onclick = () => {
-            alert("Toque no ícone de COMPARTILHAR do Safari e escolha 'Adicionar à Tela de Início'.");
-        };
-    }
+    const btn = document.getElementById('btnInstalar');
+    const txtIphone = document.getElementById('instrucaoIphone');
+
+    btn.addEventListener('click', () => {
+        // Se for iPhone/iOS
+        if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+            alert("No iPhone: Toque no botão de COMPARTILHAR (ícone de quadrado com seta) no rodapé do Safari e selecione 'Adicionar à Tela de Início'.");
+        } 
+        // Se for Android e o evento estiver disponível
+        else if (deferredPrompt) {
+            deferredPrompt.prompt();
+        } 
+        // Se for Android mas não disparou o evento (já instalado ou navegador não suporta)
+        else {
+            alert("No Android: Toque nos 3 pontinhos do menu do Chrome e selecione 'Instalar aplicativo' ou 'Adicionar à tela de início'.");
+        }
+    });
 
     carregarMiniAdmin();
     </script>
