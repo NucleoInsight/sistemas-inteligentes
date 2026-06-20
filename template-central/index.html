@@ -128,7 +128,37 @@
             } catch (e) { console.error("Erro ao configurar cliente:", e); }
         }
 
+    // ESTA É A FUNÇÃO QUE O SEU MOTOR ESTÁ PROCURANDO
+window.renderizarGestaoAlunos = async () => {
+    const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    const params = new URLSearchParams(window.location.search);
+    const cid = params.get('cid');
+    if (!cid) return;
     
+    const snapshot = await getDocs(collection(db, "clients", cid, "dados"));
+    const listaArea = document.getElementById('area-lista-alunos');
+    
+    if (!listaArea) return; // Se não achou o palco, não tenta desenhar
+    
+    let alunos = [];
+    snapshot.forEach(doc => alunos.push({ id: doc.id, ...doc.data() }));
+
+    listaArea.innerHTML = `
+        <div class="mt-6 bg-[#171A21] p-4 rounded-xl border border-gray-700">
+            <h3 class="text-white font-bold mb-4 uppercase text-xs">Lista de Alunos (${alunos.length})</h3>
+            <input type="text" id="buscaAluno" placeholder="🔍 Pesquisar nome..." 
+                class="w-full bg-gray-900 border border-gray-800 rounded p-2 text-white text-xs mb-3"
+                onkeyup="window.filtrarAlunos()">
+            <div id="lista-alunos-scroll" class="space-y-2">
+                ${alunos.map(d => `
+                    <div class="aluno-item flex justify-between items-center bg-gray-900 p-3 rounded border ${d.statusPagamento === 'Debito' ? 'border-red-500' : 'border-gray-800'} text-xs">
+                        <span class="nome-aluno text-white">${d.alunoNome || 'Sem Nome'}</span>
+                        <button onclick="window.renderizarPagina('aluno', { alunoNome: '${d.alunoNome}' })" class="text-blue-400">Ver Aluno</button>
+                    </div>
+                `).join('')}
+            </div>
+        </div>`;
+};
 window.renderizarPagina = async (tipo, dados = null) => {
     const palco = document.getElementById('palco-principal');
     palco.innerHTML = '<div class="text-white">Carregando...</div>'; // Feedback visual
