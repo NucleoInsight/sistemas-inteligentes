@@ -196,14 +196,16 @@ window.renderizarGestaoAlunos = async () => {
         }
     };
 
-  // --- DISPARO SEGURO DO MOTOR ---
+ // --- DISPARO SEGURO DO MOTOR ---
     window.onload = async () => {
         const params = new URLSearchParams(window.location.search);
         const modo = params.get('modo');
-        const fid = params.get('fid');
         const cid = params.get('cid');
+        const fid = params.get('fid');
 
-        if (modo === 'acesso' && cid && fid) {
+        if (modo === 'preencher') {
+            await window.renderizarPagina('preencher');
+        } else if (modo === 'acesso' && cid && fid) {
             await window.renderizarAreaAluno(cid, fid);
         } else {
             await window.renderizarPagina('gestao');
