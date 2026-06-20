@@ -313,21 +313,21 @@ window.renderizarPagina = async (tipo, dados = null) => {
     const cid = params.get('cid');
     const modo = params.get('modo');
     
-    // Busca configuração no Firebase
     let config = { apresentacao: '', campos: '', miniAdmin: '' };
     if (cid) {
         const docSnap = await window.getDoc(window.doc(window.db, "clients", cid));
         if (docSnap.exists()) config = docSnap.data().configuracaoPersonalizada || {};
     }
 
-    // Limpa a tela antes de injetar
-    document.body.innerHTML = '<div id="palco-principal" class="p-4"></div>';
+    // LIMPEZA TOTAL: Remove qualquer resquício de HTML antigo (inclusive o carregando)
+    document.body.innerHTML = '<div id="palco-principal"></div>';
     const palco = document.getElementById('palco-principal');
 
     if (modo === 'preencher') {
         palco.innerHTML = `<div>${config.apresentacao || ''}<div class="mt-6">${config.campos || ''}</div></div>`;
     } 
     else if (modo === 'acesso') {
+        // Se for acesso, chama a renderização específica
         await window.renderizarAreaAluno(cid, params.get('fid'));
     } 
     else if (tipo === 'gestao') {
