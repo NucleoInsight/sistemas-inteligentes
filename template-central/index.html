@@ -300,31 +300,28 @@ window.renderizarGestaoAlunos = async () => {
 
    window.renderizarPagina = async (tipo, dados = null) => {
     const palco = document.getElementById('palco-principal');
+    const loading = document.getElementById('loading');
     
-    // 1. Limpeza total do palco para evitar conflitos
+    // 1. Limpeza total do palco
     palco.innerHTML = '<div class="text-white p-10 text-center">Carregando interface...</div>';
 
-    // 2. Lógica de renderização por injeção
+    // 2. Lógica de renderização
     if (tipo === 'gestao') {
-        // Injeta a estrutura do painel do professor
         palco.innerHTML = `
             <div id="container-painel-gestor" class="w-full">
                 <div id="area-lista-alunos"></div>
             </div>`;
         
-        // Dispara as funções de busca de dados
         await window.atualizarDashboard();
         await window.renderizarGestaoAlunos();
     } 
     else if (tipo === 'aluno') {
-        // Injeta a estrutura da área do aluno
         palco.innerHTML = `
             <div id="interface-aluno" class="p-6 bg-[#171A21] rounded-xl text-white">
                 <h1 id="aluno-nome-display" class="text-2xl font-bold mb-4"></h1>
                 <div id="container-video-aluno"></div>
             </div>`;
         
-        // Injeta os dados se eles foram passados
         if (dados) {
             document.getElementById('aluno-nome-display').innerText = dados.alunoNome || "Olá, Cliente!";
             if (dados.linkVideoTreino) {
@@ -332,6 +329,9 @@ window.renderizarGestaoAlunos = async () => {
             }
         }
     }
+
+    // 3. Esconde o loading que está travando sua tela
+    if (loading) loading.classList.add('hidden');
 };
 
     window.filtrarAlunos = () => {
