@@ -410,7 +410,43 @@
     </script>
 
     <script>
-    // Script global simples para permitir acesso ao HTML injetado
+    // Ouve qualquer clique na página e filtra pelo botão de adicionar vídeo
+    document.addEventListener('click', (event) => {
+        if (event.target && event.target.id === 'btn-add-video') {
+            const containerDinamico = document.getElementById('container-dinamico');
+            
+            const elTitulo = containerDinamico.querySelector('#videoTitulo');
+            const elDesc = containerDinamico.querySelector('#videoDesc');
+            const elLink = containerDinamico.querySelector('#linkVideoTreino');
+            const container = containerDinamico.querySelector('#container-conteudos');
+
+            if (!elTitulo || !elLink || !container) {
+                console.error("❌ Elementos de vídeo não encontrados.");
+                alert("⚠️ Erro: Campos de vídeo não encontrados.");
+                return;
+            }
+
+            if (!elTitulo.value || !elLink.value) {
+                alert("⚠️ Preencha Título e Link!");
+                return;
+            }
+
+            const div = document.createElement('div');
+            div.className = "bg-[#0F1115] p-2 rounded border border-gray-800 text-xs";
+            div.innerHTML = `
+                <div class="font-bold text-blue-400">${elTitulo.value}</div>
+                <div class="text-gray-400">${elDesc ? elDesc.value : ''}</div>
+                <a href="${elLink.value}" target="_blank" class="text-green-500 underline">Assistir Vídeo</a>
+            `;
+            
+            container.appendChild(div);
+
+            elTitulo.value = '';
+            if (elDesc) elDesc.value = '';
+            elLink.value = '';
+        }
+    });
+
     window.exibirVideo = function(url) {
         if (!url) return;
         const videoId = url.split('v=')[1] || url.split('/').pop();
@@ -418,37 +454,7 @@
         const container = document.getElementById('container-video');
         if (container) {
             container.innerHTML = `<iframe class="w-full h-48 rounded-lg mt-4" src="${embedUrl}" frameborder="0" allowfullscreen></iframe>`;
-        } else {
-            console.error("Elemento container-video não encontrado.");
         }
-    };
-
-    window.adicionarVideoNaLista = () => {
-        const titulo = document.getElementById('videoTitulo').value;
-        const desc = document.getElementById('videoDesc').value;
-        const link = document.getElementById('linkVideoTreino').value;
-        const container = document.getElementById('container-conteudos');
-
-        if (!titulo || !link) {
-            alert("⚠️ Preencha Título e Link!");
-            return;
-        }
-
-        const div = document.createElement('div');
-        div.className = "bg-[#0F1115] p-2 rounded border border-gray-800 text-xs";
-        div.innerHTML = `
-            <div class="font-bold text-blue-400">${titulo}</div>
-            <div class="text-gray-400">${desc}</div>
-            <a href="${link}" target="_blank" class="text-green-500 underline">Assistir Vídeo</a>
-        `;
-        
-        container.appendChild(div);
-
-        document.getElementById('videoTitulo').value = '';
-        document.getElementById('videoDesc').value = '';
-        document.getElementById('linkVideoTreino').value = '';
-        
-        console.log("✅ Vídeo adicionado à lista.");
     };
 </script>
 </body>
