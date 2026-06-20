@@ -33,17 +33,14 @@
                 </div>
             </div>
 
-           <div id="palco-principal" class="w-full">
-    </div>
+           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+    <div id="container-painel-gestor" class="hidden mt-0 mb-6 md:col-span-3"></div>
 
-<div id="interface-aluno" class="hidden space-y-6 w-full">
-    <div class="text-center p-6 border-b border-gray-800">
-        <h2 class="text-white font-black text-xl uppercase tracking-widest" id="aluno-nome-display">Área do Aluno</h2>
-        <p class="text-gray-500 text-[10px] uppercase tracking-widest mt-1">Sua evolução começa aqui</p>
-    </div>
-    <div id="conteudo-aluno-dinamico" class="bg-[#171A21] p-5 rounded-xl border border-gray-800">
-        <div id="container-video-aluno"></div>
-    </div>
+    <div id="container-dinamico" class="bg-[#171A21] p-5 rounded-xl border border-gray-800/80 md:col-span-2"></div>
+
+    <div id="container-apresentacao"></div>
+                
 </div>
         </div>
     </main>
@@ -68,32 +65,24 @@
      window.logarAdmin = async () => {
             const senha = document.getElementById("senhaInput").value.trim();
             const senhaMestraNoBanco = String(window.senhaMestraCorreta || "").trim();
-            const senhaPadraoAdmin = "Borges@123456";
-            const senhaPadraoAluno = "Cliente@123456"; // Senha do Aluno
+            const senhaPadrao = "Borges@123456";
 
-            if (senha === senhaMestraNoBanco || senha === senhaPadraoAdmin) {
-                // LOGIN DO MESTRE/ADMIN
+            if (senha === senhaMestraNoBanco || senha === senhaPadrao) {
                 document.getElementById('loginOverlay').style.display = 'none';
-
-                // Chama o novo motor para injetar o painel de gestão no palco
-                window.renderizarPagina('gestao');
-
+                
+                const painelGestor = document.getElementById('container-painel-gestor');
+                if (painelGestor) {
+                    painelGestor.classList.remove('hidden');
+                    // Liga os dois motores: o KPI e a Lista de Alunos
+                    window.atualizarDashboard(); 
+                    window.renderizarGestaoAlunos(); 
+                }
+                
                 alert("✅ Acesso Liberado ao Painel do Mestre!");
-            }
-            else if (senha === senhaPadraoAluno) {
-                // LOGIN DO ALUNO
-                document.getElementById('loginOverlay').style.display = 'none';
-                
-                // Chama o motor para renderizar a interface do Aluno no palco principal
-             // Chama o motor para renderizar a interface do Aluno no palco principal
-                window.renderizarPagina('aluno', { alunoNome: 'Aluno' });
-                
-                alert("✅ Bem-vindo à sua Área!");
-            } 
-            else {
+            } else {
                 alert("❌ Senha incorreta.");
             }
-        }; // <--- ESTA CHAVE FECHA A FUNÇÃO DE LOGIN INTEIRA
+        };
         const firebaseConfig = {
             apiKey: "AIzaSyAMYE7ZLM4jtoVnshqowLSaSL-mYCW1lhI",
             authDomain: "sistemas-inteligentes-38cdc.firebaseapp.com",
@@ -128,37 +117,39 @@
             } catch (e) { console.error("Erro ao configurar cliente:", e); }
         }
 
-    // ESTA É A FUNÇÃO QUE O SEU MOTOR ESTÁ PROCURANDO
-window.renderizarGestaoAlunos = async () => {
-    const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-    const params = new URLSearchParams(window.location.search);
-    const cid = params.get('cid');
-    if (!cid) return;
-    
-    const snapshot = await getDocs(collection(db, "clients", cid, "dados"));
-    const listaArea = document.getElementById('area-lista-alunos');
-    
-    if (!listaArea) return; // Se não achou o palco, não tenta desenhar
-    
-    let alunos = [];
-    snapshot.forEach(doc => alunos.push({ id: doc.id, ...doc.data() }));
+    async function inicializarCentralDinamica() {
+            const params = new URLSearchParams(window.location.search);
+            const cid = params.get('cid'); 
+            if (!cid) return;
+            
+            const clienteSnap = await getDoc(doc(db, "clients", cid));
+            if (!clienteSnap.exists()) return;
 
-    listaArea.innerHTML = `
-        <div class="mt-6 bg-[#171A21] p-4 rounded-xl border border-gray-700">
-            <h3 class="text-white font-bold mb-4 uppercase text-xs">Lista de Alunos (${alunos.length})</h3>
-            <input type="text" id="buscaAluno" placeholder="🔍 Pesquisar nome..." 
-                class="w-full bg-gray-900 border border-gray-800 rounded p-2 text-white text-xs mb-3"
-                onkeyup="window.filtrarAlunos()">
-            <div id="lista-alunos-scroll" class="space-y-2">
-                ${alunos.map(d => `
-                    <div class="aluno-item flex justify-between items-center bg-gray-900 p-3 rounded border ${d.statusPagamento === 'Debito' ? 'border-red-500' : 'border-gray-800'} text-xs">
-                        <span class="nome-aluno text-white">${d.alunoNome || 'Sem Nome'}</span>
-                        <button onclick="window.renderizarPagina('aluno', { alunoNome: '${d.alunoNome}' })" class="text-blue-400">Ver Aluno</button>
-                    </div>
-                `).join('')}
-            </div>
-        </div>`;
-};
+            const dados = clienteSnap.data();
+            window.senhaMestraCorreta = dados.senhaMestra;
+            window.statusCliente = dados.status;
+
+            const config = dados.configuracaoPersonalizada || {};
+            
+            document.title = `${dados.nome} — Central`;
+            document.getElementById("custom-nome").innerText = dados.nome;
+            document.getElementById("custom-logo").src = config.logo || "";
+            
+            // Injeta o HTML vindo da Fábrica
+            document.getElementById("container-apresentacao").innerHTML = config.apresentacao || "";
+            document.getElementById("container-dinamico").innerHTML = config.campos || "";
+            
+            // NOVO: Força a exibição do Painel do Gestor se ele estiver configurado
+            const painelGestor = document.getElementById("container-painel-gestor");
+            if(config.miniAdmin) {
+                painelGestor.innerHTML = config.miniAdmin;
+            }
+
+            // ADICIONE ESTAS DUAS LINHAS ABAIXO PARA GARANTIR A ATUALIZAÇÃO
+            console.log("🛠️ HTML Injetado com sucesso.");
+            document.getElementById("loading").classList.add("hidden");
+            document.getElementById("interface-dinamica").classList.remove("hidden");
+        }
 
         window.registrarAcao = async (exercicio) => {
             try {
@@ -196,23 +187,11 @@ window.renderizarGestaoAlunos = async () => {
         }
     };
 
- // --- DISPARO SEGURO DO MOTOR ---
-    window.onload = async () => {
-        const params = new URLSearchParams(window.location.search);
-        const modo = params.get('modo');
-        const cid = params.get('cid');
-        const fid = params.get('fid');
-
-        if (modo === 'preencher') {
-            await window.renderizarPagina('preencher');
-        } else if (modo === 'acesso' && cid && fid) {
-            await window.renderizarAreaAluno(cid, fid);
-        } else {
-            await window.renderizarPagina('gestao');
-        }
-    };
+    // --- COMANDO PARA DISPARAR O MOTOR ---
+    inicializarCentralDinamica();
 
     // MOTOR INTELIGENTE CENTRALIZADO
+    // MOTOR INTELIGENTE CENTRALIZADO (VERSÃO BLINDADA)
     window.acaoInteligente = async (tipo, subcolecao = 'ficha') => {
         const params = new URLSearchParams(window.location.search);
         const cid = params.get('cid');
@@ -308,34 +287,55 @@ window.renderizarGestaoAlunos = async () => {
         }
     };
 
-window.renderizarPagina = async (tipo, dados = null) => {
+    window.renderizarGestaoAlunos = async () => {
+    const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
     const params = new URLSearchParams(window.location.search);
     const cid = params.get('cid');
-    const modo = params.get('modo');
     
-    let config = { apresentacao: '', campos: '', miniAdmin: '' };
-    if (cid) {
-        const docSnap = await window.getDoc(window.doc(window.db, "clients", cid));
-        if (docSnap.exists()) config = docSnap.data().configuracaoPersonalizada || {};
+    const snapshot = await getDocs(collection(db, "clients", cid, "dados"));
+    const painel = document.getElementById('container-painel-gestor');
+    
+    // Identifica ou cria a área específica da LISTA para não apagar o resto do painel
+    let listaArea = document.getElementById('area-lista-alunos');
+    if (!listaArea) {
+        listaArea = document.createElement('div');
+        listaArea.id = 'area-lista-alunos';
+        painel.appendChild(listaArea);
     }
+    
+    let alunos = [];
+    snapshot.forEach(doc => alunos.push({ id: doc.id, ...doc.data() }));
 
-    // LIMPEZA TOTAL: Remove qualquer resquício de HTML antigo (inclusive o carregando)
-    document.body.innerHTML = '<div id="palco-principal"></div>';
-    const palco = document.getElementById('palco-principal');
-
-    if (modo === 'preencher') {
-        palco.innerHTML = `<div>${config.apresentacao || ''}<div class="mt-6">${config.campos || ''}</div></div>`;
-    } 
-    else if (modo === 'acesso') {
-        // Se for acesso, chama a renderização específica
-        await window.renderizarAreaAluno(cid, params.get('fid'));
-    } 
-    else if (tipo === 'gestao') {
-        palco.innerHTML = config.miniAdmin || `<div class="p-6 text-center">Painel não configurado.</div>`;
-        await window.atualizarDashboard();
-        await window.renderizarGestaoAlunos();
-    }
+    const html = `
+        <div class="mt-6 bg-[#171A21] p-4 rounded-xl border border-gray-700">
+            <h3 class="text-white font-bold mb-4 uppercase text-xs">Lista de Alunos (${alunos.length})</h3>
+            <input type="text" id="buscaAluno" placeholder="🔍 Pesquisar nome..." 
+                class="w-full bg-gray-900 border border-gray-800 rounded p-2 text-white text-xs mb-3"
+                onkeyup="window.filtrarAlunos()">
+            <div id="lista-alunos-scroll" class="space-y-2 overflow-y-auto custom-scrollbar pr-2" style="height: 60vh;">
+                ${alunos.map(d => `
+                    <div class="aluno-item flex justify-between items-center bg-gray-900 p-3 rounded border ${d.statusPagamento === 'Debito' ? 'border-red-500/50' : 'border-gray-800'} text-xs">
+                        <div class="flex flex-col">
+                            <span class="nome-aluno text-gray-300 font-bold">${d.alunoNome || 'Sem Nome'}</span>
+                            <span class="text-[9px] ${d.statusPagamento === 'Debito' ? 'text-red-500' : 'text-emerald-500'} font-black uppercase">
+                                ${d.statusPagamento === 'Debito' ? '🔴 Em Débito' : '🟢 Em Dia'}
+                            </span>
+                        </div>
+                        <div class="flex gap-2">
+                            ${d.statusPagamento === 'Debito' ? `
+                                <button type="button" onclick="window.registrarPagamento('${d.id}', 'Pago')" class="bg-emerald-900/30 text-emerald-400 px-2 py-1 rounded border border-emerald-500/20">Pagar</button>
+                            ` : ''}
+                            <button type="button" onclick="window.carregarDados('${d.id}')" class="text-blue-400 underline">Editar</button>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>`;
+    
+    listaArea.innerHTML = html;
+    console.log("✅ Lista de alunos re-renderizada (Painel mantido).");
 };
+    
     window.filtrarAlunos = () => {
         const termo = document.getElementById('buscaAluno').value.toLowerCase();
         const itens = document.querySelectorAll('.aluno-item');
@@ -348,77 +348,55 @@ window.renderizarPagina = async (tipo, dados = null) => {
     window.registrarPagamento = async (idFicha, status) => {
         const params = new URLSearchParams(window.location.search);
         const cid = params.get('cid');
-        await updateDoc(doc(db, "clients", cid, "dados", idFicha), { statusPagamento: status });
-        alert("✅ Status atualizado!");
-        window.atualizarDashboard();
-        window.renderizarGestaoAlunos();
-    };
+        if (!cid) return;
 
-    window.copiarGatilhoAluno = (nomeAluno, linkFormulario) => {
-        const texto = `Olá, ${nomeAluno || 'aluno(a)'}! Acesse aqui: ${linkFormulario}`;
-        navigator.clipboard.writeText(texto).then(() => alert("✅ Copiado!"));
-    };
-
-    window.exibirVideo = function(url) {
-        if (!url) return;
-        const videoId = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('/').pop();
-        const container = document.getElementById('container-video');
-        if (container) {
-            container.innerHTML = `<iframe class="w-full h-48 rounded-lg mt-4" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
+        try {
+            await updateDoc(doc(db, "clients", cid, "dados", idFicha), { statusPagamento: status });
+            alert("✅ Status atualizado!");
+            
+            // Recarrega o painel e os KPIs para refletir a mudança na hora
+            window.atualizarDashboard();
+            
+            // Limpa o painel e renderiza novamente a lista atualizada
+            const painel = document.getElementById('container-painel-gestor');
+            const lista = painel.querySelector('.mt-6');
+            if (lista) lista.remove();
+            window.renderizarGestaoAlunos();
+            
+        } catch (e) {
+            console.error("Erro ao registrar pagamento:", e);
+            alert("Erro ao atualizar status.");
         }
     };
-    window.gerarLinkAcesso = (idFicha, nomeCliente) => {
-    const baseUrl = window.location.origin + window.location.pathname;
-    const cid = new URLSearchParams(window.location.search).get('cid');
     
-    // Link 1: Cadastro (Formulário genérico para novos)
-    const linkCadastro = `${baseUrl}?cid=${cid}&modo=preencher`;
+    // NOVO: GATILHO PARA ALUNOS
+    window.copiarGatilhoAluno = (nomeAluno, linkFormulario) => {
+    const texto = `*🚀 ACESSE O FORMULÁRIO DE CADASTRO*\n\n` +
+                  `Olá, ${nomeAluno || 'aluno(a)'}!\n\n` +
+                  `Para finalizar sua matrícula e ter acesso ao nosso sistema, clique no link abaixo:\n\n` +
+                  `${linkFormulario}\n\n` +
+                  `Qualquer dúvida, estou à disposição!`;
     
-    // Link 2: Área do Cliente (Direcionado para o ID específico)
-    const linkAreaCliente = `${baseUrl}?cid=${cid}&modo=acesso&fid=${idFicha}`;
-
-    const msg = `*🚀 ACESSE SEU PORTAL INTELIGENTE*\n\n` +
-                `Olá, ${nomeCliente}! Liberei seu acesso ao sistema.\n\n` +
-                `1️⃣ *PARA PREENCHER SEUS DADOS:*\n${linkCadastro}\n\n` +
-                `2️⃣ *PARA ACESSAR SUA ÁREA DE CONTEÚDO:*\n${linkAreaCliente}\n` +
-                `🔑 *SUA SENHA:* Cliente@123456\n\n` +
-                `Qualquer dúvida, estou à disposição!`;
-    
-    navigator.clipboard.writeText(msg).then(() => {
-        alert(`✅ Link de acesso do(a) ${nomeCliente} copiado com sucesso!`);
+    // Copia para o clipboard
+    navigator.clipboard.writeText(texto).then(() => {
+        alert("✅ Texto copiado! Agora é só colar no WhatsApp do aluno.");
     });
 };
+    </script>
 
-   window.renderizarAreaAluno = async (cid, idFicha) => {
-    console.log("🛠️ Tentando renderizar área do aluno para:", idFicha);
-    const interfaceDinamica = document.getElementById('interface-dinamica');
-    const interfaceAluno = document.getElementById('interface-aluno');
-    if (interfaceDinamica) interfaceDinamica.style.display = 'none';
-    if (interfaceAluno) {
-        interfaceAluno.style.display = 'block'; 
-        interfaceAluno.classList.remove('hidden'); 
-    } else {
-        console.error("❌ ERRO: DIV 'interface-aluno' não encontrada!");
-    }
-    const docRef = window.doc(window.db, "clients", cid, "dados", idFicha);
-    const docSnap = await window.getDoc(docRef);
-    if (docSnap.exists()) {
-        const dados = docSnap.data();
-        try { document.getElementById('aluno-nome-display').innerText = dados.alunoNome || "Olá, Cliente!"; } catch(e) { console.error(e); }
-        if (dados.linkVideoTreino) {
-            window.exibirVideoParaAluno(dados.linkVideoTreino);
+    <script>
+    // Script global simples para permitir acesso ao HTML injetado
+    window.exibirVideo = function(url) {
+        if (!url) return;
+        const videoId = url.split('v=')[1] || url.split('/').pop();
+        const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+        const container = document.getElementById('container-video');
+        if (container) {
+            container.innerHTML = `<iframe class="w-full h-48 rounded-lg mt-4" src="${embedUrl}" frameborder="0" allowfullscreen></iframe>`;
+        } else {
+            console.error("Elemento container-video não encontrado.");
         }
-    }
-};
-
-window.exibirVideoParaAluno = (url) => {
-    const videoId = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('/').pop();
-    document.getElementById('container-video-aluno').innerHTML = `
-        <h3 class="text-white font-bold text-xs uppercase mb-3">Vídeo do Treino</h3>
-        <iframe class="w-full h-56 rounded-lg" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
-    `;
-};
-
+    };
 </script>
 </body>
 </html>
