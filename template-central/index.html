@@ -197,9 +197,19 @@ window.renderizarGestaoAlunos = async () => {
     };
 
    // --- DISPARO SEGURO DO MOTOR ---
-    window.onload = async () => {
-        // Inicializa o motor de renderização automaticamente ao carregar a página
-        await window.renderizarPagina('gestao');
+   window.onload = async () => {
+       const params = new URLSearchParams(window.location.search);
+       const modo = params.get('modo'); // 'gestao', 'aluno', etc
+       const fid = params.get('fid');
+       const cid = params.get('cid');
+
+       if (modo === 'acesso' && cid && fid) {
+           await window.renderizarAreaAluno(cid, fid);
+       } else {
+           // Fallback padrão
+           await window.renderizarPagina('gestao');
+       }
+   };
     };
     // MOTOR INTELIGENTE CENTRALIZADO
     // MOTOR INTELIGENTE CENTRALIZADO (VERSÃO BLINDADA)
