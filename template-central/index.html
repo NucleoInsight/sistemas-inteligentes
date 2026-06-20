@@ -298,14 +298,14 @@ window.renderizarGestaoAlunos = async () => {
         }
     };
 
-   window.renderizarPagina = async (tipo, dados = null) => {
+  window.renderizarPagina = async (tipo, dados = null) => {
     const palco = document.getElementById('palco-principal');
     const loading = document.getElementById('loading');
     
-    // 1. Limpeza total do palco
+    // 1. Limpeza total do palco para evitar conflitos
     palco.innerHTML = '<div class="text-white p-10 text-center">Carregando interface...</div>';
 
-    // 2. Lógica de renderização
+    // 2. Lógica de renderização por injeção
     if (tipo === 'gestao') {
         palco.innerHTML = `
             <div id="container-painel-gestor" class="w-full">
@@ -330,7 +330,7 @@ window.renderizarGestaoAlunos = async () => {
         }
     }
 
-    // 3. Esconde o loading que está travando sua tela
+    // 3. COMANDO FINAL: Esconde a tela de loading
     if (loading) loading.classList.add('hidden');
 };
 
