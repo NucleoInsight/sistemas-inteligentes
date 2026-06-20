@@ -257,11 +257,18 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // INICIALIZAÇÃO E EXPOSIÇÃO GLOBAL
+        // TORNA AS FERRAMENTAS GLOBAIS
         window.db = db;
         window.auth = auth;
-        // Funções Firestore/Auth globais
-        Object.assign(window, { getDocs, getDoc, collection, doc, setDoc, updateDoc, addDoc, query, where });
+        window.getDocs = getDocs;
+        window.getDoc = getDoc;
+        window.collection = collection;
+        window.doc = doc;
+        window.setDoc = setDoc;
+        window.updateDoc = updateDoc;
+        window.addDoc = addDoc;
+        window.query = query;
+        window.where = where;
 
         async function buscarDadosDoCliente(cid) {
             try {
@@ -288,7 +295,16 @@
 
         // Inicializa o filtro de segurança
         carregarDados();
-       
+        window.buscarDadosDoCliente = buscarDadosDoCliente;
+        window.getDocs = getDocs;
+        window.getDoc = getDoc;
+        window.collection = collection;
+        window.doc = doc;
+        window.setDoc = setDoc;
+        window.updateDoc = updateDoc;
+        window.addDoc = addDoc;
+        window.query = query;
+        window.where = where;
 
         onAuthStateChanged(auth, async (user) => {
             const telaLogin = document.getElementById("tela-login");
