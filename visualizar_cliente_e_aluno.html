@@ -10,7 +10,7 @@
 
     <div id="app" class="max-w-xl mx-auto">
         <div class="text-center py-10">
-            <h1 class="text-xl font-black">Conectando ao portal...</h1>
+            <h1 class="text-xl font-black">Carregando portal exclusivo...</h1>
         </div>
     </div>
 
@@ -54,9 +54,9 @@
                 const config = clienteSnap.data().configuracaoPersonalizada;
                 const dados = alunoSnap.data();
 
-                // 1. Área Premium (Casca do Portal)
+                // ESTRUTURA PREMIUM ORGANIZADA
                 document.getElementById('app').innerHTML = `
-                    <div class="space-y-8">
+                    <div class="space-y-10">
                         <div class="text-center space-y-2">
                             <div class="relative w-24 h-24 mx-auto group">
                                 <div class="w-24 h-24 bg-gray-800 rounded-full overflow-hidden border-2 border-blue-500 mb-4">
@@ -66,13 +66,21 @@
                                 <button type="button" onclick="document.getElementById('upload-foto-aluno').click()" class="absolute bottom-4 right-0 bg-blue-600 p-2 rounded-full text-white shadow-lg text-[10px] hover:bg-blue-500 transition-all">📷</button>
                             </div>
                             <h1 class="text-2xl font-black text-white uppercase">${dados.alunoNome || 'Bem-vindo'}</h1>
-                            <p class="text-blue-400 font-mono text-xs uppercase tracking-widest">Área Exclusiva</p>
+                            <p class="text-blue-400 font-mono text-xs uppercase tracking-widest">Sua área de aluno</p>
                         </div>
-                        <div class="opacity-95">${config.campos}</div>
+
+                        <div id="container-video"></div>
+
+                        <div class="space-y-4">
+                            <div class="border-b border-gray-800 pb-2 mb-6">
+                                <h2 class="text-lg font-black text-white uppercase tracking-widest">Tudo sobre você e seu cadastro</h2>
+                            </div>
+                            <div class="opacity-95">${config.campos}</div>
+                        </div>
                     </div>
                 `;
 
-                // 2. BLOQUEIO INTELIGENTE
+                // Bloqueio de botões (Mantendo upload e desabilitando outros)
                 document.querySelectorAll('input, select, textarea, button').forEach(el => {
                     if (el.id !== 'upload-foto-aluno' && el.tagName === 'BUTTON' && !el.onclick?.toString().includes('upload-foto-aluno')) {
                         el.remove();
@@ -82,7 +90,6 @@
                     }
                 });
 
-                // 3. PREENCHIMENTO DOS DADOS
                 Object.keys(dados).forEach(id => {
                     const el = document.getElementById(id);
                     if (el) {
@@ -90,16 +97,20 @@
                     }
                 });
 
-                // 4. MOTOR DE VÍDEOS PREMIUM
+                // Motor de Vídeos
                 const linkTreino = dados.linkVideoTreino;
                 const containerVideo = document.getElementById('container-video');
                 if (containerVideo && linkTreino) {
                     const links = linkTreino.split(',');
-                    containerVideo.innerHTML = links.map(url => {
-                        const u = url.trim();
-                        const videoId = u.includes('youtu.be/') ? u.split('/').pop() : u.split('v=')[1]?.substring(0,11);
-                        return `<div class="mb-6"><iframe class="w-full h-64 rounded-xl border border-gray-800 shadow-2xl" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe></div>`;
-                    }).join('');
+                    containerVideo.innerHTML = `
+                        <h3 class="text-sm font-bold text-white uppercase mb-4 tracking-widest text-center">📺 O que temos para você</h3>
+                        <p class="text-xs text-gray-400 mb-6 text-center italic">Clique no play e veja o conteúdo exclusivo:</p>
+                        ${links.map(url => {
+                            const u = url.trim();
+                            const videoId = u.includes('youtu.be/') ? u.split('/').pop() : u.split('v=')[1]?.substring(0,11);
+                            return `<div class="mb-6"><iframe class="w-full h-64 rounded-xl border border-gray-800 shadow-2xl" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe></div>`;
+                        }).join('')}
+                    `;
                 }
             } catch (e) {
                 console.error(e);
@@ -130,14 +141,6 @@
                     alert("✅ Foto atualizada!");
                 }
             } catch (e) { alert("Erro no upload."); } finally { preview.style.opacity = '1'; }
-        };
-
-        window.exibirVideo = function(url) {
-            const container = document.getElementById('container-video');
-            if (container) {
-                const videoId = url.includes('youtu.be/') ? url.split('/').pop() : url.split('v=')[1]?.substring(0,11);
-                container.innerHTML = `<iframe class="w-full h-64 rounded-xl border border-gray-800" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
-            }
         };
 
         carregarVisualizacao();
