@@ -447,6 +447,9 @@
             
             container.appendChild(div);
 
+            // Dispara o vídeo automaticamente assim que adiciona
+            window.exibirVideo(elLink.value);
+
             elTitulo.value = '';
             if (elDesc) elDesc.value = '';
             elLink.value = '';
