@@ -102,6 +102,8 @@
         window.updateDoc = updateDoc;
         window.addDoc = addDoc;
         window.collection = collection;
+        window.getDocs = getDocs; // <--- Faltava este
+        console.log("✅ Todas as funções (incluindo getDocs) expostas.");
         let configCliente = {};
 
         async function buscarConfiguracaoDoCliente(dadosCliente) {
