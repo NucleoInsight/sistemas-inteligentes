@@ -240,6 +240,10 @@ const idFicha = document.getElementById('id-ficha-oculto')?.value || (urlParams.
             const docSnap = await getDoc(docRef);
 
             if (docSnap.exists()) {
+                // Registra o ID da ficha que está sendo editada em um campo oculto
+                const elHidden = document.getElementById('id-ficha-oculto');
+                if (elHidden) elHidden.value = subcolecao;
+
                 const dados = docSnap.data();
                 // Preenche os campos automaticamente
                 Object.keys(dados).forEach(id => {
