@@ -442,7 +442,7 @@
             div.innerHTML = `
                 <div class="font-bold text-blue-400">${elTitulo.value}</div>
                 <div class="text-gray-400">${elDesc ? elDesc.value : ''}</div>
-                <a href="${elLink.value}" target="_blank" class="text-green-500 underline">Assistir Vídeo</a>
+                <button onclick="window.exibirVideo('${elLink.value}')" class="text-green-500 underline cursor-pointer">Assistir Vídeo (Interno)</button>
             `;
             
             container.appendChild(div);
