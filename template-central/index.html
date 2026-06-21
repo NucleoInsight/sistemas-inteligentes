@@ -456,6 +456,26 @@
             container.innerHTML = `<iframe class="w-full h-48 rounded-lg mt-4" src="${embedUrl}" frameborder="0" allowfullscreen></iframe>`;
         }
     };
+
+        window.excluirAluno = async (id) => {
+    if (!confirm("⚠️ Tem certeza que deseja excluir este aluno? Esta ação não pode ser desfeita.")) return;
+    
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const cid = params.get('cid');
+        
+        // Exclui o documento no Firestore
+        await deleteDoc(doc(db, "clients", cid, "dados", id));
+        
+        alert("✅ Aluno excluído com sucesso!");
+        // Re-renderiza a lista para o aluno sumir do painel
+        window.renderizarGestaoAlunos(); 
+        window.atualizarDashboard();
+    } catch (e) {
+        console.error("Erro ao excluir:", e);
+        alert("Erro ao excluir aluno.");
+    }
+};
 </script>
 </body>
 </html>
