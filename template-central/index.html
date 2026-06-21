@@ -256,6 +256,9 @@
                     elLink.value = `https://nucleoinsight.github.io/sistemas-inteligentes/visualizar_cliente_e_aluno.html?cid=${cid}&aid=${subcolecao}`;
                 }
                 
+               // Atualiza a URL para incluir o ID do aluno (aid) e evitar duplicidade no salvamento
+                window.history.replaceState(null, null, `?cid=${cid}&aid=${subcolecao}`);
+                
                 console.log(`✅ Dados carregados e Link gerado para: ${subcolecao}`);
             }
         } catch (e) {
