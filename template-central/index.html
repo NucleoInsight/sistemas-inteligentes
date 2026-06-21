@@ -98,12 +98,6 @@
         window.db = db;
         window.doc = doc;
         window.getDoc = getDoc;
-        window.setDoc = setDoc;
-        window.updateDoc = updateDoc;
-        window.addDoc = addDoc;
-        window.collection = collection;
-        window.getDocs = getDocs; // <--- Faltava este
-        console.log("✅ Todas as funções (incluindo getDocs) expostas.");
         let configCliente = {};
 
         async function buscarConfiguracaoDoCliente(dadosCliente) {
@@ -211,10 +205,9 @@
 
         if (tipo === 'salvar') {
             try {
-               // Prioriza o ID da ficha que está sendo editada (no campo oculto) 
-                // e, se for um aluno novo, gera um ID único permanente.
-                const idEdicao = document.getElementById('id-ficha-oculto')?.value;
-                const idFicha = idEdicao ? idEdicao : `ficha-${Date.now()}`;
+                // Se existir CPF no formulário, usamos ele como ID da ficha, se não, usamos 'ficha-geral'
+                const cpf = dados.alunoCpf ? dados.alunoCpf.replace(/\D/g, '') : null;
+                const idFicha = cpf ? `ficha-${cpf}` : `ficha-${Date.now()}`;
                 
                 await setDoc(doc(db, "clients", cid, "dados", idFicha), dados, { merge: true });
                 alert(`✅ Ficha salva com sucesso! ID: ${idFicha}`);
