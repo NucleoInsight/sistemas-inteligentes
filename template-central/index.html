@@ -431,14 +431,15 @@
                 return;
             }
 
+            const videoId = elLink.value.split('v=')[1] || elLink.value.split('/').pop();
+            const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+
             const div = document.createElement('div');
-            div.className = "bg-[#0F1115] p-2 rounded border border-gray-800 text-xs";
+            div.className = "bg-[#0F1115] p-2 rounded border border-gray-800 text-xs mt-2";
             div.innerHTML = `
-                <div class="font-bold text-blue-400">${elTitulo.value}</div>
-                <div class="text-gray-400">${elDesc ? elDesc.value : ''}</div>
-                <a href="${elLink.value}" target="_blank" class="text-green-500 underline">Assistir Vídeo</a>
+                <div class="font-bold text-blue-400 mb-1">${elTitulo.value}</div>
+                <iframe class="w-full h-40 rounded-lg" src="${embedUrl}" frameborder="0" allowfullscreen></iframe>
             `;
-            
             container.appendChild(div);
 
             elTitulo.value = '';
