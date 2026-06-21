@@ -207,7 +207,9 @@
             try {
                 // Se existir CPF no formulário, usamos ele como ID da ficha, se não, usamos 'ficha-geral'
                 const cpf = dados.alunoCpf ? dados.alunoCpf.replace(/\D/g, '') : null;
-                const idFicha = cpf ? `ficha-${cpf}` : `ficha-${Date.now()}`;
+                // Verifica se já existe um ID carregado na URL ou em um campo oculto, senão gera o novo
+const urlParams = new URLSearchParams(window.location.search);
+const idFicha = urlParams.get('aid') || (cpf ? `ficha-${cpf}` : `ficha-${Date.now()}`);
                 
                 await setDoc(doc(db, "clients", cid, "dados", idFicha), dados, { merge: true });
                 alert(`✅ Ficha salva com sucesso! ID: ${idFicha}`);
