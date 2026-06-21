@@ -205,9 +205,10 @@
 
         if (tipo === 'salvar') {
             try {
-                // Se existir CPF no formulário, usamos ele como ID da ficha, se não, usamos 'ficha-geral'
-                const cpf = dados.alunoCpf ? dados.alunoCpf.replace(/\D/g, '') : null;
-                const idFicha = cpf ? `ficha-${cpf}` : `ficha-${Date.now()}`;
+               // Prioriza o ID da ficha que está sendo editada (no campo oculto) 
+                // e, se for um aluno novo, gera um ID único permanente.
+                const idEdicao = document.getElementById('id-ficha-oculto')?.value;
+                const idFicha = idEdicao ? idEdicao : `ficha-${Date.now()}`;
                 
                 await setDoc(doc(db, "clients", cid, "dados", idFicha), dados, { merge: true });
                 alert(`✅ Ficha salva com sucesso! ID: ${idFicha}`);
