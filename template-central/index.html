@@ -442,13 +442,10 @@
             div.innerHTML = `
                 <div class="font-bold text-blue-400">${elTitulo.value}</div>
                 <div class="text-gray-400">${elDesc ? elDesc.value : ''}</div>
-                <button onclick="window.exibirVideo('${elLink.value}')" class="text-green-500 underline cursor-pointer">Assistir Vídeo (Interno)</button>
+                <a href="${elLink.value}" target="_blank" class="text-green-500 underline">Assistir Vídeo</a>
             `;
             
             container.appendChild(div);
-
-            // Dispara o vídeo automaticamente assim que adiciona
-            window.exibirVideo(elLink.value);
 
             elTitulo.value = '';
             if (elDesc) elDesc.value = '';
