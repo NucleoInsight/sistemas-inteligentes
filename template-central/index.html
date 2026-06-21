@@ -92,12 +92,18 @@
             appId: "1:632476998816:web:3cb6936a5e3517b09dbdc5"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        window.app = initializeApp(firebaseConfig);
+        window.db = getFirestore(window.app);
+        
         // Expondo funções do Firebase para o escopo global do navegador
-        window.db = db;
         window.doc = doc;
         window.getDoc = getDoc;
+        window.setDoc = setDoc;
+        window.updateDoc = updateDoc;
+        window.addDoc = addDoc;
+        window.collection = collection;
+        
+        console.log("✅ Firebase Inicializado com sucesso.");
         let configCliente = {};
 
         async function buscarConfiguracaoDoCliente(dadosCliente) {
