@@ -92,18 +92,12 @@
             appId: "1:632476998816:web:3cb6936a5e3517b09dbdc5"
         };
 
-        window.app = initializeApp(firebaseConfig);
-        window.db = getFirestore(window.app);
-        
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
         // Expondo funções do Firebase para o escopo global do navegador
+        window.db = db;
         window.doc = doc;
         window.getDoc = getDoc;
-        window.setDoc = setDoc;
-        window.updateDoc = updateDoc;
-        window.addDoc = addDoc;
-        window.collection = collection;
-        
-        console.log("✅ Firebase Inicializado com sucesso.");
         let configCliente = {};
 
         async function buscarConfiguracaoDoCliente(dadosCliente) {
@@ -213,9 +207,7 @@
             try {
                 // Se existir CPF no formulário, usamos ele como ID da ficha, se não, usamos 'ficha-geral'
                 const cpf = dados.alunoCpf ? dados.alunoCpf.replace(/\D/g, '') : null;
-                // Tenta pegar o ID de um input oculto, da URL, ou gera um novo apenas se for realmente novo
-                const paramsSalvar = new URLSearchParams(window.location.search);
-                const idFicha = document.getElementById('id-ficha-oculto')?.value || (paramsSalvar.get('aid') ? paramsSalvar.get('aid') : (cpf ? `ficha-${cpf}` : `ficha-${Date.now()}`));
+                const idFicha = cpf ? `ficha-${cpf}` : `ficha-${Date.now()}`;
                 
                 await setDoc(doc(db, "clients", cid, "dados", idFicha), dados, { merge: true });
                 alert(`✅ Ficha salva com sucesso! ID: ${idFicha}`);
@@ -247,10 +239,6 @@
             const docSnap = await getDoc(docRef);
 
             if (docSnap.exists()) {
-                // Registra o ID da ficha que está sendo editada em um campo oculto
-                const elHidden = document.getElementById('id-ficha-oculto');
-                if (elHidden) elHidden.value = subcolecao;
-
                 const dados = docSnap.data();
                 // Preenche os campos automaticamente
                 Object.keys(dados).forEach(id => {
@@ -267,9 +255,6 @@
                     const cid = new URLSearchParams(window.location.search).get('cid');
                     elLink.value = `https://nucleoinsight.github.io/sistemas-inteligentes/visualizar_cliente_e_aluno.html?cid=${cid}&aid=${subcolecao}`;
                 }
-                
-               // Atualiza a URL para incluir o ID do aluno (aid) e evitar duplicidade no salvamento
-                window.history.replaceState(null, null, `?cid=${cid}&aid=${subcolecao}`);
                 
                 console.log(`✅ Dados carregados e Link gerado para: ${subcolecao}`);
             }
