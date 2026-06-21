@@ -214,7 +214,8 @@
                 // Se existir CPF no formulário, usamos ele como ID da ficha, se não, usamos 'ficha-geral'
                 const cpf = dados.alunoCpf ? dados.alunoCpf.replace(/\D/g, '') : null;
                 // Tenta pegar o ID de um input oculto, da URL, ou gera um novo apenas se for realmente novo
-const idFicha = document.getElementById('id-ficha-oculto')?.value || (urlParams.get('aid') ? urlParams.get('aid') : (cpf ? `ficha-${cpf}` : `ficha-${Date.now()}`));
+                const paramsSalvar = new URLSearchParams(window.location.search);
+                const idFicha = document.getElementById('id-ficha-oculto')?.value || (paramsSalvar.get('aid') ? paramsSalvar.get('aid') : (cpf ? `ficha-${cpf}` : `ficha-${Date.now()}`));
                 
                 await setDoc(doc(db, "clients", cid, "dados", idFicha), dados, { merge: true });
                 alert(`✅ Ficha salva com sucesso! ID: ${idFicha}`);
