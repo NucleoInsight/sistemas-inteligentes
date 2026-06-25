@@ -235,20 +235,12 @@
                 const docSnap = await getDoc(docRef);
                 let listaVideos = docSnap.exists() ? (docSnap.data().videos || []) : [];
                 
-                // 2. Extrai novos vídeos do container (o que já foi adicionado na tela)
-                const container = document.getElementById('container-conteudos');
-                const divs = container.querySelectorAll('.bg-\\[#0F1115\\]');
-                
-                divs.forEach(div => {
-                    const titulo = div.querySelector('.font-bold')?.innerText;
-                    const iframe = div.querySelector('iframe');
-                    const link = iframe ? iframe.src : "";
-                    
-                    // Adiciona apenas se não estiver na lista (simples verificação por link)
-                    if (titulo && link && !listaVideos.find(v => v.link === link)) {
-                        listaVideos.push({ titulo, link, data: new Date().toISOString() });
-                    }
-                });
+                // Captura vídeos apenas se o usuário preencheu os campos antes de salvar
+                const t = document.getElementById('videoTitulo')?.value;
+                const l = document.getElementById('linkVideoTreino')?.value;
+                if (t && l && !listaVideos.find(v => v.link === l)) {
+                    listaVideos.push({ titulo: t, link: l, data: new Date().toISOString() });
+                }
 
                 // 3. Remove campos temporários e salva
                 delete dados.videoTitulo;
