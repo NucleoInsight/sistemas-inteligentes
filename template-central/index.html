@@ -210,9 +210,10 @@
 
         if (tipo === 'salvar') {
             try {
-                // Se existir CPF no formulário, usamos ele como ID da ficha, se não, usamos 'ficha-geral'
+                // 1. Tenta pegar o ID do campo oculto, senão usa CPF ou Data
+                const idOculto = document.getElementById('id-ficha-oculto')?.value;
                 const cpf = dados.alunoCpf ? dados.alunoCpf.replace(/\D/g, '') : null;
-                const idFicha = cpf ? `ficha-${cpf}` : `ficha-${Date.now()}`;
+                const idFicha = idOculto || (cpf ? `ficha-${cpf}` : `ficha-${Date.now()}`);
                 
                 await setDoc(doc(db, "clients", cid, "dados", idFicha), dados, { merge: true });
                 alert(`✅ Ficha salva com sucesso! ID: ${idFicha}`);
