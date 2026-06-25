@@ -514,7 +514,31 @@
             console.error("Erro ao salvar na biblioteca:", e);
         }
     };
-        
+
+        window.abrirModalBiblioteca = async () => {
+    const modal = document.getElementById('modal-biblioteca');
+    const lista = document.getElementById('lista-modal-videos');
+    modal.classList.remove('hidden');
+    lista.innerHTML = '<p class="text-gray-500 text-xs">Carregando vídeos...</p>';
+
+    const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    const ownerId = "EPaByse2kuWCpsfAeF7Kn409MhI3";
+    const querySnapshot = await getDocs(collection(db, "owners", ownerId, "biblioteca_videos"));
+    
+    lista.innerHTML = '';
+    querySnapshot.forEach((doc) => {
+        const video = doc.data();
+        const div = document.createElement('div');
+        div.className = "bg-[#0F1115] p-3 rounded border border-gray-700 cursor-pointer hover:border-blue-500 transition";
+        div.innerHTML = `<div class="text-white text-xs font-bold">${video.titulo}</div>`;
+        div.onclick = () => {
+            document.getElementById('videoTitulo').value = video.titulo;
+            document.getElementById('linkVideoTreino').value = video.link;
+            modal.classList.add('hidden');
+        };
+        lista.appendChild(div);
+    });
+};
 </script>
 </body>
 </html>
