@@ -275,6 +275,14 @@
                 if (elIdOculto) {
                     elIdOculto.value = subcolecao;
                 }
+
+                // GATILHO PARA RENDERIZAR VÍDEO AUTOMATICAMENTE
+                if (dados.linkVideoTreino && dados.videoTitulo) {
+                    const btnAdd = document.getElementById('btn-add-video');
+                    if (btnAdd) {
+                        btnAdd.click();
+                    }
+                }
                 
                 console.log(`✅ Dados carregados e Link gerado para: ${subcolecao}`);
             }
