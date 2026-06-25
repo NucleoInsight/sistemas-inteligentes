@@ -489,6 +489,26 @@
         alert("Erro ao excluir aluno.");
     }
 };
+
+        // FUNÇÃO PARA SALVAR VÍDEO NA BIBLIOTECA PESSOAL
+    window.salvarNaBiblioteca = async (titulo, link) => {
+        const ownerId = "EPaByse2kuWCpsfAeF7Kn409MhI3"; // Ou pegue dinamicamente se tiver
+        const db = window.db; // Garanta que seu db está acessível
+        const { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+        
+        try {
+            const idVideo = "video-" + Date.now();
+            await setDoc(doc(db, "owners", ownerId, "biblioteca_videos", idVideo), {
+                titulo: titulo,
+                link: link,
+                dataCadastro: new Date().toISOString()
+            });
+            alert("✅ Vídeo salvo na sua Biblioteca Pessoal!");
+        } catch (e) {
+            console.error("Erro ao salvar na biblioteca:", e);
+        }
+    };
+        
 </script>
 </body>
 </html>
