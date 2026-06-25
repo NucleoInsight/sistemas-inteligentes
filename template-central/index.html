@@ -158,10 +158,13 @@
                 painelGestor.innerHTML = config.miniAdmin;
             }
 
-            // ADICIONE ESTAS DUAS LINHAS ABAIXO PARA GARANTIR A ATUALIZAÇÃO
-            console.log("🛠️ HTML Injetado com sucesso.");
+           console.log("🛠️ HTML Injetado com sucesso.");
             document.getElementById("loading").classList.add("hidden");
             document.getElementById("interface-dinamica").classList.remove("hidden");
+            
+            // GATILHO AUTOMÁTICO DE CARREGAMENTO
+            window.atualizarDashboard();
+            window.renderizarGestaoAlunos();
         }
 
         window.registrarAcao = async (exercicio) => {
