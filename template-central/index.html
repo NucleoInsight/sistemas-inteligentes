@@ -254,7 +254,10 @@
 
             if (docSnap.exists()) {
                 const dados = docSnap.data();
-                // Preenche os campos automaticamente
+               // Preenche os campos e reseta container de vídeos
+                const container = document.getElementById('container-conteudos');
+                if (container) container.innerHTML = ''; 
+
                 Object.keys(dados).forEach(id => {
                     const el = document.getElementById(id);
                     if (el) {
@@ -263,25 +266,25 @@
                     }
                 });
 
-                // NOVO: Preenche automaticamente o link de acesso, se o campo existir
+                // Força o preenchimento dos campos de vídeo caso os IDs sejam específicos
+                if (dados.videoTitulo) document.getElementById('videoTitulo').value = dados.videoTitulo;
+                if (dados.linkVideoTreino) document.getElementById('linkVideoTreino').value = dados.linkVideoTreino;
+
                 const elLink = document.getElementById('link-acesso-aluno');
                 if (elLink) {
                     const cid = new URLSearchParams(window.location.search).get('cid');
                     elLink.value = `https://nucleoinsight.github.io/sistemas-inteligentes/visualizar_cliente_e_aluno.html?cid=${cid}&aid=${subcolecao}`;
                 }
 
-                // PREENCHE O ID OCULTO PARA EVITAR DUPLICAÇÃO NA EDIÇÃO
                 const elIdOculto = document.getElementById('id-ficha-oculto');
-                if (elIdOculto) {
-                    elIdOculto.value = subcolecao;
-                }
+                if (elIdOculto) elIdOculto.value = subcolecao;
 
-                // GATILHO PARA RENDERIZAR VÍDEO AUTOMATICAMENTE
-                if (dados.linkVideoTreino && dados.videoTitulo) {
-                    const btnAdd = document.getElementById('btn-add-video');
-                    if (btnAdd) {
-                        btnAdd.click();
-                    }
+                // Dispara o gatilho de vídeo após um pequeno atraso para garantir preenchimento
+                if (dados.linkVideoTreino) {
+                    setTimeout(() => {
+                        const btnAdd = document.getElementById('btn-add-video');
+                        if (btnAdd) btnAdd.click();
+                    }, 300);
                 }
                 
                 console.log(`✅ Dados carregados e Link gerado para: ${subcolecao}`);
