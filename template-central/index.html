@@ -261,6 +261,12 @@
                     const cid = new URLSearchParams(window.location.search).get('cid');
                     elLink.value = `https://nucleoinsight.github.io/sistemas-inteligentes/visualizar_cliente_e_aluno.html?cid=${cid}&aid=${subcolecao}`;
                 }
+
+                // PREENCHE O ID OCULTO PARA EVITAR DUPLICAÇÃO NA EDIÇÃO
+                const elIdOculto = document.getElementById('id-ficha-oculto');
+                if (elIdOculto) {
+                    elIdOculto.value = subcolecao;
+                }
                 
                 console.log(`✅ Dados carregados e Link gerado para: ${subcolecao}`);
             }
