@@ -445,11 +445,16 @@
             }
 
             const videoId = elLink.value.split('v=')[1] || elLink.value.split('/').pop();
+            const videoId = elLink.value.split('v=')[1] || elLink.value.split('/').pop();
             const div = document.createElement('div');
             div.className = "bg-[#0F1115] p-2 rounded border border-gray-800 text-xs";
             div.innerHTML = `
                 <div class="font-bold text-blue-400 mb-2">${elTitulo.value}</div>
                 <iframe class="w-full h-40 rounded border border-gray-700" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+                <button type="button" onclick="window.salvarNaBiblioteca('${elTitulo.value}', '${elLink.value}')" 
+                class="mt-2 w-full bg-green-900/30 text-green-400 py-1 rounded border border-green-500/20 text-[9px] font-bold uppercase">
+                    ⭐ Salvar na minha Biblioteca
+                </button>
             `;
             
             container.appendChild(div);
