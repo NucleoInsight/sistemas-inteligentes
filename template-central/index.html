@@ -445,7 +445,8 @@
             }
 
             videoId = elLink.value.split('v=')[1] || elLink.value.split('/').pop();
-            let videoId = elLink.value.split('v=')[1] || elLink.value.split('/').pop();
+            let rawUrl = elLink.value;
+            let videoId = rawUrl.split('v=')[1] || rawUrl.split('/').pop();
             if (videoId.includes('&')) videoId = videoId.split('&')[0];
             const div = document.createElement('div');
             div.className = "bg-[#0F1115] p-2 rounded border border-gray-800 text-xs";
