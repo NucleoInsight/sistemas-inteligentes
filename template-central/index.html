@@ -293,27 +293,29 @@
                         elLink.value = `https://nucleoinsight.github.io/sistemas-inteligentes/visualizar_cliente_e_aluno.html?cid=${cid}&aid=${subcolecao}`;
                     }
 
+                    // Garante que o ID da ficha seja setado antes de qualquer outra ação
                     const elIdOculto = document.getElementById('id-ficha-oculto');
-                    if (elIdOculto) elIdOculto.value = subcolecao;
-
-                    // Lógica blindada para renderizar vídeos do histórico (Array) ou link único antigo
-                    if (dados.videos && Array.isArray(dados.videos)) {
-                        setTimeout(() => {
-                            const btnAdd = document.getElementById('btn-add-video');
-                            if (btnAdd) {
-                                dados.videos.forEach(v => {
-                                    document.getElementById('videoTitulo').value = v.titulo;
-                                    document.getElementById('linkVideoTreino').value = v.link;
-                                    btnAdd.click();
-                                });
-                            }
-                        }, 500);
-                    } else if (dados.linkVideoTreino) {
-                        setTimeout(() => {
-                            const btnAdd = document.getElementById('btn-add-video');
-                            if (btnAdd) btnAdd.click();
-                        }, 500);
+                    if (elIdOculto) {
+                        elIdOculto.value = subcolecao;
                     }
+
+                    // Renderização de vídeos (Array ou String antiga)
+                    setTimeout(() => {
+                        const btnAdd = document.getElementById('btn-add-video');
+                        if (!btnAdd) return;
+
+                        if (dados.videos && Array.isArray(dados.videos)) {
+                            dados.videos.forEach(v => {
+                                document.getElementById('videoTitulo').value = v.titulo || '';
+                                document.getElementById('linkVideoTreino').value = v.link || '';
+                                btnAdd.click();
+                            });
+                        } else if (dados.linkVideoTreino) {
+                            document.getElementById('videoTitulo').value = dados.videoTitulo || 'Vídeo';
+                            document.getElementById('linkVideoTreino').value = dados.linkVideoTreino;
+                            btnAdd.click();
+                        }
+                    }, 500);
                     console.log(`✅ Dados carregados com sucesso para: ${subcolecao}`);
                 };
 
