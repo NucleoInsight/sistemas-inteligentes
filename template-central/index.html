@@ -478,48 +478,23 @@
     </script>
 
     <script>
-    // Ouve qualquer clique na página e filtra pelo botão de adicionar vídeo
-    document.addEventListener('click', (event) => {
-        if (event.target && event.target.id === 'btn-add-video') {
-            const containerDinamico = document.getElementById('container-dinamico');
-            
-            const elTitulo = containerDinamico.querySelector('#videoTitulo');
-            const elDesc = containerDinamico.querySelector('#videoDesc');
-            const elLink = containerDinamico.querySelector('#linkVideoTreino');
-            const container = containerDinamico.querySelector('#container-conteudos');
+    // Renderização de vídeos (Array ou String antiga)
+                    setTimeout(() => {
+                        const btnAdd = document.getElementById('btn-add-video');
+                        if (!btnAdd) return;
 
-            if (!elTitulo || !elLink || !container) {
-                console.error("❌ Elementos de vídeo não encontrados.");
-                alert("⚠️ Erro: Campos de vídeo não encontrados.");
-                return;
-            }
-
-            if (!elTitulo.value || !elLink.value) {
-                alert("⚠️ Preencha Título e Link!");
-                return;
-            }
-
-            let rawUrl = elLink.value;
-            let videoId = rawUrl.split('v=')[1] || rawUrl.split('/').pop();
-            if (videoId.includes('&')) videoId = videoId.split('&')[0];
-            const div = document.createElement('div');
-            div.className = "bg-[#0F1115] p-2 rounded border border-gray-800 text-xs";
-            div.innerHTML = `
-                <div class="font-bold text-blue-400 mb-2">${elTitulo.value}</div>
-                <iframe class="w-full h-40 rounded border border-gray-700" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
-                <button type="button" onclick="window.salvarNaBiblioteca('${elTitulo.value}', '${elLink.value}')" 
-                class="mt-2 w-full bg-green-900/30 text-green-400 py-1 rounded border border-green-500/20 text-[9px] font-bold uppercase">
-                    ⭐ Salvar na minha Biblioteca
-                </button>
-            `;
-            
-            container.appendChild(div);
-
-            elTitulo.value = '';
-            if (elDesc) elDesc.value = '';
-            elLink.value = '';
-        }
-    });
+                        if (dados.videos && Array.isArray(dados.videos)) {
+                            dados.videos.forEach(v => {
+                                document.getElementById('videoTitulo').value = v.titulo || '';
+                                document.getElementById('linkVideoTreino').value = v.link || '';
+                                btnAdd.click();
+                            });
+                        } else if (dados.linkVideoTreino) {
+                            document.getElementById('videoTitulo').value = dados.titulo || 'Vídeo';
+                            document.getElementById('linkVideoTreino').value = dados.linkVideoTreino;
+                            btnAdd.click();
+                        }
+                    }, 500);
 
     window.exibirVideo = function(url) {
         if (!url) return;
