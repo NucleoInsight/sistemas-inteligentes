@@ -209,7 +209,7 @@
         const cid = params.get('cid');
         if (!cid) return alert("Erro: ID do cliente não encontrado.");
         
-        // Captura todos os inputs da página
+       // Captura todos os inputs da página
         const inputs = document.querySelectorAll('input, select, textarea');
         let dados = {};
         inputs.forEach(i => { 
@@ -218,42 +218,31 @@
             }
         });
 
-        // Garantia de captura dos vídeos (caso o querySelectorAll falhe em algum)
-        if(document.getElementById('videoTitulo')) dados.videoTitulo = document.getElementById('videoTitulo').value;
-        if(document.getElementById('linkVideoTreino')) dados.linkVideoTreino = document.getElementById('linkVideoTreino').value;
-
         if (tipo === 'salvar') {
             try {
                 const idOculto = document.getElementById('id-ficha-oculto')?.value;
-                const cpf = dados.alunoCpf ? dados.alunoCpf.replace(/\D/g, '') : null;
-                const idFicha = idOculto || (cpf ? `ficha-${cpf}` : `ficha-${Date.now()}`);
-                
-                // Busca o documento atual para preservar vídeos anteriores
+                const idFicha = idOculto || `ficha-${Date.now()}`;
                 const docRef = doc(db, "clients", cid, "dados", idFicha);
+                
+                // Busca o estado atual no banco para preservar a lista de vídeos
                 const docSnap = await getDoc(docRef);
                 let dadosExistentes = docSnap.exists() ? docSnap.data() : {};
-                
-                // Cria ou recupera a lista de vídeos
                 let listaVideos = dadosExistentes.videos || [];
                 
-                // Se um novo vídeo foi preenchido, adiciona à lista
-                if (dados.linkVideoTreino && dados.linkVideoTreino.trim() !== "") {
-                    listaVideos.push({
-                        titulo: dados.videoTitulo || "Sem título",
-                        link: dados.linkVideoTreino,
-                        data: new Date().toISOString()
-                    });
+                // Se preencheu o vídeo na tela, adiciona ao array
+                const t = document.getElementById('videoTitulo')?.value;
+                const l = document.getElementById('linkVideoTreino')?.value;
+                if (t && l) {
+                    listaVideos.push({ titulo: t, link: l, data: new Date().toISOString() });
                 }
                 
-                // Remove campos temporários para não poluir o banco
+                // Limpa campos de vídeo dos dados que vão ser salvos como texto
                 delete dados.videoTitulo;
                 delete dados.linkVideoTreino;
-                
-                // Mescla os dados: mantém os antigos e adiciona a nova lista de vídeos
                 dados.videos = listaVideos;
                 
                 await setDoc(docRef, dados, { merge: true });
-                alert(`✅ Ficha salva com sucesso! ID: ${idFicha}`);
+                alert(`✅ Ficha salva com sucesso!`);
             } catch (e) {
                 console.error("Erro ao salvar:", e);
                 alert("Erro ao salvar os dados.");
