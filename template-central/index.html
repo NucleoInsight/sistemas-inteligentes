@@ -204,13 +204,12 @@
     inicializarCentralDinamica();
 
     // MOTOR INTELIGENTE CENTRALIZADO
-    // MOTOR INTELIGENTE CENTRALIZADO (VERSÃO BLINDADA)
-    window.acaoInteligente = async (tipo, subcolecao = 'ficha') => {
+   window.acaoInteligente = async (tipo, subcolecao = 'ficha') => {
         const params = new URLSearchParams(window.location.search);
         const cid = params.get('cid');
         if (!cid) return alert("Erro: ID do cliente não encontrado.");
         
-        // Captura todos os inputs da página para garantir que os campos de vídeo sejam lidos
+        // Captura todos os inputs da página
         const inputs = document.querySelectorAll('input, select, textarea');
         let dados = {};
         inputs.forEach(i => { 
@@ -219,9 +218,12 @@
             }
         });
 
+        // Garantia de captura dos vídeos (caso o querySelectorAll falhe em algum)
+        if(document.getElementById('videoTitulo')) dados.videoTitulo = document.getElementById('videoTitulo').value;
+        if(document.getElementById('linkVideoTreino')) dados.linkVideoTreino = document.getElementById('linkVideoTreino').value;
+
         if (tipo === 'salvar') {
             try {
-                // 1. Tenta pegar o ID do campo oculto, senão usa CPF ou Data
                 const idOculto = document.getElementById('id-ficha-oculto')?.value;
                 const cpf = dados.alunoCpf ? dados.alunoCpf.replace(/\D/g, '') : null;
                 const idFicha = idOculto || (cpf ? `ficha-${cpf}` : `ficha-${Date.now()}`);
@@ -238,10 +240,6 @@
             const nome = dados.alunoNome || "Cliente";
             const msg = `Olá! Me chamo ${nome} e gostaria de falar sobre meu cadastro.`;
             window.open(`https://wa.me/5575998649927?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-        
-        else if (tipo === 'agendar') {
-            alert("Abrindo agenda personalizada...");
         }
     };
 
