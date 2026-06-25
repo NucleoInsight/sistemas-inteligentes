@@ -247,8 +247,16 @@
                 delete dados.linkVideoTreino;
                 dados.videos = listaVideos;
                 
-                await setDoc(docRef, dados, { merge: true });
+               await setDoc(docRef, dados, { merge: true });
                 alert(`✅ Ficha salva com ${listaVideos.length} vídeos!`);
+                
+                // Reset do formulário e limpeza do ID para evitar duplicidade
+                const inputsReset = document.querySelectorAll('input, select, textarea');
+                inputsReset.forEach(i => { if (i.id !== 'id-ficha-oculto') i.value = ''; });
+                document.getElementById('id-ficha-oculto').value = '';
+                
+                // Atualiza a lista visualmente
+                window.renderizarGestaoAlunos();
             } catch (e) {
                 console.error("Erro ao salvar:", e);
                 alert("Erro ao salvar os dados.");
