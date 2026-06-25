@@ -444,12 +444,12 @@
                 return;
             }
 
+            const videoId = elLink.value.split('v=')[1] || elLink.value.split('/').pop();
             const div = document.createElement('div');
             div.className = "bg-[#0F1115] p-2 rounded border border-gray-800 text-xs";
             div.innerHTML = `
-                <div class="font-bold text-blue-400">${elTitulo.value}</div>
-                <div class="text-gray-400">${elDesc ? elDesc.value : ''}</div>
-                <a href="${elLink.value}" target="_blank" class="text-green-500 underline">Assistir Vídeo</a>
+                <div class="font-bold text-blue-400 mb-2">${elTitulo.value}</div>
+                <iframe class="w-full h-40 rounded border border-gray-700" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
             `;
             
             container.appendChild(div);
