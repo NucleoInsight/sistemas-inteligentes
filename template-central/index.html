@@ -444,7 +444,6 @@
                 return;
             }
 
-            videoId = elLink.value.split('v=')[1] || elLink.value.split('/').pop();
             let rawUrl = elLink.value;
             let videoId = rawUrl.split('v=')[1] || rawUrl.split('/').pop();
             if (videoId.includes('&')) videoId = videoId.split('&')[0];
