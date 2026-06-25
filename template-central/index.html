@@ -209,7 +209,7 @@
         const cid = params.get('cid');
         if (!cid) return alert("Erro: ID do cliente não encontrado.");
         
-       // Captura todos os inputs da página
+        // Captura todos os inputs da página
         const inputs = document.querySelectorAll('input, select, textarea');
         let dados = {};
         inputs.forEach(i => { 
@@ -218,31 +218,42 @@
             }
         });
 
+        // Garantia de captura dos vídeos (caso o querySelectorAll falhe em algum)
+        if(document.getElementById('videoTitulo')) dados.videoTitulo = document.getElementById('videoTitulo').value;
+        if(document.getElementById('linkVideoTreino')) dados.linkVideoTreino = document.getElementById('linkVideoTreino').value;
+
         if (tipo === 'salvar') {
             try {
                 const idOculto = document.getElementById('id-ficha-oculto')?.value;
-                const idFicha = idOculto || `ficha-${Date.now()}`;
-                const docRef = doc(db, "clients", cid, "dados", idFicha);
+                const cpf = dados.alunoCpf ? dados.alunoCpf.replace(/\D/g, '') : null;
+                const idFicha = idOculto || (cpf ? `ficha-${cpf}` : `ficha-${Date.now()}`);
                 
-                // Busca o estado atual no banco para preservar a lista de vídeos
+                // Busca o documento atual para preservar vídeos anteriores
+                const docRef = doc(db, "clients", cid, "dados", idFicha);
                 const docSnap = await getDoc(docRef);
                 let dadosExistentes = docSnap.exists() ? docSnap.data() : {};
+                
+                // Cria ou recupera a lista de vídeos
                 let listaVideos = dadosExistentes.videos || [];
                 
-                // Se preencheu o vídeo na tela, adiciona ao array
-                const t = document.getElementById('videoTitulo')?.value;
-                const l = document.getElementById('linkVideoTreino')?.value;
-                if (t && l) {
-                    listaVideos.push({ titulo: t, link: l, data: new Date().toISOString() });
+                // Se um novo vídeo foi preenchido, adiciona à lista
+                if (dados.linkVideoTreino && dados.linkVideoTreino.trim() !== "") {
+                    listaVideos.push({
+                        titulo: dados.videoTitulo || "Sem título",
+                        link: dados.linkVideoTreino,
+                        data: new Date().toISOString()
+                    });
                 }
                 
-                // Limpa campos de vídeo dos dados que vão ser salvos como texto
+                // Remove campos temporários para não poluir o banco
                 delete dados.videoTitulo;
                 delete dados.linkVideoTreino;
+                
+                // Mescla os dados: mantém os antigos e adiciona a nova lista de vídeos
                 dados.videos = listaVideos;
                 
                 await setDoc(docRef, dados, { merge: true });
-                alert(`✅ Ficha salva com sucesso!`);
+                alert(`✅ Ficha salva com sucesso! ID: ${idFicha}`);
             } catch (e) {
                 console.error("Erro ao salvar:", e);
                 alert("Erro ao salvar os dados.");
@@ -293,29 +304,27 @@
                         elLink.value = `https://nucleoinsight.github.io/sistemas-inteligentes/visualizar_cliente_e_aluno.html?cid=${cid}&aid=${subcolecao}`;
                     }
 
-                    // Garante que o ID da ficha seja setado antes de qualquer outra ação
                     const elIdOculto = document.getElementById('id-ficha-oculto');
-                    if (elIdOculto) {
-                        elIdOculto.value = subcolecao;
+                    if (elIdOculto) elIdOculto.value = subcolecao;
+
+                    // Lógica blindada para renderizar vídeos do histórico (Array) ou link único antigo
+                    if (dados.videos && Array.isArray(dados.videos)) {
+                        setTimeout(() => {
+                            const btnAdd = document.getElementById('btn-add-video');
+                            if (btnAdd) {
+                                dados.videos.forEach(v => {
+                                    document.getElementById('videoTitulo').value = v.titulo;
+                                    document.getElementById('linkVideoTreino').value = v.link;
+                                    btnAdd.click();
+                                });
+                            }
+                        }, 500);
+                    } else if (dados.linkVideoTreino) {
+                        setTimeout(() => {
+                            const btnAdd = document.getElementById('btn-add-video');
+                            if (btnAdd) btnAdd.click();
+                        }, 500);
                     }
-
-                    // Renderização de vídeos (Array ou String antiga)
-                    setTimeout(() => {
-                        const btnAdd = document.getElementById('btn-add-video');
-                        if (!btnAdd) return;
-
-                        if (dados.videos && Array.isArray(dados.videos)) {
-                            dados.videos.forEach(v => {
-                                document.getElementById('videoTitulo').value = v.titulo || '';
-                                document.getElementById('linkVideoTreino').value = v.link || '';
-                                btnAdd.click();
-                            });
-                        } else if (dados.linkVideoTreino) {
-                            document.getElementById('videoTitulo').value = dados.videoTitulo || 'Vídeo';
-                            document.getElementById('linkVideoTreino').value = dados.linkVideoTreino;
-                            btnAdd.click();
-                        }
-                    }, 500);
                     console.log(`✅ Dados carregados com sucesso para: ${subcolecao}`);
                 };
 
