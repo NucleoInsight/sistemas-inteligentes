@@ -306,23 +306,12 @@
                         elIdOculto.value = subcolecao;
                     }
 
-                    // Renderização de vídeos (Array ou String antiga)
-                    setTimeout(() => {
-                        const btnAdd = document.getElementById('btn-add-video');
-                        if (!btnAdd) return;
-
-                        if (dados.videos && Array.isArray(dados.videos)) {
-                            dados.videos.forEach(v => {
-                                document.getElementById('videoTitulo').value = v.titulo || '';
-                                document.getElementById('linkVideoTreino').value = v.link || '';
-                                btnAdd.click();
-                            });
-                        } else if (dados.linkVideoTreino) {
-                            document.getElementById('videoTitulo').value = dados.videoTitulo || 'Vídeo';
-                            document.getElementById('linkVideoTreino').value = dados.linkVideoTreino;
-                            btnAdd.click();
-                        }
-                    }, 500);
+                   // Apenas carrega os dados nos campos. O usuário gerencia vídeos pela Biblioteca.
+                    if (dados.videos && Array.isArray(dados.videos) && dados.videos.length > 0) {
+                        const ultimoVideo = dados.videos[dados.videos.length - 1];
+                        document.getElementById('videoTitulo').value = ultimoVideo.titulo || '';
+                        document.getElementById('linkVideoTreino').value = ultimoVideo.link || '';
+                    }
                     console.log(`✅ Dados carregados com sucesso para: ${subcolecao}`);
                 };
 
