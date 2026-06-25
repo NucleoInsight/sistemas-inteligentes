@@ -225,46 +225,43 @@
             }
         });
 
-        // Garantia de captura dos vídeos (caso o querySelectorAll falhe em algum)
-        if(document.getElementById('videoTitulo')) dados.videoTitulo = document.getElementById('videoTitulo').value;
-        if(document.getElementById('linkVideoTreino')) dados.linkVideoTreino = document.getElementById('linkVideoTreino').value;
-
         if (tipo === 'salvar') {
             try {
                 const idOculto = document.getElementById('id-ficha-oculto')?.value;
-                const cpf = dados.alunoCpf ? dados.alunoCpf.replace(/\D/g, '') : null;
-                const idFicha = idOculto || (cpf ? `ficha-${cpf}` : `ficha-${Date.now()}`);
-                
-                // Busca o documento atual para preservar vídeos anteriores
+                const idFicha = idOculto || `ficha-${Date.now()}`;
                 const docRef = doc(db, "clients", cid, "dados", idFicha);
+                
+                // 1. Recupera lista atual do banco
                 const docSnap = await getDoc(docRef);
-                let dadosExistentes = docSnap.exists() ? docSnap.data() : {};
+                let listaVideos = docSnap.exists() ? (docSnap.data().videos || []) : [];
                 
-                // Cria ou recupera a lista de vídeos
-                let listaVideos = dadosExistentes.videos || [];
+                // 2. Extrai novos vídeos do container (o que já foi adicionado na tela)
+                const container = document.getElementById('container-conteudos');
+                const divs = container.querySelectorAll('.bg-\\[#0F1115\\]');
                 
-                // Se um novo vídeo foi preenchido, adiciona à lista
-                if (dados.linkVideoTreino && dados.linkVideoTreino.trim() !== "") {
-                    listaVideos.push({
-                        titulo: dados.videoTitulo || "Sem título",
-                        link: dados.linkVideoTreino,
-                        data: new Date().toISOString()
-                    });
-                }
-                
-                // Remove campos temporários para não poluir o banco
+                divs.forEach(div => {
+                    const titulo = div.querySelector('.font-bold')?.innerText;
+                    const iframe = div.querySelector('iframe');
+                    const link = iframe ? iframe.src : "";
+                    
+                    // Adiciona apenas se não estiver na lista (simples verificação por link)
+                    if (titulo && link && !listaVideos.find(v => v.link === link)) {
+                        listaVideos.push({ titulo, link, data: new Date().toISOString() });
+                    }
+                });
+
+                // 3. Remove campos temporários e salva
                 delete dados.videoTitulo;
                 delete dados.linkVideoTreino;
-                
-                // Mescla os dados: mantém os antigos e adiciona a nova lista de vídeos
                 dados.videos = listaVideos;
                 
                 await setDoc(docRef, dados, { merge: true });
-                alert(`✅ Ficha salva com sucesso! ID: ${idFicha}`);
+                alert(`✅ Ficha salva com ${listaVideos.length} vídeos!`);
             } catch (e) {
                 console.error("Erro ao salvar:", e);
                 alert("Erro ao salvar os dados.");
             }
+        }
         }
         
         else if (tipo === 'whatsapp') {
