@@ -243,7 +243,7 @@
     };
 
     // MOTOR DE CARREGAMENTO UNIVERSAL
-    window.carregarDados = async (subcolecao = 'ficha') => {
+   window.carregarDados = async (subcolecao = 'ficha') => {
         const params = new URLSearchParams(window.location.search);
         const cid = params.get('cid');
         if (!cid) return;
@@ -254,40 +254,44 @@
 
             if (docSnap.exists()) {
                 const dados = docSnap.data();
-               // Preenche os campos e reseta container de vídeos
-                const container = document.getElementById('container-conteudos');
-                if (container) container.innerHTML = ''; 
-
-                Object.keys(dados).forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) {
-                        if (el.type === 'checkbox') el.checked = dados[id];
-                        else el.value = dados[id];
-                    }
-                });
-
-                // Força o preenchimento dos campos de vídeo caso os IDs sejam específicos
-                if (dados.videoTitulo) document.getElementById('videoTitulo').value = dados.videoTitulo;
-                if (dados.linkVideoTreino) document.getElementById('linkVideoTreino').value = dados.linkVideoTreino;
-
-                const elLink = document.getElementById('link-acesso-aluno');
-                if (elLink) {
-                    const cid = new URLSearchParams(window.location.search).get('cid');
-                    elLink.value = `https://nucleoinsight.github.io/sistemas-inteligentes/visualizar_cliente_e_aluno.html?cid=${cid}&aid=${subcolecao}`;
-                }
-
-                const elIdOculto = document.getElementById('id-ficha-oculto');
-                if (elIdOculto) elIdOculto.value = subcolecao;
-
-                // Dispara o gatilho de vídeo após um pequeno atraso para garantir preenchimento
-                if (dados.linkVideoTreino) {
-                    setTimeout(() => {
-                        const btnAdd = document.getElementById('btn-add-video');
-                        if (btnAdd) btnAdd.click();
-                    }, 300);
-                }
                 
-                console.log(`✅ Dados carregados e Link gerado para: ${subcolecao}`);
+                // Função recursiva de espera para garantir que os inputs existam no DOM
+                const preencher = () => {
+                    const elTitulo = document.getElementById('videoTitulo');
+                    if (!elTitulo) {
+                        setTimeout(preencher, 100);
+                        return;
+                    }
+
+                    const container = document.getElementById('container-conteudos');
+                    if (container) container.innerHTML = ''; 
+
+                    Object.keys(dados).forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) {
+                            if (el.type === 'checkbox') el.checked = dados[id];
+                            else el.value = dados[id];
+                        }
+                    });
+
+                    const elLink = document.getElementById('link-acesso-aluno');
+                    if (elLink) {
+                        elLink.value = `https://nucleoinsight.github.io/sistemas-inteligentes/visualizar_cliente_e_aluno.html?cid=${cid}&aid=${subcolecao}`;
+                    }
+
+                    const elIdOculto = document.getElementById('id-ficha-oculto');
+                    if (elIdOculto) elIdOculto.value = subcolecao;
+
+                    if (dados.linkVideoTreino) {
+                        setTimeout(() => {
+                            const btnAdd = document.getElementById('btn-add-video');
+                            if (btnAdd) btnAdd.click();
+                        }, 200);
+                    }
+                    console.log(`✅ Dados carregados com sucesso para: ${subcolecao}`);
+                };
+
+                preencher();
             }
         } catch (e) {
             console.error("Erro ao carregar dados:", e);
