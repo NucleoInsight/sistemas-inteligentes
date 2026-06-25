@@ -228,37 +228,13 @@
                 const cpf = dados.alunoCpf ? dados.alunoCpf.replace(/\D/g, '') : null;
                 const idFicha = idOculto || (cpf ? `ficha-${cpf}` : `ficha-${Date.now()}`);
                 
-                // Busca o documento atual para preservar vídeos anteriores
-                const docRef = doc(db, "clients", cid, "dados", idFicha);
-                const docSnap = await getDoc(docRef);
-                let dadosExistentes = docSnap.exists() ? docSnap.data() : {};
-                
-                // Cria ou recupera a lista de vídeos
-                let listaVideos = dadosExistentes.videos || [];
-                
-                // Se um novo vídeo foi preenchido, adiciona à lista
-                if (dados.linkVideoTreino && dados.linkVideoTreino.trim() !== "") {
-                    listaVideos.push({
-                        titulo: dados.videoTitulo || "Sem título",
-                        link: dados.linkVideoTreino,
-                        data: new Date().toISOString()
-                    });
-                }
-                
-                // Remove campos temporários para não poluir o banco
-                delete dados.videoTitulo;
-                delete dados.linkVideoTreino;
-                
-                // Mescla os dados: mantém os antigos e adiciona a nova lista de vídeos
-                dados.videos = listaVideos;
-                
-                await setDoc(docRef, dados, { merge: true });
+                await setDoc(doc(db, "clients", cid, "dados", idFicha), dados, { merge: true });
                 alert(`✅ Ficha salva com sucesso! ID: ${idFicha}`);
             } catch (e) {
                 console.error("Erro ao salvar:", e);
                 alert("Erro ao salvar os dados.");
             }
-        }
+        } 
         
         else if (tipo === 'whatsapp') {
             const nome = dados.alunoNome || "Cliente";
