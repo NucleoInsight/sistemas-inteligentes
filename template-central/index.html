@@ -210,11 +210,14 @@
         const cid = params.get('cid');
         if (!cid) return alert("Erro: ID do cliente não encontrado.");
         
-        // Pega dados de qualquer container (deixa de ser fixo no container-dinamico)
-        const container = document.querySelector('#container-dinamico') || document.body;
-        const inputs = container.querySelectorAll('input, select, textarea');
+        // Captura todos os inputs da página para garantir que os campos de vídeo sejam lidos
+        const inputs = document.querySelectorAll('input, select, textarea');
         let dados = {};
-        inputs.forEach(i => { if (i.id) dados[i.id] = i.type === 'checkbox' ? i.checked : i.value; });
+        inputs.forEach(i => { 
+            if (i.id) {
+                dados[i.id] = i.type === 'checkbox' ? i.checked : i.value; 
+            }
+        });
 
         if (tipo === 'salvar') {
             try {
