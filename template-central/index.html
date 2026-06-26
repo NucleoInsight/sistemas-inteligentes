@@ -216,10 +216,7 @@
             console.error("Erro ao salvar:", e);
         }
     };
-
-    // --- COMANDO PARA DISPARAR O MOTOR ---
-    inicializarCentralDinamica();
-
+    
     // MOTOR INTELIGENTE CENTRALIZADO
    window.acaoInteligente = async (tipo, subcolecao = 'ficha') => {
         const params = new URLSearchParams(window.location.search);
