@@ -17,20 +17,19 @@
                 <input type="text" id="cli-nome" required class="w-full bg-[#0F1115] border border-gray-700 rounded px-3 py-2 text-white">
             </div>
 
-            <div class="grid grid-cols-2 gap-2">
-                <div>
-                    <label class="block text-[10px] text-gray-400 uppercase font-bold">1. Nicho</label>
-                    <select id="cli-nicho" onchange="window.atualizarTemas(this.value)" class="w-full bg-[#0F1115] border border-gray-700 rounded px-2 py-2 text-white">
-                        <option value="estetica">Estética</option>
-                        <option value="performance">Performance</option>
-                        <option value="profissionais">Profissionais</option>
-                        <option value="eventos">Eventos</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-[10px] text-gray-400 uppercase font-bold">2. Tema/Tag</label>
-                    <select id="cli-tag" class="w-full bg-[#0F1115] border border-gray-700 rounded px-2 py-2 text-white"></select>
-                </div>
+            <div>
+                <label class="block text-[10px] text-gray-400 uppercase font-bold">WhatsApp</label>
+                <input type="text" id="cli-contato" placeholder="(00) 90000-0000" required class="w-full bg-[#0F1115] border border-gray-700 rounded px-3 py-2 text-white">
+            </div>
+
+            <div>
+                <label class="block text-[10px] text-gray-400 uppercase font-bold">1. Qual o Nicho?</label>
+                <select id="cli-nicho" class="w-full bg-[#0F1115] border border-gray-700 rounded px-2 py-2 text-white">
+                    <option value="estetica">Estética e Beleza</option>
+                    <option value="performance">Esporte e Performance</option>
+                    <option value="profissionais">Serviços e Consultoria</option>
+                    <option value="eventos">Eventos e Lazer</option>
+                </select>
             </div>
 
             <div>
@@ -70,18 +69,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Atualizar temas dinamicamente
-        window.atualizarTemas = (nicho) => {
-            const temas = {
-                estetica: ["Botox", "Limpeza de Pele", "Massagem", "Lash/Cílios", "Microblading"],
-                performance: ["Jiu-Jitsu", "Capoeira", "Musculação", "Corrida", "Yoga"],
-                profissionais: ["Nutrição", "Psicologia", "Mentoria", "Reforma", "Eletricista"],
-                eventos: ["Buffet", "Fotografia", "Locação de Espaço", "Decoração"]
-            };
-            document.getElementById('cli-tag').innerHTML = temas[nicho].map(t => `<option value="${t.toLowerCase()}">${t}</option>`).join('');
-        };
-        window.atualizarTemas('estetica'); // Inicializa
-
         // Upload do Imgur
         window.subirLogo = async function(input) {
             const file = input.files[0];
@@ -109,8 +96,8 @@
             try {
                 await addDoc(collection(db, "leads"), {
                     nome: document.getElementById("cli-nome").value,
+                    contato: document.getElementById("cli-contato").value,
                     nicho: document.getElementById("cli-nicho").value,
-                    tag: document.getElementById("cli-tag").value,
                     cor: document.getElementById("cli-cor").value,
                     logo: document.getElementById("tpl-logo").value,
                     status: "Lead",
