@@ -777,8 +777,18 @@ window.exibirVideo = (url) => {
         });
         conteudo.innerText = listaDados || "Nenhum lead encontrado.";
     };
-            
+
+
     </script>
-        
+
+    <!-- MODAL FIXO NO FINAL DO BODY -->
+<div id="modal-dados" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-black/80">
+    <div class="bg-[#171A21] p-6 rounded-2xl border border-gray-800 w-full max-w-lg max-h-[80vh] overflow-y-auto">
+        <h3 class="text-white font-bold mb-4">DADOS DOS LEADS</h3>
+        <pre id="resultado-dados-conteudo" class="text-green-400 text-[10px] font-mono whitespace-pre-wrap"></pre>
+        <button onclick="document.getElementById('modal-dados').classList.add('hidden')" class="mt-4 w-full bg-red-600 py-2 rounded text-white font-bold text-xs">FECHAR</button>
+    </div>
+</div>
+    
 </body>
 </html>
