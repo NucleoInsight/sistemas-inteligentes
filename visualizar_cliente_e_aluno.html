@@ -155,6 +155,43 @@
             } catch (e) { alert("Erro no upload."); } finally { preview.style.opacity = '1'; }
         };
 
+        // Função inteligente para ambos (Aluno e Personal)
+        window.marcarConcluido = async (idFicha = null) => {
+            const params = new URLSearchParams(window.location.search);
+            const cid = params.get('cid');
+            // Forçamos a string do ID para evitar erros de tipo
+            const aid = String(idFicha || params.get('aid') || "");
+
+            if (!cid || !aid || aid === "undefined" || aid === "null") {
+                alert("Erro: Identificação do treino não encontrada.");
+                return;
+            }
+
+            try {
+                const hoje = new Date().toISOString().split('T')[0];
+                const agora = new Date().toISOString();
+                
+                await updateDoc(doc(db, "clients", cid, "dados", aid), { 
+                    [`historicoTreinos.${hoje}`]: {
+                        status: "Concluído",
+                        data: agora,
+                        marcadoPor: idFicha ? "Personal" : "Aluno"
+                    },
+                    statusTreino: "Concluído",
+                    dataConclusao: agora,
+                    marcadoPor: idFicha ? "Personal" : "Aluno"
+                });
+                
+                alert("✅ Treino marcado como concluído!");
+                window.location.reload();
+            } catch (error) {
+                console.error("Erro no Firestore:", error);
+                alert("Erro ao salvar no banco de dados.");
+            }
+        };
+
+        window.marcarConcluidoAdmin = (id) => window.marcarConcluido(String(id));
+        
         carregarVisualizacao();
     </script>
 </body>
