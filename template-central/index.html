@@ -477,24 +477,22 @@
     </script>
 
     <script>
-    // Renderização de vídeos (Array ou String antiga)
-                    setTimeout(() => {
-                        const btnAdd = document.getElementById('btn-add-video');
-                        if (!btnAdd) return;
-
+    // Renderização automática dos players ao carregar o aluno
+                    const containerPlayers = document.getElementById('container-players-renderizados');
+                    if (containerPlayers) {
+                        containerPlayers.innerHTML = ''; // Limpa players anteriores
                         if (dados.videos && Array.isArray(dados.videos)) {
                             dados.videos.forEach(v => {
-                                document.getElementById('videoTitulo').value = v.titulo || '';
-                                document.getElementById('linkVideoTreino').value = v.link || '';
-                                btnAdd.click();
+                                const videoId = v.link.split('v=')[1] || v.link.split('/').pop().split('?')[0];
+                                const div = document.createElement('div');
+                                div.innerHTML = `
+                                    <p class="text-xs font-bold text-blue-400 mb-1">${v.titulo}</p>
+                                    <iframe class="w-full h-48 rounded-lg" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+                                `;
+                                containerPlayers.appendChild(div);
                             });
-                        } else if (dados.linkVideoTreino) {
-                            document.getElementById('videoTitulo').value = dados.titulo || 'Vídeo';
-                            document.getElementById('linkVideoTreino').value = dados.linkVideoTreino;
-                            btnAdd.click();
                         }
-                    }, 500);
-
+                    }
     window.exibirVideo = function(url) {
         if (!url) return;
         const videoId = url.split('v=')[1] || url.split('/').pop();
