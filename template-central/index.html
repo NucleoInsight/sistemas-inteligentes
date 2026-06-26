@@ -611,6 +611,15 @@
     await buscarEListar(ownerId, "Global");
     await buscarEListar(personalId, "Privado");
 };
+
+// DISPARO DO MOTOR (ÚNICA VEZ)
+inicializarCentralDinamica();
+
+// EXPORTAÇÃO GLOBAL
+window.inicializarCentralDinamica = inicializarCentralDinamica;
+window.acaoInteligente = acaoInteligente;
+window.carregarDados = carregarDados;
+window.atualizarDashboard = atualizarDashboard;
+window.renderizarGestaoAlunos = renderizarGestaoAlunos;
+window.abrirModalBiblioteca = abrirModalBiblioteca;
 </script>
-</body>
-</html>
