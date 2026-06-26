@@ -618,6 +618,8 @@
     await buscarEListar(ownerId, "Global");
     await buscarEListar(personalId, "Privado");
 };
+        // Exponha a função para o objeto global window
+window.inicializarCentralDinamica = inicializarCentralDinamica;
 </script>
 </body>
 </html>
