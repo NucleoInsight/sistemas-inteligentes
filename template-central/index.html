@@ -558,10 +558,18 @@
         const div = document.createElement('div');
         div.className = "bg-[#0F1115] p-3 rounded border border-gray-700 cursor-pointer hover:border-blue-500 transition";
         div.innerHTML = `<div class="text-white text-xs font-bold">${video.titulo}</div>`;
-        div.onclick = () => {
+       div.onclick = () => {
             document.getElementById('videoTitulo').value = video.titulo;
             document.getElementById('linkVideoTreino').value = video.link;
             modal.classList.add('hidden');
+            
+            // Renderiza o player instantaneamente na tela
+            const containerPlayers = document.getElementById('container-players-renderizados');
+            const videoId = video.link.split('v=')[1] || video.link.split('/').pop().split('?')[0];
+            containerPlayers.innerHTML = `
+                <p class="text-xs font-bold text-blue-400 mb-1">${video.titulo}</p>
+                <iframe class="w-full h-48 rounded-lg" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+            `;
         };
         lista.appendChild(div);
     });
