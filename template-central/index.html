@@ -226,6 +226,11 @@
         });
 
         if (tipo === 'salvar') {
+            const nome = document.getElementById('alunoNome')?.value;
+            if (!nome || nome.trim() === "") {
+                alert("⚠️ Digite o nome do cliente/aluno ou clique em Editar na lista.");
+                return;
+            }
             try {
                 const idOculto = document.getElementById('id-ficha-oculto')?.value;
                 const idFicha = idOculto || `ficha-${Date.now()}`;
