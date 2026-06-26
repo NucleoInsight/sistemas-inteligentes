@@ -667,23 +667,32 @@ window.abrirModalBiblioteca = async (nicho = "global") => {
 
          // Função inteligente para ambos (Aluno e Personal)
                 window.marcarConcluido = async (idFicha = null) => {
-                    // Se não passar ID, pega o da URL (caso do aluno na ficha dele)
-                    const params = new URLSearchParams(window.location.search);
-                    const cid = params.get('cid');
-                    const aid = idFicha || params.get('aid'); 
+    const params = new URLSearchParams(window.location.search);
+    const cid = params.get('cid');
+    // Forçamos a string do ID para evitar erros de tipo
+    const aid = String(idFicha || document.getElementById('id-ficha-oculto')?.value || params.get('aid') || "");
 
-                    await updateDoc(doc(db, "clients", cid, "dados", aid), { 
-                        statusTreino: "Concluído",
-                        dataConclusao: new Date().toISOString(),
-                        marcadoPor: idFicha ? "Personal" : "Aluno" 
-                    });
-                    
-                    alert("✅ Treino marcado como concluído!");
-                    window.location.reload();
-                };
+    if (!cid || !aid || aid === "undefined" || aid === "null") {
+        alert("Erro: Identificação do treino não encontrada.");
+        return;
+    }
 
-                // Alias para o botão do professor/admin não quebrar
-                window.marcarConcluidoAdmin = (id) => window.marcarConcluido(id);
+    try {
+        await window.updateDoc(window.doc(window.db, "clients", cid, "dados", aid), { 
+            statusTreino: "Concluído",
+            dataConclusao: new Date().toISOString(),
+            marcadoPor: idFicha ? "Personal" : "Aluno" 
+        });
+        
+        alert("✅ Treino marcado como concluído!");
+        window.location.reload();
+    } catch (error) {
+        console.error("Erro no Firestore:", error);
+        alert("Erro ao salvar no banco de dados.");
+    }
+};
+
+window.marcarConcluidoAdmin = (id) => window.marcarConcluido(String(id));
 </script>
 </body>
 </html>
