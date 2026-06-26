@@ -85,26 +85,7 @@
                     el.disabled = true;
                     el.classList.add('opacity-70');
                 });
-                
-               // Função inteligente para ambos (Aluno e Personal)
-                window.marcarConcluido = async (idFicha = null) => {
-                    // Se não passar ID, pega o da URL (caso do aluno na ficha dele)
-                    const params = new URLSearchParams(window.location.search);
-                    const cid = params.get('cid');
-                    const aid = idFicha || params.get('aid'); 
-
-                    await updateDoc(doc(db, "clients", cid, "dados", aid), { 
-                        statusTreino: "Concluído",
-                        dataConclusao: new Date().toISOString(),
-                        marcadoPor: idFicha ? "Personal" : "Aluno" 
-                    });
-                    
-                    alert("✅ Treino marcado como concluído!");
-                    window.location.reload();
-                };
-
-                // Alias para o botão do professor/admin não quebrar
-                window.marcarConcluidoAdmin = (id) => window.marcarConcluido(id);
+              
                 Object.keys(dados).forEach(id => {
                     const el = document.getElementById(id);
                     if (el) {
