@@ -80,15 +80,23 @@
                     </div>
                 `;
 
-                // Bloqueio de botões (Mantendo upload e desabilitando outros)
-                document.querySelectorAll('input, select, textarea, button').forEach(el => {
-                    if (el.id !== 'upload-foto-aluno' && el.tagName === 'BUTTON' && !el.onclick?.toString().includes('upload-foto-aluno')) {
-                        el.remove();
-                    } else if (el.id !== 'upload-foto-aluno' && el.tagName !== 'BUTTON') {
-                        el.disabled = true;
-                        el.classList.add('opacity-70');
-                    }
+                // Bloqueio de edição, mas MANTENDO o botão de conclusão do aluno
+                document.querySelectorAll('input, select, textarea').forEach(el => {
+                    el.disabled = true;
+                    el.classList.add('opacity-70');
                 });
+                
+                // Função para o aluno marcar como concluído
+                window.marcarConcluido = async () => {
+                    const btn = document.getElementById('btn-concluir');
+                    await updateDoc(doc(db, "clients", cid, "dados", aid), { 
+                        statusTreino: "Concluído",
+                        dataConclusao: new Date().toISOString() 
+                    });
+                    btn.innerText = "Treino Concluído! 🏆";
+                    btn.classList.replace('bg-emerald-600', 'bg-gray-800');
+                    btn.disabled = true;
+                };
 
                 Object.keys(dados).forEach(id => {
                     const el = document.getElementById(id);
