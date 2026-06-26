@@ -551,7 +551,8 @@
         // FUNÇÃO PARA SALVAR VÍDEO NA BIBLIOTECA (GLOBAL OU PRIVADA)
     window.salvarNaBiblioteca = async (titulo, link, tipo) => {
         // Se tipo for 'Global', usa seu ID fixo. Se for 'Privado', usa o ID do personal logado.
-        const destinoId = tipo === 'Global' ? "EPaByse2kuWCpsfAeF7Kn409MhI3" : "ID_DO_PERSONAL_LOGADO";
+        const personalId = auth.currentUser ? auth.currentUser.uid : "ID_NAO_ENCONTRADO";
+        const destinoId = tipo === 'Global' ? "EPaByse2kuWCpsfAeF7Kn409MhI3" : personalId;
         
         try {
             const idVideo = "video-" + Date.now();
