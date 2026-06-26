@@ -107,6 +107,7 @@
 
         // --- FUNÇÃO NO TOPO (LOCALIZADA CORRETAMENTE) ---
         async function inicializarCentralDinamica() {
+            window.inicializarCentralDinamica = inicializarCentralDinamica;
             const params = new URLSearchParams(window.location.search);
             const cid = params.get('cid'); 
             if (!cid) return;
