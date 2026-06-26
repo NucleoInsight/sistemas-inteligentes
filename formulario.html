@@ -6,12 +6,12 @@
     <title>Configuração de Central — Borges Soluções</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-[#0F1115] text-white p-6 flex justify-center">
+<body class="bg-[#0F1115] text-white p-6 flex justify-center min-h-screen">
 
-    <div class="w-full max-w-md bg-[#171A21] p-6 rounded-2xl border border-gray-800 shadow-xl">
+    <div class="w-full max-w-md bg-[#171A21] p-6 rounded-2xl border border-gray-800 shadow-xl h-fit">
         <h2 class="text-xl font-black mb-6 uppercase text-blue-500">Configurar Central</h2>
         
-        <form id="form-lead" class="space-y-4">
+        <form id="form-lead" class="space-y-4 text-sm">
             <div>
                 <label class="block text-[10px] text-gray-400 uppercase font-bold">Nome do Cliente</label>
                 <input type="text" id="cli-nome" required class="w-full bg-[#0F1115] border border-gray-700 rounded px-3 py-2 text-white">
@@ -19,8 +19,8 @@
 
             <div class="grid grid-cols-2 gap-2">
                 <div>
-                    <label class="block text-[10px] text-gray-400 uppercase font-bold">Nicho</label>
-                    <select id="cli-nicho" class="w-full bg-[#0F1115] border border-gray-700 rounded px-2 py-2 text-white">
+                    <label class="block text-[10px] text-gray-400 uppercase font-bold">1. Nicho</label>
+                    <select id="cli-nicho" onchange="window.atualizarTemas(this.value)" class="w-full bg-[#0F1115] border border-gray-700 rounded px-2 py-2 text-white">
                         <option value="estetica">Estética</option>
                         <option value="performance">Performance</option>
                         <option value="profissionais">Profissionais</option>
@@ -28,9 +28,14 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-[10px] text-gray-400 uppercase font-bold">Cor Principal</label>
-                    <input type="color" id="cli-cor" value="#3B82F6" class="w-full h-[38px] bg-[#0F1115] border border-gray-700 rounded px-1">
+                    <label class="block text-[10px] text-gray-400 uppercase font-bold">2. Tema/Tag</label>
+                    <select id="cli-tag" class="w-full bg-[#0F1115] border border-gray-700 rounded px-2 py-2 text-white"></select>
                 </div>
+            </div>
+
+            <div>
+                <label class="block text-[10px] text-gray-400 uppercase font-bold">Cor Principal</label>
+                <input type="color" id="cli-cor" value="#3B82F6" class="w-full h-[38px] bg-[#0F1115] border border-gray-700 rounded px-1">
             </div>
 
             <div>
@@ -44,7 +49,7 @@
             </div>
 
             <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg mt-4 uppercase text-xs">
-                Enviar Dados para Borges Soluções
+                Enviar Dados
             </button>
         </form>
     </div>
@@ -64,6 +69,18 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
+        // Atualizar temas dinamicamente
+        window.atualizarTemas = (nicho) => {
+            const temas = {
+                estetica: ["Botox", "Limpeza de Pele", "Massagem", "Lash/Cílios", "Microblading"],
+                performance: ["Jiu-Jitsu", "Capoeira", "Musculação", "Corrida", "Yoga"],
+                profissionais: ["Nutrição", "Psicologia", "Mentoria", "Reforma", "Eletricista"],
+                eventos: ["Buffet", "Fotografia", "Locação de Espaço", "Decoração"]
+            };
+            document.getElementById('cli-tag').innerHTML = temas[nicho].map(t => `<option value="${t.toLowerCase()}">${t}</option>`).join('');
+        };
+        window.atualizarTemas('estetica'); // Inicializa
 
         // Upload do Imgur
         window.subirLogo = async function(input) {
@@ -86,16 +103,17 @@
             }
         };
 
-        // Salvar no Banco
+        // Salvar no Banco (Coleção 'leads')
         document.getElementById("form-lead").addEventListener("submit", async (e) => {
             e.preventDefault();
             try {
-                await addDoc(collection(db, "clients"), {
+                await addDoc(collection(db, "leads"), {
                     nome: document.getElementById("cli-nome").value,
                     nicho: document.getElementById("cli-nicho").value,
+                    tag: document.getElementById("cli-tag").value,
                     cor: document.getElementById("cli-cor").value,
                     logo: document.getElementById("tpl-logo").value,
-                    status: "Demonstração",
+                    status: "Lead",
                     dataCriacao: new Date().toISOString()
                 });
                 alert("✅ Dados enviados com sucesso! Em breve entraremos em contato.");
