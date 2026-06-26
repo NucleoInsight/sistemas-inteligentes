@@ -86,7 +86,23 @@
                     el.classList.add('opacity-70');
                 });
               
-                Object.keys(dados).forEach(id => {
+                // Renderização do Histórico Semanal
+                const historico = dados.historicoTreinos || {};
+                const listaHistorico = Object.keys(historico).map(data => `
+                    <li class="flex justify-between text-xs border-b border-gray-800 py-2">
+                        <span class="text-gray-400">${new Date(data).toLocaleDateString('pt-BR')}</span>
+                        <span class="text-emerald-500 font-bold">CONCLUÍDO (${historico[data].marcadoPor})</span>
+                    </li>
+                `).join('');
+
+                if (listaHistorico) {
+                    document.getElementById('app').insertAdjacentHTML('beforeend', `
+                        <div class="mt-8 p-4 bg-gray-900 rounded-xl border border-gray-800">
+                            <h3 class="text-white font-black uppercase text-xs mb-4 tracking-widest">📜 Histórico de Treinos</h3>
+                            <ul class="space-y-2">${listaHistorico}</ul>
+                        </div>
+                    `);
+                }
                     const el = document.getElementById(id);
                     if (el) {
                         el.type === 'checkbox' ? el.checked = dados[id] : el.value = dados[id];
