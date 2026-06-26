@@ -552,28 +552,28 @@
 };
 
         // FUNÇÃO PARA SALVAR VÍDEO NA BIBLIOTECA (GLOBAL OU PRIVADA)
- window.salvarNaBiblioteca = async (titulo, link, tipo) => {
-    // Cria o elemento de forma que o DOM consiga enxergar
+window.salvarNaBiblioteca = async (titulo, link, tipo) => {
+    // Modal aprimorado com descrição clara
     const container = document.createElement('div');
     container.id = 'modal-selecao-temp';
-    container.className = 'fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4';
+    container.className = 'fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4';
     container.innerHTML = `
-        <div class="bg-gray-900 p-6 rounded-xl border border-gray-700 w-full max-w-sm">
-            <h2 class="text-white font-bold mb-4">Categorizar Vídeo</h2>
-            <select id="nicho-select" class="w-full bg-gray-800 text-white p-2 mb-2 rounded">
-                <option value="estetica">Estética</option>
-                <option value="performance">Performance</option>
-                <option value="profissionais">Profissionais</option>
-                <option value="eventos">Eventos</option>
+        <div class="bg-gray-900 p-6 rounded-2xl border border-blue-500 w-full max-w-sm">
+            <h2 class="text-white font-bold text-lg mb-2">Organizar Vídeo</h2>
+            <p class="text-gray-400 text-xs mb-4">Escolha a categoria e o tema para que outros profissionais encontrem seu vídeo facilmente.</p>
+            
+            <label class="text-gray-500 text-[10px] uppercase font-bold">1. Escolha o nicho:</label>
+            <select id="nicho-select" class="w-full bg-black text-white p-3 mb-4 rounded border border-gray-700">
+                <option value="estetica">Estética e Beleza</option>
+                <option value="performance">Esporte e Performance</option>
+                <option value="profissionais">Serviços e Consultoria</option>
+                <option value="eventos">Eventos e Lazer</option>
             </select>
-            <select id="tag-select" class="w-full bg-gray-800 text-white p-2 mb-4 rounded">
-                <option value="geral">Geral</option>
-                <option value="botox">Botox</option>
-                <option value="jiu-jitsu">Jiu-Jitsu</option>
-                <option value="nutricao">Nutrição</option>
-                <option value="buffet">Buffet</option>
-            </select>
-            <button id="btn-confirmar-salvar" class="w-full bg-blue-600 text-white py-2 rounded font-bold">SALVAR VÍDEO</button>
+            
+            <label class="text-gray-500 text-[10px] uppercase font-bold">2. Escolha o tema:</label>
+            <input type="text" id="tag-input" placeholder="Ex: Treino de Bíceps, Maquiagem, Limpeza de pele..." class="w-full bg-black text-white p-3 mb-6 rounded border border-gray-700">
+            
+            <button id="btn-confirmar-salvar" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl font-bold transition">SALVAR NA BIBLIOTECA</button>
         </div>
     `;
     document.body.appendChild(container);
@@ -583,8 +583,8 @@
     });
 
     const nicho = document.getElementById('nicho-select').value;
-    const tag = document.getElementById('tag-select').value;
-    document.body.removeChild(container); // Remove o modal temporário
+    const tag = document.getElementById('tag-input').value || "geral";
+    document.body.removeChild(container);
 
     if (!confirmar) return;
 
@@ -600,12 +600,12 @@
             titulo: titulo,
             link: link,
             nicho: nicho,
-            tags: [tag],
+            tags: [tag.toLowerCase()],
             dataCadastro: new Date().toISOString()
         });
-        alert(`✅ Vídeo salvo em ${nicho} com tag ${tag}!`);
+        alert(`✅ Sucesso! Vídeo organizado em ${nicho.toUpperCase()}.`);
     } catch (e) {
-        console.error("Erro:", e);
+        alert("Erro ao salvar. Verifique sua conexão.");
     }
 };
 
