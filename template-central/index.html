@@ -703,6 +703,24 @@ window.abrirModalBiblioteca = async (nicho = "global") => {
 };
 
 window.marcarConcluidoAdmin = (id) => window.marcarConcluido(String(id));
+
+        window.copiarConviteParaWhatsApp = () => {
+            const nomeAluno = document.getElementById('alunoNome')?.value || 'aluno(a)';
+            const linkFicha = window.location.href;
+            
+            const texto = `*🚀 ACESSE SUA FICHA DE TREINO*\n\n` +
+                          `Olá, ${nomeAluno}!\n\n` +
+                          `Aqui está o link para acessar sua ficha e marcar seu treino:\n\n` +
+                          `${linkFicha}\n\n` +
+                          `Qualquer dúvida, estou à disposição!`;
+            
+            navigator.clipboard.writeText(texto).then(() => {
+                alert("✅ Convite copiado! Agora é só colar no WhatsApp do aluno.");
+            }).catch(err => {
+                alert("Erro ao copiar.");
+            });
+        };
+        
 </script>
 </body>
 </html>
