@@ -104,54 +104,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-
-        // --- FUNÇÃO NO TOPO (LOCALIZADA CORRETAMENTE) ---
-        async function inicializarCentralDinamica() {
-            window.inicializarCentralDinamica = inicializarCentralDinamica;
-            const params = new URLSearchParams(window.location.search);
-            const cid = params.get('cid'); 
-            if (!cid) return;
-            
-            const clienteSnap = await getDoc(doc(db, "clients", cid));
-            if (!clienteSnap.exists()) return;
-
-            const dados = clienteSnap.data();
-
-            if (dados.status.toLowerCase() !== "ativo") {
-                document.getElementById("loading").innerHTML = `
-                    <div class="text-center space-y-4 p-10">
-                        <h2 class="text-2xl font-bold text-red-500">ACESSO SUSPENSO</h2>
-                        <p class="text-gray-400">Sua central está inativa. Entre em contato com o suporte para regularizar.</p>
-                        <a href="https://wa.me/5575998649927" class="inline-block bg-green-600 text-white px-6 py-2 rounded font-bold">SOLICITAR SUPORTE</a>
-                    </div>
-                `;
-                document.getElementById("loading").classList.remove("hidden");
-                return;
-            }
-
-            window.senhaMestraCorreta = dados.senhaMestra;
-            window.statusCliente = dados.status;
-
-            const config = dados.configuracaoPersonalizada || {};
-            document.title = `${dados.nome} — Central`;
-            document.getElementById("custom-nome").innerText = dados.nome;
-            document.getElementById("custom-logo").src = config.logo || "";
-            document.getElementById("container-apresentacao").innerHTML = config.apresentacao || "";
-            document.getElementById("container-dinamico").innerHTML = config.campos || "";
-            
-            const painelGestor = document.getElementById("container-painel-gestor");
-            if(config.miniAdmin) {
-                painelGestor.innerHTML = config.miniAdmin;
-            }
-
-            console.log("🛠️ Porteiro validado: Acesso Liberado.");
-            document.getElementById("loading").classList.add("hidden");
-            document.getElementById("interface-dinamica").classList.remove("hidden");
-
-            window.atualizarDashboard();
-            window.renderizarGestaoAlunos();
-        }
-
         // Expondo funções e o auth para o escopo global do navegador
         window.db = db;
         window.auth = auth;
@@ -181,7 +133,47 @@
             } catch (e) { console.error("Erro ao configurar cliente:", e); }
         }
 
-  
+    async function inicializarCentralDinamica() {
+            const params = new URLSearchParams(window.location.search);
+            const cid = params.get('cid'); 
+            if (!cid) return;
+            
+            const clienteSnap = await getDoc(doc(db, "clients", cid));
+            if (!clienteSnap.exists()) return;
+
+            const dados = clienteSnap.data();
+            window.senhaMestraCorreta = dados.senhaMestra;
+            window.statusCliente = dados.status;
+
+            const config = dados.configuracaoPersonalizada || {};
+            
+            document.title = `${dados.nome} — Central`;
+            document.getElementById("custom-nome").innerText = dados.nome;
+            document.getElementById("custom-logo").src = config.logo || "";
+            
+            // Injeta o HTML vindo da Fábrica
+            document.getElementById("container-apresentacao").innerHTML = config.apresentacao || "";
+            document.getElementById("container-dinamico").innerHTML = config.campos || "";
+            
+            // NOVO: Força a exibição do Painel do Gestor se ele estiver configurado
+            const painelGestor = document.getElementById("container-painel-gestor");
+            if(config.miniAdmin) {
+                painelGestor.innerHTML = config.miniAdmin;
+            }
+
+            console.log("🛠️ HTML Injetado com sucesso.");
+            document.getElementById("loading").classList.add("hidden");
+            document.getElementById("interface-dinamica").classList.remove("hidden");
+
+            // FORÇA O CARREGAMENTO DOS MOTORES COM O CID CORRETO
+            window.atualizarDashboard();
+            window.renderizarGestaoAlunos();
+            
+            // GATILHO AUTOMÁTICO DE CARREGAMENTO
+            window.atualizarDashboard();
+            window.renderizarGestaoAlunos();
+        }
+
         window.registrarAcao = async (exercicio) => {
             try {
                 const params = new URLSearchParams(window.location.search);
@@ -217,7 +209,10 @@
             console.error("Erro ao salvar:", e);
         }
     };
-    
+
+    // --- COMANDO PARA DISPARAR O MOTOR ---
+    inicializarCentralDinamica();
+
     // MOTOR INTELIGENTE CENTRALIZADO
    window.acaoInteligente = async (tipo, subcolecao = 'ficha') => {
         const params = new URLSearchParams(window.location.search);
@@ -613,20 +608,9 @@
         });
     };
 
-   await buscarEListar(ownerId, "Global");
+    await buscarEListar(ownerId, "Global");
     await buscarEListar(personalId, "Privado");
 };
-
-// DISPARO DO MOTOR (ÚNICA VEZ)
-inicializarCentralDinamica();
-
-// EXPORTAÇÃO GLOBAL
-window.inicializarCentralDinamica = inicializarCentralDinamica;
-window.acaoInteligente = acaoInteligente;
-window.carregarDados = carregarDados;
-window.atualizarDashboard = atualizarDashboard;
-window.renderizarGestaoAlunos = renderizarGestaoAlunos;
-window.abrirModalBiblioteca = abrirModalBiblioteca;
 </script>
 </body>
 </html>
