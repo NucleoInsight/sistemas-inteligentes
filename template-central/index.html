@@ -571,22 +571,35 @@
         }
     };
 
-        window.abrirModalBiblioteca = async () => {
+        window.abrirModalBiblioteca = async (termoBusca = "") => {
     const modal = document.getElementById('modal-biblioteca');
     const lista = document.getElementById('lista-modal-videos');
     modal.classList.remove('hidden');
-    lista.innerHTML = '<p class="text-gray-500 text-xs">Carregando vídeos...</p>';
 
-    const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-    const ownerId = "EPaByse2kuWCpsfAeF7Kn409MhI3"; // ID Global
+    // Adiciona o campo de busca se não existir
+    if (!document.getElementById('input-busca-video')) {
+        lista.insertAdjacentHTML('beforebegin', `
+            <input type="text" id="input-busca-video" placeholder="🔍 Filtrar por tag (ex: bíceps)..." 
+            class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white text-xs mb-4"
+            onkeyup="if(event.key==='Enter') window.abrirModalBiblioteca(this.value)">
+        `);
+    }
+
+    const { collection, getDocs, query, where } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    const ownerId = "EPaByse2kuWCpsfAeF7Kn409MhI3";
     const params = new URLSearchParams(window.location.search);
     const personalId = params.get('cid');
     
-    lista.innerHTML = '';
+    lista.innerHTML = '<p class="text-gray-500 text-xs">Carregando...</p>';
     
-    // Função para buscar e renderizar vídeos
     const buscarEListar = async (id, tipo) => {
-        const querySnapshot = await getDocs(collection(db, "owners", id, "biblioteca_videos"));
+        let q;
+        const colRef = collection(db, "owners", id, "biblioteca_videos");
+        
+        // Se houver termo, aplica o filtro de tags, senão traz tudo
+        q = termoBusca ? query(colRef, where("tags", "array-contains", termoBusca.toLowerCase())) : colRef;
+        
+        const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
             const video = doc.data();
             const div = document.createElement('div');
@@ -608,8 +621,11 @@
         });
     };
 
+    lista.innerHTML = '';
     await buscarEListar(ownerId, "Global");
     await buscarEListar(personalId, "Privado");
+    
+    if (lista.innerHTML === '') lista.innerHTML = '<p class="text-gray-500 text-xs">Nenhum vídeo encontrado com essa tag.</p>';
 };
 </script>
 </body>
