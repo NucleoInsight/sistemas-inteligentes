@@ -619,12 +619,12 @@
     await buscarEListar(personalId, "Privado");
 };
 
-// EXPORTAÇÃO GLOBAL DAS FUNÇÕES DO MOTOR
-window.inicializarCentralDinamica = inicializarCentralDinamica;
-window.acaoInteligente = acaoInteligente;
-window.carregarDados = carregarDados;
-window.atualizarDashboard = atualizarDashboard;
-window.renderizarGestaoAlunos = renderizarGestaoAlunos;
+// EXPORTAÇÃO GLOBAL FORÇADA PARA O OBJETO WINDOW
+        window.inicializarCentralDinamica = inicializarCentralDinamica;
+        window.acaoInteligente = acaoInteligente;
+        window.carregarDados = carregarDados;
+        window.atualizarDashboard = atualizarDashboard;
+        window.renderizarGestaoAlunos = renderizarGestaoAlunos;
 </script>
 </body>
 </html>
