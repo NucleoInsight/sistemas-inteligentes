@@ -558,31 +558,38 @@
     modal.classList.remove('hidden');
     lista.innerHTML = '<p class="text-gray-500 text-xs">Carregando vídeos...</p>';
 
-    const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-    const ownerId = "EPaByse2kuWCpsfAeF7Kn409MhI3";
-    const querySnapshot = await getDocs(collection(db, "owners", ownerId, "biblioteca_videos"));
+   const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    const ownerId = "EPaByse2kuWCpsfAeF7Kn409MhI3"; // ID Global
+    const personalId = "ID_DO_PERSONAL_LOGADO"; // Substitua pelo ID dinâmico do Personal
     
     lista.innerHTML = '';
-    querySnapshot.forEach((doc) => {
-        const video = doc.data();
-        const div = document.createElement('div');
-        div.className = "bg-[#0F1115] p-3 rounded border border-gray-700 cursor-pointer hover:border-blue-500 transition";
-        div.innerHTML = `<div class="text-white text-xs font-bold">${video.titulo}</div>`;
-       div.onclick = () => {
-            document.getElementById('videoTitulo').value = video.titulo;
-            document.getElementById('linkVideoTreino').value = video.link;
-            modal.classList.add('hidden');
-            
-            // Renderiza o player instantaneamente na tela
-            const containerPlayers = document.getElementById('container-players-renderizados');
-            const videoId = video.link.split('v=')[1] || video.link.split('/').pop().split('?')[0];
-            containerPlayers.innerHTML = `
-                <p class="text-xs font-bold text-blue-400 mb-1">${video.titulo}</p>
-                <iframe class="w-full h-48 rounded-lg" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
-            `;
-        };
-        lista.appendChild(div);
-    });
+    
+    // Função para buscar e renderizar vídeos
+    const buscarEListar = async (id, tipo) => {
+        const querySnapshot = await getDocs(collection(db, "owners", id, "biblioteca_videos"));
+        querySnapshot.forEach((doc) => {
+            const video = doc.data();
+            const div = document.createElement('div');
+            div.className = "bg-[#0F1115] p-3 rounded border border-gray-700 cursor-pointer hover:border-blue-500 transition";
+            div.innerHTML = `<div class="text-white text-xs font-bold">${video.titulo} <span class="text-[8px] text-gray-500">(${tipo})</span></div>`;
+            div.onclick = () => {
+                document.getElementById('videoTitulo').value = video.titulo;
+                document.getElementById('linkVideoTreino').value = video.link;
+                modal.classList.add('hidden');
+                
+                const containerPlayers = document.getElementById('container-players-renderizados');
+                const videoId = video.link.split('v=')[1] || video.link.split('/').pop().split('?')[0];
+                containerPlayers.innerHTML = `
+                    <p class="text-xs font-bold text-blue-400 mb-1">${video.titulo}</p>
+                    <iframe class="w-full h-48 rounded-lg" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+                `;
+            };
+            lista.appendChild(div);
+        });
+    };
+
+    await buscarEListar(ownerId, "Global");
+    await buscarEListar(personalId, "Privado");
 };
 </script>
 </body>
