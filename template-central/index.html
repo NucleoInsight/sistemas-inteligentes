@@ -144,7 +144,7 @@
             const dados = clienteSnap.data();
 
             // LÓGICA DO PORTEIRO: Verifica se o status é 'ativo'
-            if (dados.status !== "ativo") {
+            if (dados.status.toLowerCase() !== "ativo") {
                 document.getElementById("loading").innerHTML = `
                     <div class="text-center space-y-4 p-10">
                         <h2 class="text-2xl font-bold text-red-500">ACESSO SUSPENSO</h2>
