@@ -103,6 +103,7 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
         // Expondo funções do Firebase para o escopo global do navegador
         window.db = db;
         window.doc = doc;
