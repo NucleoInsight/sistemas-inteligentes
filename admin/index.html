@@ -757,6 +757,30 @@ window.exibirVideo = (url) => {
     }
     alert(`✅ ${contagem} clientes atualizados com a estrutura de Painel!`);
 };
+
+        window.copiarLinkDoFormulario = () => {
+        const url = "https://nucleoinsight.github.io/sistemas-inteligentes/formulario.html";
+        const texto = `*🚀 RECEBA SUA CENTRAL PERSONALIZADA*\n\nOlá! Para que eu possa configurar sua Central Digital de alta performance, preencha seus dados no link abaixo:\n\n👉 ${url}\n\nAssim que você enviar, configurarei sua demonstração exclusiva!`;
+        navigator.clipboard.writeText(texto).then(() => alert("✅ Link copiado com mensagem formatada para WhatsApp!"));
+    };
+
+    window.renderizarDadosFormulario = async () => {
+        const res = document.getElementById('resultado-dados');
+        res.classList.remove('hidden');
+        
+        const q = query(collection(db, "clients"), where("status", "==", "Demonstração"));
+        const snapshot = await getDocs(q);
+        
+        let listaDados = "DADOS DOS LEADS (DEMONSTRAÇÃO):\n\n";
+        snapshot.forEach((doc) => {
+            const d = doc.data();
+            listaDados += `NOME: ${d.nome} | NICHO: ${d.nicho} | COR: ${d.cor}\n--------------------------\n`;
+        });
+        res.innerText = listaDados || "Nenhum lead em demonstração encontrado.";
+    };
+
+    window.abrirFormulario = () => window.open("https://nucleoinsight.github.io/sistemas-inteligentes/formulario.html", "_blank");
+            
     </script>
         
 </body>
