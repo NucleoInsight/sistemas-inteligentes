@@ -133,7 +133,7 @@
             } catch (e) { console.error("Erro ao configurar cliente:", e); }
         }
 
-    async function inicializarCentralDinamica() {
+   async function inicializarCentralDinamica() {
             const params = new URLSearchParams(window.location.search);
             const cid = params.get('cid'); 
             if (!cid) return;
@@ -142,6 +142,20 @@
             if (!clienteSnap.exists()) return;
 
             const dados = clienteSnap.data();
+
+            // LÓGICA DO PORTEIRO: Verifica se o status é 'ativo'
+            if (dados.status !== "ativo") {
+                document.getElementById("loading").innerHTML = `
+                    <div class="text-center space-y-4 p-10">
+                        <h2 class="text-2xl font-bold text-red-500">ACESSO SUSPENSO</h2>
+                        <p class="text-gray-400">Sua central está inativa. Entre em contato com o suporte para regularizar.</p>
+                        <a href="https://wa.me/5575998649927" class="inline-block bg-green-600 text-white px-6 py-2 rounded font-bold">SOLICITAR SUPORTE</a>
+                    </div>
+                `;
+                document.getElementById("loading").classList.remove("hidden");
+                return;
+            }
+
             window.senhaMestraCorreta = dados.senhaMestra;
             window.statusCliente = dados.status;
 
@@ -151,25 +165,18 @@
             document.getElementById("custom-nome").innerText = dados.nome;
             document.getElementById("custom-logo").src = config.logo || "";
             
-            // Injeta o HTML vindo da Fábrica
             document.getElementById("container-apresentacao").innerHTML = config.apresentacao || "";
             document.getElementById("container-dinamico").innerHTML = config.campos || "";
             
-            // NOVO: Força a exibição do Painel do Gestor se ele estiver configurado
             const painelGestor = document.getElementById("container-painel-gestor");
             if(config.miniAdmin) {
                 painelGestor.innerHTML = config.miniAdmin;
             }
 
-            console.log("🛠️ HTML Injetado com sucesso.");
+            console.log("🛠️ Porteiro validado: Acesso Liberado.");
             document.getElementById("loading").classList.add("hidden");
             document.getElementById("interface-dinamica").classList.remove("hidden");
 
-            // FORÇA O CARREGAMENTO DOS MOTORES COM O CID CORRETO
-            window.atualizarDashboard();
-            window.renderizarGestaoAlunos();
-            
-            // GATILHO AUTOMÁTICO DE CARREGAMENTO
             window.atualizarDashboard();
             window.renderizarGestaoAlunos();
         }
