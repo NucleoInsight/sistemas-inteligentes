@@ -575,7 +575,7 @@
 
    const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
     const ownerId = "EPaByse2kuWCpsfAeF7Kn409MhI3"; // ID Global
-    const personalId = "ID_DO_PERSONAL_LOGADO"; // Substitua pelo ID dinâmico do Personal
+    const personalId = auth.currentUser ? auth.currentUser.uid : "ID_NAO_ENCONTRADO";
     
     lista.innerHTML = '';
     
