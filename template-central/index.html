@@ -533,22 +533,21 @@
     }
 };
 
-        // FUNÇÃO PARA SALVAR VÍDEO NA BIBLIOTECA PESSOAL
-    window.salvarNaBiblioteca = async (titulo, link) => {
-        const ownerId = "EPaByse2kuWCpsfAeF7Kn409MhI3"; // Ou pegue dinamicamente se tiver
-        const db = window.db; // Garanta que seu db está acessível
-        const { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+        // FUNÇÃO PARA SALVAR VÍDEO NA BIBLIOTECA (GLOBAL OU PRIVADA)
+    window.salvarNaBiblioteca = async (titulo, link, tipo) => {
+        // Se tipo for 'Global', usa seu ID fixo. Se for 'Privado', usa o ID do personal logado.
+        const destinoId = tipo === 'Global' ? "EPaByse2kuWCpsfAeF7Kn409MhI3" : "ID_DO_PERSONAL_LOGADO";
         
         try {
             const idVideo = "video-" + Date.now();
-            await setDoc(doc(db, "owners", ownerId, "biblioteca_videos", idVideo), {
+            await setDoc(doc(db, "owners", destinoId, "biblioteca_videos", idVideo), {
                 titulo: titulo,
                 link: link,
                 dataCadastro: new Date().toISOString()
             });
-            alert("✅ Vídeo salvo na sua Biblioteca Pessoal!");
+            alert(`✅ Vídeo salvo na sua Biblioteca ${tipo}!`);
         } catch (e) {
-            console.error("Erro ao salvar na biblioteca:", e);
+            console.error("Erro ao salvar:", e);
         }
     };
 
