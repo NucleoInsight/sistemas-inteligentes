@@ -553,34 +553,26 @@
 
         // FUNÇÃO PARA SALVAR VÍDEO NA BIBLIOTECA (GLOBAL OU PRIVADA)
    window.salvarNaBiblioteca = async (titulo, link, tipo) => {
-        const tagsInput = prompt("Digite as tags para este vídeo separadas por vírgula (ex: treino, bíceps, técnico):");
-        const tagsArray = tagsInput ? tagsInput.split(',').map(t => t.trim().toLowerCase()) : [];
+        // Modal de seleção (você pode injetar esse HTML no seu Modal de Cadastro)
+        const nicho = prompt("Escolha o Nicho (barbearia, personal, estetica):"); 
+        const tag = prompt("Escolha a Tag principal (treino, corte, procedimento):");
 
         const params = new URLSearchParams(window.location.search);
         const personalId = params.get('cid');
-        
-        // Define o destino baseando-se estritamente no tipo enviado pelo botão
-        const destinoId = (tipo === 'Global') ? "EPaByse2kuWCpsfAeF7Kn409MhI3" : personalId;
-        
-        console.log("DEBUG DE SALVAMENTO: Tipo:", tipo, "| Destino ID:", destinoId);
-
-        if (!destinoId) {
-            alert("⚠️ Erro: Destino de salvamento inválido.");
-            return;
-        }
+        const destinoId = tipo === 'Global' ? "EPaByse2kuWCpsfAeF7Kn409MhI3" : personalId;
         
         try {
             const idVideo = "video-" + Date.now();
             await setDoc(doc(db, "owners", destinoId, "biblioteca_videos", idVideo), {
                 titulo: titulo,
                 link: link,
-                tags: tagsArray,
+                nicho: nicho.toLowerCase(),
+                tags: [tag.toLowerCase()], // Array estruturado
                 dataCadastro: new Date().toISOString()
             });
-            alert(`✅ Vídeo salvo com sucesso no destino: ${tipo}!`);
+            alert(`✅ Vídeo salvo em ${nicho} com tag ${tag}!`);
         } catch (e) {
-            console.error("Erro detalhado do Firebase:", e);
-            alert("Erro ao salvar o vídeo. Verifique se você tem permissão para escrever no destino: " + destinoId);
+            console.error("Erro:", e);
         }
     };
 
