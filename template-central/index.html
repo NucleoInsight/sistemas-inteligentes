@@ -576,9 +576,9 @@
     modal.classList.remove('hidden');
     lista.innerHTML = '<p class="text-gray-500 text-xs">Carregando vídeos...</p>';
 
-   const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
     const ownerId = "EPaByse2kuWCpsfAeF7Kn409MhI3"; // ID Global
-    const personalId = auth.currentUser ? auth.currentUser.uid : "ID_NAO_ENCONTRADO";
+    const personalId = window.auth.currentUser ? window.auth.currentUser.uid : "ID_NAO_ENCONTRADO";
     
     lista.innerHTML = '';
     
