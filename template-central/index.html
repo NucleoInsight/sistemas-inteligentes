@@ -584,61 +584,63 @@
         }
     };
 
-        window.abrirModalBiblioteca = async (termoBusca = "") => {
+       window.abrirModalBiblioteca = async (nicho = "global") => {
     const modal = document.getElementById('modal-biblioteca');
     const lista = document.getElementById('lista-modal-videos');
     modal.classList.remove('hidden');
 
-    // Adiciona o campo de busca se não existir
-    if (!document.getElementById('input-busca-video')) {
+    // Botões de navegação por nicho
+    if (!document.getElementById('container-nichos')) {
         lista.insertAdjacentHTML('beforebegin', `
-            <input type="text" id="input-busca-video" placeholder="🔍 Filtrar por tag (ex: bíceps)..." 
-            class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white text-xs mb-4"
-            onkeyup="if(event.key==='Enter') window.abrirModalBiblioteca(this.value)">
+            <div id="container-nichos" class="flex flex-wrap gap-2 mb-4">
+                <button onclick="window.abrirModalBiblioteca('global')" class="bg-gray-800 text-white px-2 py-1 rounded text-[10px]">GLOBAL</button>
+                <button onclick="window.abrirModalBiblioteca('barbearia')" class="bg-gray-800 text-white px-2 py-1 rounded text-[10px]">BARBEARIA</button>
+                <button onclick="window.abrirModalBiblioteca('personal')" class="bg-gray-800 text-white px-2 py-1 rounded text-[10px]">PERSONAL</button>
+                <button onclick="window.abrirModalBiblioteca('estetica')" class="bg-gray-800 text-white px-2 py-1 rounded text-[10px]">ESTÉTICA</button>
+            </div>
         `);
     }
 
-    const { collection, getDocs, query, where } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-    const ownerId = "EPaByse2kuWCpsfAeF7Kn409MhI3";
+    const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
     const params = new URLSearchParams(window.location.search);
     const personalId = params.get('cid');
     
-    lista.innerHTML = '<p class="text-gray-500 text-xs">Carregando...</p>';
+    lista.innerHTML = '<p class="text-gray-500 text-xs">Carregando vídeos de ' + nicho + '...</p>';
     
-    const buscarEListar = async (id, tipo) => {
-        let q;
-        const colRef = collection(db, "owners", id, "biblioteca_videos");
-        
-        // Se houver termo, aplica o filtro de tags, senão traz tudo
-        q = termoBusca ? query(colRef, where("tags", "array-contains", termoBusca.toLowerCase())) : colRef;
-        
-        const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => {
-            const video = doc.data();
-            const div = document.createElement('div');
-            div.className = "bg-[#0F1115] p-3 rounded border border-gray-700 cursor-pointer hover:border-blue-500 transition";
-            div.innerHTML = `<div class="text-white text-xs font-bold">${video.titulo} <span class="text-[8px] text-gray-500">(${tipo})</span></div>`;
-            div.onclick = () => {
-                document.getElementById('videoTitulo').value = video.titulo;
-                document.getElementById('linkVideoTreino').value = video.link;
-                modal.classList.add('hidden');
-                
-                const containerPlayers = document.getElementById('container-players-renderizados');
-                const videoId = video.link.split('v=')[1] || video.link.split('/').pop().split('?')[0];
-                containerPlayers.innerHTML = `
-                    <p class="text-xs font-bold text-blue-400 mb-1">${video.titulo}</p>
-                    <iframe class="w-full h-48 rounded-lg" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
-                `;
-            };
-            lista.appendChild(div);
-        });
-    };
-
+    // Caminho da pasta: ou é a pasta privada do usuário, ou uma pasta de nicho na Global
+    const caminho = (nicho === 'privado') ? ["owners", personalId, "biblioteca_videos"] : ["owners", "EPaByse2kuWCpsfAeF7Kn409MhI3", "nichos", nicho, "videos"];
+    
+    const colRef = collection(db, ...caminho);
+    const querySnapshot = await getDocs(colRef);
+    
     lista.innerHTML = '';
-    await buscarEListar(ownerId, "Global");
-    await buscarEListar(personalId, "Privado");
     
-    if (lista.innerHTML === '') lista.innerHTML = '<p class="text-gray-500 text-xs">Nenhum vídeo encontrado com essa tag.</p>';
+    // Adiciona botão para ver Privados no topo da lista
+    if (nicho !== 'privado') {
+        lista.innerHTML += `<div onclick="window.abrirModalBiblioteca('privado')" class="bg-blue-900 p-2 mb-2 rounded text-white text-xs text-center cursor-pointer">⭐ VER MEUS VÍDEOS PRIVADOS</div>`;
+    }
+
+    querySnapshot.forEach((doc) => {
+        const video = doc.data();
+        const div = document.createElement('div');
+        div.className = "bg-[#0F1115] p-3 rounded border border-gray-700 cursor-pointer hover:border-blue-500 transition mb-2";
+        div.innerHTML = `<div class="text-white text-xs font-bold">${video.titulo}</div>`;
+        div.onclick = () => {
+            document.getElementById('videoTitulo').value = video.titulo;
+            document.getElementById('linkVideoTreino').value = video.link;
+            modal.classList.add('hidden');
+            
+            const containerPlayers = document.getElementById('container-players-renderizados');
+            const videoId = video.link.split('v=')[1] || video.link.split('/').pop().split('?')[0];
+            containerPlayers.innerHTML = `
+                <p class="text-xs font-bold text-blue-400 mb-1">${video.titulo}</p>
+                <iframe class="w-full h-48 rounded-lg" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+            `;
+        };
+        lista.appendChild(div);
+    });
+
+    if (lista.innerHTML === '') lista.innerHTML = '<p class="text-gray-500 text-xs">Nenhum vídeo nesta categoria.</p>';
 };
 </script>
 </body>
