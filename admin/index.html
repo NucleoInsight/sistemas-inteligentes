@@ -767,21 +767,19 @@ window.exibirVideo = (url) => {
     };
 
     window.renderizarDadosFormulario = async () => {
-        const res = document.getElementById('resultado-dados');
-        res.classList.remove('hidden');
+        const modal = document.getElementById('modal-dados');
+        const conteudo = document.getElementById('resultado-dados-conteudo');
+        modal.classList.remove('hidden');
         
-        const q = query(collection(db, "clients"), where("status", "==", "Demonstração"));
-        const snapshot = await getDocs(q);
+        const snapshot = await getDocs(collection(db, "leads"));
         
         let listaDados = "DADOS DOS LEADS (DEMONSTRAÇÃO):\n\n";
         snapshot.forEach((doc) => {
             const d = doc.data();
-            listaDados += `NOME: ${d.nome} | NICHO: ${d.nicho} | COR: ${d.cor}\n--------------------------\n`;
+            listaDados += `NOME: ${d.nome || 'N/A'}\nCONTATO: ${d.contato || 'N/A'}\nNICHO: ${d.nicho}\nCOR: ${d.cor}\n--------------------------\n`;
         });
-        res.innerText = listaDados || "Nenhum lead em demonstração encontrado.";
+        conteudo.innerText = listaDados || "Nenhum lead encontrado.";
     };
-
-    window.abrirFormulario = () => window.open("https://nucleoinsight.github.io/sistemas-inteligentes/formulario.html", "_blank");
             
     </script>
         
