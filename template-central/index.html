@@ -680,10 +680,18 @@ window.abrirModalBiblioteca = async (nicho = "global") => {
     }
 
     try {
+        const hoje = new Date().toISOString().split('T')[0];
+        const agora = new Date().toISOString();
+        
         await window.updateDoc(window.doc(window.db, "clients", cid, "dados", aid), { 
+            [`historicoTreinos.${hoje}`]: {
+                status: "Concluído",
+                data: agora,
+                marcadoPor: idFicha ? "Personal" : "Aluno"
+            },
             statusTreino: "Concluído",
-            dataConclusao: new Date().toISOString(),
-            marcadoPor: idFicha ? "Personal" : "Aluno" 
+            dataConclusao: agora,
+            marcadoPor: idFicha ? "Personal" : "Aluno"
         });
         
         alert("✅ Treino marcado como concluído!");
