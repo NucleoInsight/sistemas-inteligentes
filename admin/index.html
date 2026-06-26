@@ -94,55 +94,58 @@
                     <span>⚙️</span> Iniciar Nova Captura
                 </h2>
              <form id="form-cliente" class="space-y-4 text-xs">
-    <!-- BOTÕES DE COMANDO DO FORMULÁRIO -->
-    <div class="grid grid-cols-3 gap-2">
-        <button type="button" onclick="window.copiarLinkDoFormulario()" class="bg-blue-600 text-white font-bold p-2 rounded text-[9px]">📋 LINK</button>
-        <button type="button" onclick="window.renderizarDadosFormulario()" class="bg-purple-600 text-white font-bold p-2 rounded text-[9px]">📊 DADOS</button>
-        <button type="button" onclick="window.abrirFormulario()" class="bg-gray-700 text-white font-bold p-2 rounded text-[9px]">🔗 ABRIR</button>
-    </div>
-
+                    <div>
+                        <label class="block text-textoSecundario mb-1 font-medium">Nome do Empreendedor / Empresa</label>
+                        <input type="text" id="cli-nome" required class="w-full bg-bgPrincipal border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-cyan-500">
+                    </div>
+                    <div>
+                        <label class="block text-textoSecundario mb-1 font-medium">WhatsApp do Dono</label>
+                        <input type="text" id="cli-contato" required class="w-full bg-bgPrincipal border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-cyan-500" placeholder="75999999999">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-textoSecundario mb-1 font-medium">Mensalidade (R$)</label>
+                            <input type="number" id="cli-mrr" value="49" required class="w-full bg-bgPrincipal border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-cyan-500">
+                        </div>
+                        <div>
+                            <label class="block text-textoSecundario mb-1 font-medium">Dia do Vencimento</label>
+                            <select id="cli-vencimento" class="w-full bg-bgPrincipal border border-gray-800 rounded px-2 py-2 text-white focus:outline-none">
+                                <option value="05">Dia 05</option><option value="10" selected>Dia 10</option><option value="15">Dia 15</option><option value="20">Dia 20</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-textoSecundario mb-1 font-medium">Link da Prévia / Demo do GitHub</label>
+                        <div class="grid grid-cols-2 gap-2">
     <div>
-        <label class="block text-textoSecundario mb-1">Nome do Cliente</label>
-        <input type="text" id="cli-nome" required class="w-full bg-bgPrincipal border border-gray-800 rounded px-3 py-2 text-white">
+        <label class="block text-textoSecundario mb-1 font-medium">Selecione o Template (Motor)</label>
+        <select id="cli-nicho" onchange="window.resgatarTemplate(this.value)" class="w-full bg-[#171A21] border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-cyan-500">
+            <option value="">Carregando...</option>
+        </select>
     </div>
-
-    <div class="grid grid-cols-2 gap-2">
-        <div>
-            <label class="block text-textoSecundario mb-1">Template Base</label>
-            <select id="cli-nicho" onchange="window.resgatarTemplate(this.value)" class="w-full bg-bgPrincipal border border-gray-800 rounded px-2 py-2 text-white">
-                <option value="">Carregando...</option>
-            </select>
-        </div>
-        <div>
-            <label class="block text-textoSecundario mb-1">Cor do Sistema</label>
-            <input type="color" id="cli-cor" class="w-full h-8 bg-bgPrincipal border border-gray-800 rounded px-1">
-        </div>
+    <div>
+        <label class="block text-textoSecundario mb-1 font-medium">Cor do Sistema</label>
+        <input type="color" id="cli-cor" class="w-full bg-bgPrincipal border border-gray-800 rounded px-1 h-[38px]">
     </div>
+</div>
+                    </div>
+                    <div>
+                        <label class="block text-textoSecundario mb-1 font-medium">Situação Comercial Atual</label>
+                        <div>
+                            <label class="block text-textoSecundario mb-1 font-medium">Senha Mestra do Cliente</label>
+                            <input type="password" id="cli-senha" required class="w-full bg-bgPrincipal border border-gray-800 rounded px-3 py-2 text-white focus:outline-none focus:border-cyan-500">
+                        </div>
+                        <select id="cli-status" class="w-full bg-bgPrincipal border border-gray-800 rounded px-2 py-2 text-white focus:outline-none">
+                            <option value="Demonstração">Demonstração</option>
+                            <option value="Ativo">Contrato Ativo</option>
+                            <option value="Bloqueado">Bloqueado / Inadimplente</option>
+                        </select>
+                    </div>
 
-    <button type="submit" class="w-full bg-green-600 text-white font-black py-3 rounded-lg uppercase">SALVAR CLIENTE</button>
-    
-    <div id="resultado-dados" class="bg-black p-2 rounded text-[10px] text-green-400 font-mono hidden"></div>
-</form>
-
-<script>
-    window.copiarLinkDoFormulario = () => {
-        const url = "https://nucleoinsight.github.io/sistemas-inteligentes/formulario.html";
-        const texto = `Olá! Clique aqui para enviar seus dados e configurar sua Central Digital: ${url}`;
-        navigator.clipboard.writeText(texto).then(() => alert("✅ Link copiado com mensagem!"));
-    };
-
-    window.renderizarDadosFormulario = () => {
-        const res = document.getElementById('resultado-dados');
-        res.classList.remove('hidden');
-        res.innerText = JSON.stringify({
-            nome: document.getElementById('cli-nome').value,
-            nicho: document.getElementById('cli-nicho').value,
-            cor: document.getElementById('cli-cor').value
-        }, null, 2);
-    };
-
-    window.abrirFormulario = () => window.open("https://nucleoinsight.github.io/sistemas-inteligentes/formulario.html", "_blank");
-</script>
+                    <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold py-2.5 rounded-lg shadow-lg tracking-wide uppercase">
+                        Salvar na Central Alfa
+                    </button>
+                </form>
             </div>
 
             <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-800 lg:col-span-2">
