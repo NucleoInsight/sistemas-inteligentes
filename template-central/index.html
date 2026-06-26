@@ -553,35 +553,40 @@
 
         // FUNÇÃO PARA SALVAR VÍDEO NA BIBLIOTECA (GLOBAL OU PRIVADA)
  window.salvarNaBiblioteca = async (titulo, link, tipo) => {
-    // Modal de seleção profissional
-    const selectNicho = `
-        <select id="nicho-select" class="w-full bg-gray-800 text-white p-2 mb-2 rounded">
-            <option value="estetica">Estética</option>
-            <option value="performance">Performance</option>
-            <option value="profissionais">Profissionais</option>
-            <option value="eventos">Eventos</option>
-        </select>
-        <select id="tag-select" class="w-full bg-gray-800 text-white p-2 rounded">
-            <option value="geral">Geral</option>
-            <option value="botox">Botox</option>
-            <option value="jiu-jitsu">Jiu-Jitsu</option>
-            <option value="nutricao">Nutrição</option>
-            <option value="buffet">Buffet</option>
-        </select>
-    `;
-    
-    // Injetamos um modal temporário ou usamos o confirm para pegar os valores dos selects
+    // Cria o elemento de forma que o DOM consiga enxergar
     const container = document.createElement('div');
-    container.innerHTML = selectNicho;
-    const confirmacao = await new Promise((resolve) => {
-        const dialog = window.confirm("Escolha o Nicho e a Tag nas opções abaixo (Sim=Salvar, Cancelar=Cancelar)");
-        resolve(dialog);
-    });
+    container.id = 'modal-selecao-temp';
+    container.className = 'fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4';
+    container.innerHTML = `
+        <div class="bg-gray-900 p-6 rounded-xl border border-gray-700 w-full max-w-sm">
+            <h2 class="text-white font-bold mb-4">Categorizar Vídeo</h2>
+            <select id="nicho-select" class="w-full bg-gray-800 text-white p-2 mb-2 rounded">
+                <option value="estetica">Estética</option>
+                <option value="performance">Performance</option>
+                <option value="profissionais">Profissionais</option>
+                <option value="eventos">Eventos</option>
+            </select>
+            <select id="tag-select" class="w-full bg-gray-800 text-white p-2 mb-4 rounded">
+                <option value="geral">Geral</option>
+                <option value="botox">Botox</option>
+                <option value="jiu-jitsu">Jiu-Jitsu</option>
+                <option value="nutricao">Nutrição</option>
+                <option value="buffet">Buffet</option>
+            </select>
+            <button id="btn-confirmar-salvar" class="w-full bg-blue-600 text-white py-2 rounded font-bold">SALVAR VÍDEO</button>
+        </div>
+    `;
+    document.body.appendChild(container);
 
-    if (!confirmacao) return;
+    const confirmar = await new Promise((resolve) => {
+        document.getElementById('btn-confirmar-salvar').onclick = () => resolve(true);
+    });
 
     const nicho = document.getElementById('nicho-select').value;
     const tag = document.getElementById('tag-select').value;
+    document.body.removeChild(container); // Remove o modal temporário
+
+    if (!confirmar) return;
 
     const params = new URLSearchParams(window.location.search);
     const personalId = params.get('cid');
@@ -609,7 +614,6 @@ window.abrirModalBiblioteca = async (nicho = "global") => {
     const lista = document.getElementById('lista-modal-videos');
     modal.classList.remove('hidden');
 
-    // Menu estilo YouTube
     if (!document.getElementById('container-nichos')) {
         lista.insertAdjacentHTML('beforebegin', `
             <div id="container-nichos" class="flex flex-col gap-2 mb-4">
@@ -643,7 +647,7 @@ window.abrirModalBiblioteca = async (nicho = "global") => {
         const video = doc.data();
         const div = document.createElement('div');
         div.className = "bg-[#0F1115] p-4 rounded border border-gray-700 hover:border-blue-500 transition mb-3 cursor-pointer";
-        div.innerHTML = `<div class="text-white text-sm font-bold">${video.titulo}</div><div class="text-[10px] text-gray-500 uppercase">${video.nicho} • ${video.tags[0]}</div>`;
+        div.innerHTML = `<div class="text-white text-sm font-bold">${video.titulo}</div><div class="text-[10px] text-gray-500 uppercase">${video.nicho || ''} • ${video.tags?.[0] || ''}</div>`;
         div.onclick = () => {
             document.getElementById('videoTitulo').value = video.titulo;
             document.getElementById('linkVideoTreino').value = video.link;
