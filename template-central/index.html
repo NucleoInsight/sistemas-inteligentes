@@ -553,37 +553,43 @@
 
         // FUNÇÃO PARA SALVAR VÍDEO NA BIBLIOTECA (GLOBAL OU PRIVADA)
 window.salvarNaBiblioteca = async (titulo, link, tipo) => {
-    // Modal aprimorado com descrição clara
     const container = document.createElement('div');
-    container.id = 'modal-selecao-temp';
     container.className = 'fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4';
     container.innerHTML = `
         <div class="bg-gray-900 p-6 rounded-2xl border border-blue-500 w-full max-w-sm">
-            <h2 class="text-white font-bold text-lg mb-2">Organizar Vídeo</h2>
-            <p class="text-gray-400 text-xs mb-4">Escolha a categoria e o tema para que outros profissionais encontrem seu vídeo facilmente.</p>
-            
-            <label class="text-gray-500 text-[10px] uppercase font-bold">1. Escolha o nicho:</label>
-            <select id="nicho-select" class="w-full bg-black text-white p-3 mb-4 rounded border border-gray-700">
+            <h2 class="text-white font-bold text-lg mb-4">Organizar seu vídeo</h2>
+            <label class="text-[9px] text-gray-500 uppercase font-bold">1. Qual o Nicho?</label>
+            <select id="nicho-select" class="w-full bg-black text-white p-3 mb-4 rounded border border-gray-700" onchange="window.atualizarTemas(this.value)">
                 <option value="estetica">Estética e Beleza</option>
                 <option value="performance">Esporte e Performance</option>
                 <option value="profissionais">Serviços e Consultoria</option>
                 <option value="eventos">Eventos e Lazer</option>
             </select>
-            
-            <label class="text-gray-500 text-[10px] uppercase font-bold">2. Escolha o tema:</label>
-            <input type="text" id="tag-input" placeholder="Ex: Treino de Bíceps, Maquiagem, Limpeza de pele..." class="w-full bg-black text-white p-3 mb-6 rounded border border-gray-700">
-            
-            <button id="btn-confirmar-salvar" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl font-bold transition">SALVAR NA BIBLIOTECA</button>
+            <label class="text-[9px] text-gray-500 uppercase font-bold">2. Escolha o Tema específico:</label>
+            <select id="tag-select" class="w-full bg-black text-white p-3 mb-6 rounded border border-gray-700">
+            </select>
+            <button id="btn-confirmar-salvar" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold">SALVAR VÍDEO</button>
         </div>
     `;
     document.body.appendChild(container);
+
+    window.atualizarTemas = (nicho) => {
+        const temas = {
+            estetica: ["Botox", "Limpeza de Pele", "Massagem", "Lash/Cílios", "Microblading"],
+            performance: ["Jiu-Jitsu", "Capoeira", "Musculação", "Corrida", "Yoga"],
+            profissionais: ["Nutrição", "Psicologia", "Mentoria", "Reforma", "Eletricista"],
+            eventos: ["Buffet", "Fotografia", "Locação de Espaço", "Decoração"]
+        };
+        document.getElementById('tag-select').innerHTML = temas[nicho].map(t => `<option value="${t.toLowerCase()}">${t}</option>`).join('');
+    };
+    window.atualizarTemas('estetica');
 
     const confirmar = await new Promise((resolve) => {
         document.getElementById('btn-confirmar-salvar').onclick = () => resolve(true);
     });
 
     const nicho = document.getElementById('nicho-select').value;
-    const tag = document.getElementById('tag-input').value || "geral";
+    const tag = document.getElementById('tag-select').value;
     document.body.removeChild(container);
 
     if (!confirmar) return;
@@ -600,12 +606,12 @@ window.salvarNaBiblioteca = async (titulo, link, tipo) => {
             titulo: titulo,
             link: link,
             nicho: nicho,
-            tags: [tag.toLowerCase()],
+            tags: [tag],
             dataCadastro: new Date().toISOString()
         });
-        alert(`✅ Sucesso! Vídeo organizado em ${nicho.toUpperCase()}.`);
+        alert(`✅ Vídeo organizado em ${nicho.toUpperCase()} > ${tag.toUpperCase()}!`);
     } catch (e) {
-        alert("Erro ao salvar. Verifique sua conexão.");
+        alert("Erro ao salvar.");
     }
 };
 
