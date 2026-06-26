@@ -618,8 +618,16 @@
     await buscarEListar(ownerId, "Global");
     await buscarEListar(personalId, "Privado");
 };
-        // Exponha a função para o objeto global window
+        /await buscarEListar(ownerId, "Global");
+    await buscarEListar(personalId, "Privado");
+};
+
+// EXPORTAÇÃO GLOBAL DAS FUNÇÕES DO MOTOR
 window.inicializarCentralDinamica = inicializarCentralDinamica;
+window.acaoInteligente = acaoInteligente;
+window.carregarDados = carregarDados;
+window.atualizarDashboard = atualizarDashboard;
+window.renderizarGestaoAlunos = renderizarGestaoAlunos;
 </script>
 </body>
 </html>
