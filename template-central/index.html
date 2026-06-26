@@ -664,6 +664,26 @@ window.abrirModalBiblioteca = async (nicho = "global") => {
         lista.appendChild(div);
     });
 };
+
+         // Função inteligente para ambos (Aluno e Personal)
+                window.marcarConcluido = async (idFicha = null) => {
+                    // Se não passar ID, pega o da URL (caso do aluno na ficha dele)
+                    const params = new URLSearchParams(window.location.search);
+                    const cid = params.get('cid');
+                    const aid = idFicha || params.get('aid'); 
+
+                    await updateDoc(doc(db, "clients", cid, "dados", aid), { 
+                        statusTreino: "Concluído",
+                        dataConclusao: new Date().toISOString(),
+                        marcadoPor: idFicha ? "Personal" : "Aluno" 
+                    });
+                    
+                    alert("✅ Treino marcado como concluído!");
+                    window.location.reload();
+                };
+
+                // Alias para o botão do professor/admin não quebrar
+                window.marcarConcluidoAdmin = (id) => window.marcarConcluido(id);
 </script>
 </body>
 </html>
