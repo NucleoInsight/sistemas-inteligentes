@@ -95,7 +95,7 @@
                     </li>
                 `).join('');
 
-                if (listaHistorico) {
+               if (listaHistorico) {
                     document.getElementById('app').insertAdjacentHTML('beforeend', `
                         <div class="mt-8 p-4 bg-gray-900 rounded-xl border border-gray-800">
                             <h3 class="text-white font-black uppercase text-xs mb-4 tracking-widest">📜 Histórico de Treinos</h3>
@@ -103,6 +103,8 @@
                         </div>
                     `);
                 }
+
+                Object.keys(dados).forEach(id => {
                     const el = document.getElementById(id);
                     if (el) {
                         el.type === 'checkbox' ? el.checked = dados[id] : el.value = dados[id];
