@@ -151,6 +151,8 @@
             if (!file) return;
             const params = new URLSearchParams(window.location.search);
             const preview = document.getElementById('aluno-foto-display');
+            
+            // Feedback visual
             preview.style.opacity = '0.5';
 
             const formData = new FormData();
@@ -162,13 +164,25 @@
                     headers: { 'Authorization': 'Client-ID 546c25a59c58ad7' },
                     body: formData
                 });
+                
                 const data = await response.json();
+                
                 if (data.success) {
-                    preview.src = data.data.link;
-                    await updateDoc(doc(db, "clients", params.get('cid'), "dados", params.get('aid')), { alunoFoto: data.data.link });
-                    alert("✅ Foto atualizada!");
+                    const novaUrl = data.data.link;
+                    preview.src = novaUrl;
+                    await updateDoc(doc(db, "clients", params.get('cid'), "dados", params.get('aid')), { 
+                        alunoFoto: novaUrl 
+                    });
+                    alert("✅ Foto atualizada com sucesso!");
+                } else {
+                    throw new Error("Falha no upload para o Imgur");
                 }
-            } catch (e) { alert("Erro no upload."); } finally { preview.style.opacity = '1'; }
+            } catch (e) { 
+                console.error(e);
+                alert("Erro ao subir a foto. Tente uma imagem menor."); 
+            } finally { 
+                preview.style.opacity = '1'; 
+            }
         };
 
         // Função inteligente para ambos (Aluno e Personal)
