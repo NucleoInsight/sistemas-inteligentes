@@ -279,51 +279,65 @@
     };
 
     // MOTOR DE CARREGAMENTO UNIVERSAL
-   window.carregarDados = async (subcolecao = 'ficha') => {
+     // MOTOR DE CARREGAMENTO UNIVERSAL
+    window.carregarDados = async (subcolecao = 'ficha') => {
         const params = new URLSearchParams(window.location.search);
         const cid = params.get('cid');
         if (!cid) return;
 
-        try {
+        try { // [1] Abertura Try
             const docRef = doc(db, "clients", cid, "dados", subcolecao);
             const docSnap = await getDoc(docRef);
 
-            if (docSnap.exists()) {
+            if (docSnap.exists()) { // [2] Abertura If
                 const dados = docSnap.data();
                 
-                // Função recursiva de espera para garantir que os inputs existam no DOM
-                const preencher = () => {
+                const preencher = () => { // [3] Abertura Função preencher
                     const elTitulo = document.getElementById('videoTitulo');
-                    if (!elTitulo) {
+                    if (!elTitulo) { // [4] Abertura If
                         setTimeout(preencher, 100);
                         return;
-                    }
+                    } // [4] Fechamento If
 
                     const container = document.getElementById('container-conteudos');
                     if (container) container.innerHTML = ''; 
 
-                   Object.keys(dados).forEach(id => {
+                    Object.keys(dados).forEach(id => { // [4] Abertura ForEach
                         const el = document.getElementById(id);
-                        if (el) {
+                        if (el) { // [5] Abertura If
                             if (el.type === 'checkbox') el.checked = dados[id];
                             else el.value = dados[id];
-                        }
-                    });
+                        } // [5] Fechamento If
+                    }); // [4] Fechamento ForEach
 
                     const elLink = document.getElementById('link-acesso-aluno');
-                    if (elLink) {
-                        elLink.value = `https://nucleoinsight.github.io/sistemas-inteligentes/visualizar_cliente_e_aluno.html?cid=${cid}&aid=${subcolecao}`;
-                    }
+                    if (elLink) elLink.value = `https://nucleoinsight.github.io/sistemas-inteligentes/visualizar_cliente_e_aluno.html?cid=${cid}&aid=${subcolecao}`;
 
                     const elIdOculto = document.getElementById('id-ficha-oculto');
-                    if (elIdOculto) {
-                        elIdOculto.value = subcolecao;
-                    }
-               } 
-            } catch (e) {
-                console.error("Erro na renderização:", e);
-                document.getElementById('app').innerHTML = "Erro ao carregar dados.";
-            }
+                    if (elIdOculto) elIdOculto.value = subcolecao;
+                }; // [3] Fechamento Função preencher
+
+                preencher();
+
+                const containerPlayers = document.getElementById('container-players-renderizados');
+                if (containerPlayers) { // [3] Abertura If
+                    containerPlayers.innerHTML = '';
+                    if (dados.videos && Array.isArray(dados.videos)) { // [4] Abertura If
+                        dados.videos.forEach(v => { // [5] Abertura ForEach
+                            const videoId = v.link.split('v=')[1] || v.link.split('/').pop().split('?')[0];
+                            const div = document.createElement('div');
+                            div.className = "mt-4 p-2 border border-gray-800 rounded";
+                            div.innerHTML = `...`;
+                            containerPlayers.appendChild(div);
+                        }); // [5] Fechamento ForEach
+                    } // [4] Fechamento If
+                } // [3] Fechamento If
+            } // [2] Fechamento If
+        } catch (e) { // [1] Fechamento Try / Abertura Catch
+            console.error("Erro na renderização:", e);
+            document.getElementById('app').innerHTML = "Erro ao carregar dados.";
+        } // [1] Fechamento Catch
+    }; // [0] Fechamento Função carregarDados
 
                   // Renderização de todos os vídeos (Array completo)
                     const containerPlayers = document.getElementById('container-players-renderizados');
