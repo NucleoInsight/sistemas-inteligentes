@@ -704,63 +704,7 @@ window.abrirModalBiblioteca = async (nicho = "global") => {
         alert("Erro ao copiar.");
     });
 };
-
-        // NOVA FUNÇÃO: Salva a rotina de treinos organizada por dia
-window.salvarRotina = async (idFicha, rotinaDados) => {
-    try {
-        const params = new URLSearchParams(window.location.search);
-        const cid = params.get('cid');
         
-        if (!cid || !idFicha) {
-            alert("Erro: Dados do aluno não encontrados.");
-            return;
-        }
-
-        const docRef = doc(db, "clients", cid, "dados", idFicha);
-        
-        // Salva a estrutura de rotina: rotina: { Segunda: [...], Terca: [...] }
-        await updateDoc(docRef, {
-            rotinaTreino: rotinaDados,
-            ultimaAtualizacaoTreino: new Date().toISOString()
-        });
-
-        alert("✅ Rotina de treinos salva com sucesso!");
-    } catch (e) {
-        console.error("Erro ao salvar rotina:", e);
-        alert("Erro ao salvar a rotina de treinos.");
-    }
-};
-
-        // Motor de adição de exercícios no formulário
-window.adicionarExercicioNaRotina = () => {
-    const dia = document.getElementById('rotinaDiaSelect').value;
-    const titulo = document.getElementById('novoExercicioTitulo').value;
-    const link = document.getElementById('novoExercicioLink').value;
-
-    if (!titulo || !link) {
-        alert("⚠️ Preencha o nome do exercício e o link do YouTube.");
-        return;
-    }
-
-    const container = document.getElementById('container-rotina-preview');
-    
-    // Se for o primeiro item, limpa a mensagem de "nenhum adicionado"
-    if (container.querySelector('p')) container.innerHTML = '';
-
-    const div = document.createElement('div');
-    div.className = "flex justify-between items-center bg-gray-900 p-2 rounded border border-gray-800 text-[10px]";
-    div.setAttribute('data-dia', dia);
-    div.innerHTML = `
-        <span class="text-white"><b>${dia}:</b> ${titulo}</span>
-        <button onclick="this.parentElement.remove()" class="text-red-500 hover:text-white">✕</button>
-    `;
-    
-    container.appendChild(div);
-
-    // Limpa campos para o próximo
-    document.getElementById('novoExercicioTitulo').value = '';
-    document.getElementById('novoExercicioLink').value = '';
-};
 </script>
 </body>
 </html>
