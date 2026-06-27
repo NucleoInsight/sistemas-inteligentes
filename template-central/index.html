@@ -431,6 +431,7 @@
                             <button type="button" onclick="window.carregarDados('${d.id}')" class="text-blue-400 underline">Editar</button>
                             <button type="button" onclick="window.marcarConcluidoAdmin('${d.id}')" class="text-emerald-400 underline">Concluir Presencial</button>
                             <button type="button" onclick="window.copiarConviteParaCadastro('${d.id}', '${d.alunoNome}')" class="text-purple-400 underline">Copiar Cadastro</button>
+                            <button type="button" onclick="window.copiarGatilhoAluno('${d.alunoNome}', 'https://nucleoinsight.github.io/sistemas-inteligentes/template-central/index.html?cid=' + new URLSearchParams(window.location.search).get('cid'))" class="text-green-400 underline">Enviar Ficha</button>
                         </div>
                     </div>
                 `).join('')}
