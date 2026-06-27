@@ -734,12 +734,12 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
     }
 };
        window.adicionarExercicioNaRotina = () => {
-    // Captura os valores ANTES de qualquer limpeza
+    // 1. Captura os valores dos campos
     const titulo = document.getElementById('novoExercicioTitulo').value;
     const series = document.getElementById('novoExercicioSeries').value;
     const reps = document.getElementById('novoExercicioReps').value;
     const obs = document.getElementById('novoExercicioObs').value;
-    const link = document.getElementById('linkVideoTreino').value; // Captura do campo da biblioteca
+    const link = document.getElementById('linkVideoTreino').value;
     const dia = document.getElementById('rotinaDiaSelect').value;
 
     if (!titulo) {
@@ -747,10 +747,10 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
         return;
     }
 
-    // Cria o objeto com o link capturado
-    const exercicio = { titulo, series, reps, obs, link, dia };
+    // 2. SALVA NO ARRAY GLOBAL (O que faltava!)
+    window.listaExercicios.push({ titulo, series, reps, obs, link, dia });
 
-    // Adiciona ao preview visual
+    // 3. Atualiza o preview visual
     const preview = document.getElementById('container-rotina-preview');
     if (preview.querySelector('p')) preview.innerHTML = ''; 
 
@@ -759,14 +759,13 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
     div.innerHTML = `<strong>${dia}</strong>: ${titulo} (${series}x${reps}) - Obs: ${obs} ${link ? '🔗' : ''}`;
     preview.appendChild(div);
 
-    // Limpa apenas os campos do exercício, deixando o link para o próximo se desejar
+    // 4. Limpa campos do exercício (mantendo o link, conforme solicitado)
     document.getElementById('novoExercicioTitulo').value = '';
     document.getElementById('novoExercicioSeries').value = '';
     document.getElementById('novoExercicioReps').value = '';
     document.getElementById('novoExercicioObs').value = '';
-    // NÃO limpe o linkVideoTreino aqui se quiser manter o mesmo vídeo para vários exercícios
 
-    alert("✅ Exercício adicionado com sucesso!");
+    alert("✅ Exercício adicionado à fila de salvamento!");
 };
         
 </script>
