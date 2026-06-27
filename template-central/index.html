@@ -253,13 +253,20 @@
                     listaVideos.push({ titulo: t, link: l, data: new Date().toISOString() });
                 }
 
-                // 3. Remove campos temporários e salva
+               // 3. Remove campos temporários e prepara dados para salvar
                 delete dados.videoTitulo;
                 delete dados.linkVideoTreino;
-                dados.videos = listaVideos;
                 
-               await setDoc(docRef, dados, { merge: true });
-                alert(`✅ Ficha salva com ${listaVideos.length} vídeos!`);
+                // Adiciona os dados novos à estrutura
+                dados.videos = listaVideos;
+                dados.rotinaTreino = window.listaExercicios;
+                
+                await setDoc(docRef, dados, { merge: true });
+                alert(`✅ Ficha salva com ${listaVideos.length} vídeos e ${window.listaExercicios.length} exercícios!`);
+                
+                // Reset da lista de exercícios na memória e no HTML
+                window.listaExercicios = [];
+                document.getElementById('container-rotina-preview').innerHTML = '<p class="text-[9px] text-gray-500 uppercase italic">Nenhum exercício adicionado.</p>';
                 
                 // Reset do formulário e limpeza do ID para evitar duplicidade
                 const inputsReset = document.querySelectorAll('input, select, textarea');
