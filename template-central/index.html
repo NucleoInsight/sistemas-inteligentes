@@ -279,65 +279,47 @@
     };
 
     // MOTOR DE CARREGAMENTO UNIVERSAL
-     // MOTOR DE CARREGAMENTO UNIVERSAL
-    window.carregarDados = async (subcolecao = 'ficha') => {
+   window.carregarDados = async (subcolecao = 'ficha') => {
         const params = new URLSearchParams(window.location.search);
         const cid = params.get('cid');
         if (!cid) return;
 
-        try { // [1] Abertura Try
+        try {
             const docRef = doc(db, "clients", cid, "dados", subcolecao);
             const docSnap = await getDoc(docRef);
 
-            if (docSnap.exists()) { // [2] Abertura If
+            if (docSnap.exists()) {
                 const dados = docSnap.data();
                 
-                const preencher = () => { // [3] Abertura Função preencher
+                // Função recursiva de espera para garantir que os inputs existam no DOM
+                const preencher = () => {
                     const elTitulo = document.getElementById('videoTitulo');
-                    if (!elTitulo) { // [4] Abertura If
+                    if (!elTitulo) {
                         setTimeout(preencher, 100);
                         return;
-                    } // [4] Fechamento If
+                    }
 
                     const container = document.getElementById('container-conteudos');
                     if (container) container.innerHTML = ''; 
 
-                    Object.keys(dados).forEach(id => { // [4] Abertura ForEach
+                    Object.keys(dados).forEach(id => {
                         const el = document.getElementById(id);
-                        if (el) { // [5] Abertura If
+                        if (el) {
                             if (el.type === 'checkbox') el.checked = dados[id];
                             else el.value = dados[id];
-                        } // [5] Fechamento If
-                    }); // [4] Fechamento ForEach
+                        }
+                    });
 
                     const elLink = document.getElementById('link-acesso-aluno');
-                    if (elLink) elLink.value = `https://nucleoinsight.github.io/sistemas-inteligentes/visualizar_cliente_e_aluno.html?cid=${cid}&aid=${subcolecao}`;
+                    if (elLink) {
+                        elLink.value = `https://nucleoinsight.github.io/sistemas-inteligentes/visualizar_cliente_e_aluno.html?cid=${cid}&aid=${subcolecao}`;
+                    }
 
+                   // Garante que o ID da ficha seja setado antes de qualquer outra ação
                     const elIdOculto = document.getElementById('id-ficha-oculto');
-                    if (elIdOculto) elIdOculto.value = subcolecao;
-                }; // [3] Fechamento Função preencher
-
-                preencher();
-
-                const containerPlayers = document.getElementById('container-players-renderizados');
-                if (containerPlayers) { // [3] Abertura If
-                    containerPlayers.innerHTML = '';
-                    if (dados.videos && Array.isArray(dados.videos)) { // [4] Abertura If
-                        dados.videos.forEach(v => { // [5] Abertura ForEach
-                            const videoId = v.link.split('v=')[1] || v.link.split('/').pop().split('?')[0];
-                            const div = document.createElement('div');
-                            div.className = "mt-4 p-2 border border-gray-800 rounded";
-                            div.innerHTML = `...`;
-                            containerPlayers.appendChild(div);
-                        }); // [5] Fechamento ForEach
-                    } // [4] Fechamento If
-                } // [3] Fechamento If
-            } // [2] Fechamento If
-        } catch (e) { // [1] Fechamento Try / Abertura Catch
-            console.error("Erro na renderização:", e);
-            document.getElementById('app').innerHTML = "Erro ao carregar dados.";
-        } // [1] Fechamento Catch
-    }; // [0] Fechamento Função carregarDados
+                    if (elIdOculto) {
+                        elIdOculto.value = subcolecao;
+                    }
 
                   // Renderização de todos os vídeos (Array completo)
                     const containerPlayers = document.getElementById('container-players-renderizados');
@@ -445,13 +427,9 @@
                             ${d.statusPagamento === 'Debito' ? `
                                 <button type="button" onclick="window.registrarPagamento('${d.id}', 'Pago')" class="bg-emerald-900/30 text-emerald-400 px-2 py-1 rounded border border-emerald-500/20">Pagar</button>
                             ` : ''}
-                           <button type="button" onclick="window.excluirAluno('${d.id}')" class="text-red-500 hover:text-red-300 underline">Excluir</button>
+                            <button type="button" onclick="window.excluirAluno('${d.id}')" class="text-red-500 hover:text-red-300 underline">Excluir</button>
                             <button type="button" onclick="window.carregarDados('${d.id}')" class="text-blue-400 underline">Editar</button>
-                            <button type="button" onclick="window.marcarConcluidoAdmin('${d.id}')" class="text-emerald-400 underline">Concluir Presencial</button>
-                            <button type="button" onclick="window.copiarConviteParaWhatsApp('${d.id}', '${d.alunoNome}')" class="text-purple-400 underline ml-2">Copiar Convite</button>
                         </div>
-                    </div>
-                    </div>
                     </div>
                 `).join('')}
             </div>
@@ -689,58 +667,23 @@ window.abrirModalBiblioteca = async (nicho = "global") => {
 
          // Função inteligente para ambos (Aluno e Personal)
                 window.marcarConcluido = async (idFicha = null) => {
-    const params = new URLSearchParams(window.location.search);
-    const cid = params.get('cid');
-    // Forçamos a string do ID para evitar erros de tipo
-    const aid = String(idFicha || document.getElementById('id-ficha-oculto')?.value || params.get('aid') || "");
+                    // Se não passar ID, pega o da URL (caso do aluno na ficha dele)
+                    const params = new URLSearchParams(window.location.search);
+                    const cid = params.get('cid');
+                    const aid = idFicha || params.get('aid'); 
 
-    if (!cid || !aid || aid === "undefined" || aid === "null") {
-        alert("Erro: Identificação do treino não encontrada.");
-        return;
-    }
+                    await updateDoc(doc(db, "clients", cid, "dados", aid), { 
+                        statusTreino: "Concluído",
+                        dataConclusao: new Date().toISOString(),
+                        marcadoPor: idFicha ? "Personal" : "Aluno" 
+                    });
+                    
+                    alert("✅ Treino marcado como concluído!");
+                    window.location.reload();
+                };
 
-    try {
-        const hoje = new Date().toISOString().split('T')[0];
-        const agora = new Date().toISOString();
-        
-        await window.updateDoc(window.doc(window.db, "clients", cid, "dados", aid), { 
-            [`historicoTreinos.${hoje}`]: {
-                status: "Concluído",
-                data: agora,
-                marcadoPor: idFicha ? "Personal" : "Aluno"
-            },
-            statusTreino: "Concluído",
-            dataConclusao: agora,
-            marcadoPor: idFicha ? "Personal" : "Aluno"
-        });
-        
-        alert("✅ Treino marcado como concluído!");
-        window.location.reload();
-    } catch (error) {
-        console.error("Erro no Firestore:", error);
-        alert("Erro ao salvar no banco de dados.");
-    }
-};
-
-window.marcarConcluidoAdmin = (id) => window.marcarConcluido(String(id));
-
-      window.copiarConviteParaWhatsApp = (aid, nome) => {
-        const cid = new URLSearchParams(window.location.search).get('cid');
-        const link = `https://nucleoinsight.github.io/sistemas-inteligentes/visualizar_cliente_e_aluno.html?cid=${cid}&aid=${aid}`;
-        
-        const texto = `*🚀 ACESSE SUA FICHA DE TREINO*\n\n` +
-                      `Olá, ${nome || 'aluno(a)'}!\n\n` +
-                      `Aqui está o link para acessar sua ficha e marcar seu treino:\n\n` +
-                      `${link}\n\n` +
-                      `Qualquer dúvida, estou à disposição!`;
-        
-        navigator.clipboard.writeText(texto).then(() => {
-            alert("✅ Convite correto copiado!");
-        }).catch(err => {
-            alert("Erro ao copiar.");
-        });
-    };
-        
+                // Alias para o botão do professor/admin não quebrar
+                window.marcarConcluidoAdmin = (id) => window.marcarConcluido(id);
 </script>
 </body>
 </html>
