@@ -126,8 +126,8 @@
                         }).join('')}
                     `;
                 }
-            } catch (e) {
-                console.error(e);
+           } catch (e) {
+                console.error("Erro na renderização:", e);
                 document.getElementById('app').innerHTML = "Erro ao carregar dados.";
             }
         }
