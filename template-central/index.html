@@ -704,7 +704,32 @@ window.abrirModalBiblioteca = async (nicho = "global") => {
         alert("Erro ao copiar.");
     });
 };
+
+        // NOVA FUNÇÃO: Salva a rotina de treinos organizada por dia
+window.salvarRotina = async (idFicha, rotinaDados) => {
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const cid = params.get('cid');
         
+        if (!cid || !idFicha) {
+            alert("Erro: Dados do aluno não encontrados.");
+            return;
+        }
+
+        const docRef = doc(db, "clients", cid, "dados", idFicha);
+        
+        // Salva a estrutura de rotina: rotina: { Segunda: [...], Terca: [...] }
+        await updateDoc(docRef, {
+            rotinaTreino: rotinaDados,
+            ultimaAtualizacaoTreino: new Date().toISOString()
+        });
+
+        alert("✅ Rotina de treinos salva com sucesso!");
+    } catch (e) {
+        console.error("Erro ao salvar rotina:", e);
+        alert("Erro ao salvar a rotina de treinos.");
+    }
+};
 </script>
 </body>
 </html>
