@@ -309,21 +309,21 @@
                             else el.value = dados[id];
                         }
                     });
-            } catch (e) {
-                console.error("Erro na renderização:", e);
-                document.getElementById('app').innerHTML = "Erro ao carregar dados.";
-            }
 
                     const elLink = document.getElementById('link-acesso-aluno');
                     if (elLink) {
                         elLink.value = `https://nucleoinsight.github.io/sistemas-inteligentes/visualizar_cliente_e_aluno.html?cid=${cid}&aid=${subcolecao}`;
                     }
 
-                   // Garante que o ID da ficha seja setado antes de qualquer outra ação
                     const elIdOculto = document.getElementById('id-ficha-oculto');
                     if (elIdOculto) {
                         elIdOculto.value = subcolecao;
                     }
+                } // Fecha o if (docSnap.exists())
+            } catch (e) {
+                console.error("Erro na renderização:", e);
+                document.getElementById('app').innerHTML = "Erro ao carregar dados.";
+            }
 
                   // Renderização de todos os vídeos (Array completo)
                     const containerPlayers = document.getElementById('container-players-renderizados');
