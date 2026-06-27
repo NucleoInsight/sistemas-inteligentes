@@ -55,30 +55,26 @@
                 const dados = alunoSnap.data();
 
                 // ESTRUTURA PREMIUM DASHBOARD
-                document.getElementById('app').innerHTML = `
-                    <div class="space-y-8">
-                        <div class="text-center">
-                            <div class="relative w-24 h-24 mx-auto mb-4">
-                                <img id="aluno-foto-display" src="${dados.alunoFoto || 'https://via.placeholder.com/150'}" class="w-24 h-24 rounded-full object-cover border-2 border-blue-500">
-                                <input type="file" id="upload-foto-aluno" accept="image/*" class="hidden" onchange="window.subirFoto(this)">
-                                <button type="button" onclick="document.getElementById('upload-foto-aluno').click()" class="absolute bottom-0 right-0 bg-blue-600 p-2 rounded-full text-white text-[10px]">📷</button>
+               document.getElementById('app').innerHTML = `
+                    <div class="space-y-6">
+                        <!-- HEADER: Saudação e Status -->
+                        <div class="flex items-center justify-between p-4 bg-gray-900 rounded-xl border border-gray-800">
+                            <div>
+                                <h1 class="text-lg font-black text-white uppercase">Olá, ${dados.alunoNome?.split(' ')[0] || 'Aluno'}!</h1>
+                                <p class="text-[9px] text-blue-400 font-bold uppercase tracking-widest">Treino de hoje: ${new Date().toLocaleDateString('pt-BR', { weekday: 'long' })}</p>
                             </div>
-                            <h1 class="text-xl font-black text-white uppercase">Bem-vindo, ${dados.alunoNome?.split(' ')[0] || 'Aluno'}</h1>
-                            <p class="text-blue-400 text-[10px] uppercase tracking-widest font-bold">Área de Treino Exclusiva</p>
+                            <img id="aluno-foto-display" src="${dados.alunoFoto || 'https://via.placeholder.com/150'}" class="w-12 h-12 rounded-full object-cover border border-blue-500">
                         </div>
 
+                        <!-- CORPO PRINCIPAL: Treino do dia -->
                         <div id="container-video"></div>
 
-                        <button type="button" onclick="window.marcarConcluido()" class="w-full bg-emerald-600 text-white font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-emerald-500 transition-all">
+                        <!-- AÇÕES: Botão de Conclusão -->
+                        <button type="button" onclick="window.marcarConcluido()" class="w-full bg-emerald-600 text-white font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-900/20">
                             Marcar treino de hoje como Concluído ✅
                         </button>
-
-                        <div class="pt-6 border-t border-gray-800 space-y-3">
-                            <details class="group bg-gray-900 p-4 rounded-lg border border-gray-800">
-                                <summary class="font-bold text-xs uppercase cursor-pointer text-gray-300">📂 Ver Minha Ficha Completa</summary>
-                                <div class="mt-4 opacity-80 text-xs">${config.campos}</div>
-                            </details>
-                        </div>
+                        
+                        <div id="container-footer"></div>
                     </div>
                 `;
                // Bloqueio de edição, mantendo o input de foto habilitado
