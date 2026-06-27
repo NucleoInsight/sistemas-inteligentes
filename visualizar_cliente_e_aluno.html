@@ -193,7 +193,32 @@
         };
 
         window.marcarConcluidoAdmin = (id) => window.marcarConcluido(String(id));
+        window.salvarCheck = async (exercicioId, isChecked) => {
+    const cid = new URLSearchParams(window.location.search).get('cid');
+    const aid = new URLSearchParams(window.location.search).get('aid');
+
+    if (!cid || !aid) {
+        alert("Erro: Identificação do aluno não encontrada.");
+        return;
+    }
+
+    try {
+        const docRef = doc(db, "clients", cid, "dados", aid, "checkins", exercicioId);
         
+        if (isChecked) {
+            await setDoc(docRef, {
+                data: new Date().toISOString(),
+                status: "realizado"
+            });
+        } else {
+            await deleteDoc(docRef);
+        }
+        console.log("Check atualizado com sucesso!");
+    } catch (error) {
+        console.error("Erro ao salvar check: ", error);
+        alert("Erro ao salvar progresso.");
+    }
+};
         carregarVisualizacao();
     </script>
 </body>
