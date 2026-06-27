@@ -71,6 +71,9 @@
        import { getFirestore, doc, getDoc, addDoc, collection, setDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
        import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
+    //CARREGAR EXERCÍCIOS
+     window.listaExercicios = [];
+    
      window.logarAdmin = async () => {
             const senha = document.getElementById("senhaInput").value.trim();
             const senhaMestraNoBanco = String(window.senhaMestraCorreta || "").trim();
