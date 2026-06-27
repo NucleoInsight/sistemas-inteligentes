@@ -730,6 +730,43 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
         alert("Erro ao salvar a rotina de treinos.");
     }
 };
+        window.adicionarExercicioNaRotina = () => {
+    // 1. Captura os valores dos novos campos
+    const titulo = document.getElementById('novoExercicioTitulo').value;
+    const series = document.getElementById('novoExercicioSeries').value;
+    const reps = document.getElementById('novoExercicioReps').value;
+    const obs = document.getElementById('novoExercicioObs').value;
+    const link = document.getElementById('linkVideoTreino').value;
+    const dia = document.getElementById('rotinaDiaSelect').value;
+
+    if (!titulo) {
+        alert("⚠️ Digite o nome do exercício!");
+        return;
+    }
+
+    // 2. Cria o objeto do exercício
+    const exercicio = { titulo, series, reps, obs, link, dia };
+
+    // 3. Adiciona ao preview visual (ajustando a pré-visualização)
+    const preview = document.getElementById('container-rotina-preview');
+    if (preview.querySelector('p')) preview.innerHTML = ''; // Remove o aviso de "vazio"
+
+    const div = document.createElement('div');
+    div.className = "bg-black p-2 rounded text-[10px] border border-gray-700 text-white mb-1";
+    div.innerHTML = `<strong>${dia}</strong>: ${titulo} (${series}x${reps}) - Obs: ${obs}`;
+    preview.appendChild(div);
+
+    // 4. Limpa os campos para o próximo exercício
+    document.getElementById('novoExercicioTitulo').value = '';
+    document.getElementById('novoExercicioSeries').value = '';
+    document.getElementById('novoExercicioReps').value = '';
+    document.getElementById('novoExercicioObs').value = '';
+    document.getElementById('linkVideoTreino').value = '';
+    document.getElementById('videoTitulo').value = '';
+
+    alert("✅ Exercício adicionado à fila de salvamento!");
+};
+        
 </script>
 </body>
 </html>
