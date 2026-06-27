@@ -222,11 +222,16 @@
         const cid = params.get('cid');
         if (!cid) return alert("Erro: ID do cliente não encontrado.");
         
-        // Captura todos os inputs da página
+        // Captura todos os inputs da página, filtrando lixo
         const inputs = document.querySelectorAll('input, select, textarea');
         let dados = {};
+        const camposParaIgnorar = [
+            'novoExercicioObs', 'novoExercicioReps', 'novoExercicioSeries', 
+            'novoExercicioTitulo', 'senhaInput', 'buscaAluno', 'marcadoPor'
+        ];
+
         inputs.forEach(i => { 
-            if (i.id) {
+            if (i.id && !camposParaIgnorar.includes(i.id)) {
                 dados[i.id] = i.type === 'checkbox' ? i.checked : i.value; 
             }
         });
