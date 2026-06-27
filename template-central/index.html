@@ -302,13 +302,17 @@
                     const container = document.getElementById('container-conteudos');
                     if (container) container.innerHTML = ''; 
 
-                    Object.keys(dados).forEach(id => {
+                   Object.keys(dados).forEach(id => {
                         const el = document.getElementById(id);
                         if (el) {
                             if (el.type === 'checkbox') el.checked = dados[id];
                             else el.value = dados[id];
                         }
                     });
+                } catch (e) {
+                    console.error("Erro na renderização:", e);
+                    document.getElementById('app').innerHTML = "Erro ao carregar dados.";
+                }
 
                     const elLink = document.getElementById('link-acesso-aluno');
                     if (elLink) {
