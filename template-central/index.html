@@ -430,7 +430,7 @@
                             <button type="button" onclick="window.excluirAluno('${d.id}')" class="text-red-500 hover:text-red-300 underline">Excluir</button>
                             <button type="button" onclick="window.carregarDados('${d.id}')" class="text-blue-400 underline">Editar</button>
                             <button type="button" onclick="window.marcarConcluidoAdmin('${d.id}')" class="text-emerald-400 underline">Concluir Presencial</button>
-                            <button type="button" onclick="window.copiarConviteParaWhatsApp('${d.id}', '${d.alunoNome}')" class="text-purple-400 underline">Copiar Convite</button>
+                            <button type="button" onclick="window.copiarConviteParaCadastro('${d.id}', '${d.alunoNome}')" class="text-purple-400 underline">Copiar Cadastro</button>
                         </div>
                     </div>
                 `).join('')}
@@ -686,18 +686,19 @@ window.abrirModalBiblioteca = async (nicho = "global") => {
 
                 // Alias para o botão do professor/admin não quebrar
                 window.marcarConcluidoAdmin = (id) => window.marcarConcluido(id);
-        window.copiarConviteParaCadastro = (nome) => {
+        
+        window.copiarConviteParaCadastro = (aid, nome) => {
     const cid = new URLSearchParams(window.location.search).get('cid');
-    const link = `https://nucleoinsight.github.io/sistemas-inteligentes/template-central/index.html?cid=${cid}`;
+    const link = `https://nucleoinsight.github.io/sistemas-inteligentes/visualizar_cliente_e_aluno.html?cid=${cid}&aid=${aid}`;
     
-    const texto = `*🚀 CADASTRE-SE*\n\n` +
+    const texto = `*🚀 ACESSE SUA FICHA DE TREINO*\n\n` +
                   `Olá, ${nome || 'aluno(a)'}!\n\n` +
-                  `Para cadastrar seus dados e iniciar seu acompanhamento, acesse:\n\n` +
+                  `Aqui está o link para acessar sua ficha e marcar seu treino:\n\n` +
                   `${link}\n\n` +
                   `Qualquer dúvida, estou à disposição!`;
     
     navigator.clipboard.writeText(texto).then(() => {
-        alert("✅ Convite de CADASTRO copiado!");
+        alert("✅ Convite correto copiado!");
     }).catch(err => {
         alert("Erro ao copiar.");
     });
