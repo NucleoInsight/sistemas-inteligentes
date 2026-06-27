@@ -686,18 +686,18 @@ window.abrirModalBiblioteca = async (nicho = "global") => {
 
                 // Alias para o botão do professor/admin não quebrar
                 window.marcarConcluidoAdmin = (id) => window.marcarConcluido(id);
-        window.copiarConviteParaWhatsApp = (aid, nome) => {
+        window.copiarConviteParaCadastro = (nome) => {
     const cid = new URLSearchParams(window.location.search).get('cid');
-    const link = `https://nucleoinsight.github.io/sistemas-inteligentes/visualizar_cliente_e_aluno.html?cid=${cid}&aid=${aid}`;
+    const link = `https://nucleoinsight.github.io/sistemas-inteligentes/template-central/index.html?cid=${cid}`;
     
-    const texto = `*🚀 ACESSE SUA FICHA DE TREINO*\n\n` +
+    const texto = `*🚀 CADASTRE-SE*\n\n` +
                   `Olá, ${nome || 'aluno(a)'}!\n\n` +
-                  `Aqui está o link para acessar sua ficha e marcar seu treino:\n\n` +
+                  `Para cadastrar seus dados e iniciar seu acompanhamento, acesse:\n\n` +
                   `${link}\n\n` +
                   `Qualquer dúvida, estou à disposição!`;
     
     navigator.clipboard.writeText(texto).then(() => {
-        alert("✅ Convite correto copiado!");
+        alert("✅ Convite de CADASTRO copiado!");
     }).catch(err => {
         alert("Erro ao copiar.");
     });
