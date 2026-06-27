@@ -94,15 +94,29 @@
                     </li>
                 `).join('');
 
-               if (listaHistorico) {
-                    document.getElementById('app').insertAdjacentHTML('beforeend', `
-                        <div class="mt-8 p-4 bg-gray-900 rounded-xl border border-gray-800">
-                            <h3 class="text-white font-black uppercase text-xs mb-4 tracking-widest">📜 Histórico de Treinos</h3>
-                            <ul class="space-y-2">${listaHistorico}</ul>
-                        </div>
-                    `);
-                }
+               // RENDERIZAÇÃO DO RODAPÉ (Menu de Acesso)
+                const footer = document.getElementById('container-footer');
+                if (footer) {
+                    footer.innerHTML = `
+                        <div class="space-y-3 pt-6 border-t border-gray-800">
+                            <h3 class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2">Informações Adicionais</h3>
+                            
+                            <!-- Botão Ficha Completa -->
+                            <details class="group bg-gray-900 p-4 rounded-lg border border-gray-800 cursor-pointer">
+                                <summary class="font-bold text-xs uppercase text-gray-300">📂 Ver Minha Ficha Completa</summary>
+                                <div class="mt-4 pt-4 border-t border-gray-800 opacity-80 text-xs">${config.campos}</div>
+                            </details>
 
+                            <!-- Botão Histórico -->
+                            <details class="group bg-gray-900 p-4 rounded-lg border border-gray-800 cursor-pointer">
+                                <summary class="font-bold text-xs uppercase text-gray-300">📜 Histórico de Treinos</summary>
+                                <div class="mt-4 pt-4 border-t border-gray-800">
+                                    <ul class="space-y-2">${listaHistorico || '<li class="text-xs text-gray-500 italic">Nenhum treino concluído ainda.</li>'}</ul>
+                                </div>
+                            </details>
+                        </div>
+                    `;
+                }
                 Object.keys(dados).forEach(id => {
                     const el = document.getElementById(id);
                     if (el) {
