@@ -165,14 +165,13 @@
         };
 
         // Função inteligente para ambos (Aluno e Personal)
-        window.marcarConcluido = async (idFicha = null) => {
+        window.marcarConcluido = async () => {
             const params = new URLSearchParams(window.location.search);
             const cid = params.get('cid');
-            // Forçamos a string do ID para evitar erros de tipo
-            const aid = String(idFicha || params.get('aid') || "");
+            const aid = params.get('aid');
 
-            if (!cid || !aid || aid === "undefined" || aid === "null") {
-                alert("Erro: Identificação do treino não encontrada.");
+            if (!cid || !aid) {
+                alert("Erro: Identificação do aluno não encontrada.");
                 return;
             }
 
@@ -184,11 +183,11 @@
                     [`historicoTreinos.${hoje}`]: {
                         status: "Concluído",
                         data: agora,
-                        marcadoPor: idFicha ? "Personal" : "Aluno"
+                        marcadoPor: "Aluno"
                     },
                     statusTreino: "Concluído",
                     dataConclusao: agora,
-                    marcadoPor: idFicha ? "Personal" : "Aluno"
+                    marcadoPor: "Aluno"
                 });
                 
                 alert("✅ Treino marcado como concluído!");
