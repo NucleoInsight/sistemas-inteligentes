@@ -89,10 +89,12 @@
                     </div>
                 `;
 
-                // Bloqueio de edição, mas MANTENDO o botão de conclusão do aluno
+               // Bloqueio de edição, mantendo o input de foto habilitado
                 document.querySelectorAll('input, select, textarea').forEach(el => {
-                    el.disabled = true;
-                    el.classList.add('opacity-70');
+                    if (el.id !== 'upload-foto-aluno') {
+                        el.disabled = true;
+                        el.classList.add('opacity-70');
+                    }
                 });
               
                 // Renderização do Histórico Semanal
