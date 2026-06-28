@@ -53,7 +53,33 @@
                 }
 
                 const config = clienteSnap.data().configuracaoPersonalizada;
-               window.dadosAluno = alunoSnap.data();
+               // ... logo após o const config = ...
+                window.dadosAluno = alunoSnap.data();
+
+                // NOVA LÓGICA DE TERMO DE RESPONSABILIDADE
+                if (!window.dadosAluno.termoAceite) {
+                    document.getElementById('app').insertAdjacentHTML('beforeend', `
+                        <div id="modal-termo" class="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/90">
+                            <div class="bg-gray-900 border border-gray-700 p-6 rounded-2xl w-full max-w-md shadow-2xl">
+                                <h2 class="text-white font-black text-lg mb-4 text-center">Termo de Responsabilidade</h2>
+                                <div class="text-[10px] text-gray-400 text-justify mb-6 h-40 overflow-y-auto pr-2 border border-gray-800 p-2 rounded">
+                                    Declaro que as informações prestadas são verdadeiras e autorizo minha participação nas atividades do Grupo Cordão de Ouro sob responsabilidade do Contra Mestre Juninho. Comprometo-me a seguir as regras, fundamentos da capoeira e as orientações do professor. Estou ciente dos riscos e apto a praticar atividades físicas.
+                                </div>
+                                <button id="btn-aceitar" class="w-full bg-emerald-600 text-white font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-emerald-500 transition-all">
+                                    Li e Aceito os Termos
+                                </button>
+                            </div>
+                        </div>
+                    `);
+
+                    document.getElementById('btn-aceitar').onclick = async () => {
+                        const params = new URLSearchParams(window.location.search);
+                        await updateDoc(doc(db, "clients", params.get('cid'), "dados", params.get('aid')), { termoAceite: true });
+                        document.getElementById('modal-termo').remove();
+                        alert("✅ Termo aceito com sucesso!");
+                    };
+                }
+                // --- FIM DA LÓGICA ---
 
                 // SISTEMA DE BLOQUEIO DE ACESSO
                 if (window.dadosAluno.statusAcesso === 'Bloqueado') {
