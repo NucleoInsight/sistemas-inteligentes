@@ -281,6 +281,8 @@ document.documentElement.style.setProperty('--cor-cliente', corPrincipal);
                // Adiciona os dados novos à estrutura
                 dados.videos = listaVideos;
                 dados.rotinaTreino = window.rotinaTemporaria;
+                // Captura o nicho definido na tela ou salva como "Treino" por padrão
+                dados.nicho = document.getElementById('nicho')?.value || "Treino";
                 
                 await setDoc(docRef, dados, { merge: true });
                 alert(`✅ Ficha salva com ${listaVideos.length} vídeos e ${window.rotinaTemporaria.length} exercícios!`);
