@@ -792,22 +792,25 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
     const cid = params.get('cid');
     const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
     
-    // Busca em todos os alunos
     const snapshot = await getDocs(collection(db, "clients", cid, "dados"));
     let alertas = [];
+    const agora = new Date();
 
     snapshot.forEach(doc => {
         const d = doc.data();
         const historico = d.historicoTreinos || {};
-        const datas = Object.keys(historico).sort((a, b) => new Date(b) - new Date(a));
-        
-        if (datas.length > 0) {
-            const ultimaData = datas[0];
-            const ultimoFeedback = historico[ultimaData];
-            if (ultimoFeedback.intensidade === "Muito Difícil" || ultimoFeedback.feedback) {
-                alertas.push(`${d.alunoNome}: ${ultimoFeedback.intensidade}`);
+        const datas = Object.keys(historico);
+
+        // Pega a data mais recente dentro do histórico
+        datas.forEach(dataStr => {
+            const dataFeedback = new Date(dataStr);
+            const diffHoras = (agora - dataFeedback) / (1000 * 60 * 60);
+
+            // Verifica se o feedback foi nas últimas 48h (para evitar erro de fuso)
+            if (diffHoras < 48 && historico[dataStr].feedback) {
+                alertas.push(`${d.alunoNome || 'Aluno'}: "${historico[dataStr].feedback}" (${historico[dataStr].intensidade})`);
             }
-        }
+        });
     });
 
     const el = document.getElementById('kpi-feedback-alerta');
