@@ -76,8 +76,10 @@
                         const params = new URLSearchParams(window.location.search);
                         await updateDoc(doc(db, "clients", params.get('cid'), "dados", params.get('aid')), { termoAceite: true });
                         document.getElementById('modal-termo').remove();
-                        alert("✅ Termo aceito com sucesso!");
+                        window.location.reload(); // Recarrega para mostrar o dashboard
                     };
+                    
+                    return; // <--- ISSO É O QUE FALTA! ELE PARA A EXECUÇÃO AQUI.
                 }
                 // --- FIM DA LÓGICA ---
 
