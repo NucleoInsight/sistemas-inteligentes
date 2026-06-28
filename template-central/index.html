@@ -442,14 +442,14 @@
                                 ${statusVisual} ${d.dataVencimento ? '(Vence dia ' + d.dataVencimento + ')' : ''}
                             </span>
                         </div>
-                        <div class="flex gap-2">
-                            ${(d.statusPagamento !== 'Pago') ? `<button type="button" onclick="window.registrarPagamento('${d.id}', 'Pago')" class="bg-emerald-900/30 text-emerald-400 px-2 py-1 rounded border border-emerald-500/20">Pagar</button>` : ''}
-                            <button type="button" onclick="window.excluirAluno('${d.id}')" class="text-red-500 hover:text-red-300 underline">Excluir</button>
-                            <button type="button" onclick="window.carregarDados('${d.id}')" class="text-blue-400 underline">Editar</button>
-                            <button type="button" onclick="window.limparRotinaAluno('${d.id}')" class="text-yellow-500 underline">Limpar Treino</button>
-                            <button type="button" onclick="window.marcarConcluidoAdmin('${d.id}')" class="text-emerald-400 underline">Concluir Presencial</button>
-                            <button type="button" onclick="window.copiarConviteParaCadastro('${d.id}', '${d.alunoNome}')" class="text-purple-400 underline">Copiar Cadastro</button>
-                            <button type="button" onclick="window.copiarGatilhoAluno('${d.alunoNome}', 'https://nucleoinsight.github.io/sistemas-inteligentes/template-central/index.html?cid=' + new URLSearchParams(window.location.search).get('cid'))" class="text-green-400 underline">Enviar Ficha</button>
+                        <div class="flex flex-wrap gap-2 mt-3">
+                            ${(d.statusPagamento !== 'Pago') ? `<button type="button" onclick="window.registrarPagamento('${d.id}', 'Pago')" class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded-md border border-emerald-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Pagar</button>` : ''}
+                            <button type="button" onclick="window.carregarDados('${d.id}')" class="bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 px-3 py-1.5 rounded-md border border-blue-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Editar</button>
+                            <button type="button" onclick="window.marcarConcluidoAdmin('${d.id}')" class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 px-3 py-1.5 rounded-md border border-emerald-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Concluir</button>
+                            <button type="button" onclick="window.copiarGatilhoAluno('${d.alunoNome}', 'https://nucleoinsight.github.io/sistemas-inteligentes/template-central/index.html?cid=' + new URLSearchParams(window.location.search).get('cid'))" class="bg-green-500/10 hover:bg-green-500/20 text-green-400 px-3 py-1.5 rounded-md border border-green-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Enviar Ficha</button>
+                            <button type="button" onclick="window.copiarConviteParaCadastro('${d.id}', '${d.alunoNome}')" class="bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 px-3 py-1.5 rounded-md border border-purple-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Copiar Cadastro</button>
+                            <button type="button" onclick="window.limparRotinaAluno('${d.id}')" class="bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 px-3 py-1.5 rounded-md border border-yellow-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Limpar</button>
+                            <button type="button" onclick="window.excluirAluno('${d.id}')" class="bg-red-500/10 hover:bg-red-500/20 text-red-500 px-3 py-1.5 rounded-md border border-red-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Excluir</button>
                         </div>
                     </div>`;
                 }).join('')}
