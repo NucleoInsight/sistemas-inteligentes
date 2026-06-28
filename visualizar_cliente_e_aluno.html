@@ -64,7 +64,7 @@
                             </div>
                             <h2 class="text-white font-black text-xl uppercase mb-2">Acesso Bloqueado</h2>
                             <p class="text-gray-400 text-xs mb-6">Sua ficha está temporariamente indisponível. Entre em contato com seu Personal para regularizar sua situação.</p>
-                            <button onclick="window.open('https://web.whatsapp.com', '_blank')" class="bg-[#25D366] text-white font-bold py-3 px-6 rounded-lg text-xs uppercase w-full hover:bg-[#128C7E] transition-all">Abrir WhatsApp 📱</button>
+                            <button onclick="window.enviarRelatorioWhatsApp()" class="bg-[#25D366] text-white font-bold py-3 px-6 rounded-lg text-xs uppercase w-full">Contatar Personal via WhatsApp 📱</button>
                         </div>
                     `;
                     return;
@@ -320,42 +320,8 @@
     win.document.close();
     win.print();
 };
-        window.dadosAluno = alunoSnap.data();
-                
-                // --- AJUSTE DE POSIÇÃO DO TERMO ---
-                if (!window.dadosAluno.termoAceite) {
-                    document.getElementById('modal-termo').classList.remove('hidden');
-                }
-
-                window.aceitarTermo = async () => {
-                    const params = new URLSearchParams(window.location.search);
-                    const cid = params.get('cid');
-                    const aid = params.get('aid');
-                    try {
-                        await updateDoc(doc(db, "clients", cid, "dados", aid), { termoAceite: true });
-                        document.getElementById('modal-termo').classList.add('hidden');
-                        alert("✅ Termo aceito com sucesso!");
-                    } catch (e) {
-                        alert("Erro ao salvar aceite.");
-                    }
-                };
-                // ----------------------------------
         
         carregarVisualizacao();
     </script>
-
-    <!-- Modal de Termo -->
-<div id="modal-termo" class="fixed inset-0 z-[1000] hidden flex items-center justify-center p-4 bg-black/90">
-    <div class="bg-gray-900 border border-gray-700 p-6 rounded-2xl w-full max-w-md shadow-2xl">
-        <h2 class="text-white font-black text-lg mb-4 text-center">Termo de Responsabilidade</h2>
-        <div class="text-[10px] text-gray-400 text-justify mb-6 h-40 overflow-y-auto pr-2 border border-gray-800 p-2 rounded">
-            Declaro que as informações prestadas são verdadeiras e autorizo minha participação nas atividades do Grupo Cordão de Ouro sob responsabilidade do Contra Mestre Juninho. Comprometo-me a seguir as regras, fundamentos da capoeira e as orientações do professor. Estou ciente dos riscos e apto a praticar atividades físicas.
-        </div>
-        <button onclick="window.aceitarTermo()" class="w-full bg-emerald-600 text-white font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-emerald-500 transition-all">
-            Li e Aceito os Termos
-        </button>
-    </div>
-</div>
-    
 </body>
 </html>
