@@ -373,24 +373,48 @@
 };
         
        // --- BLOCO DE MÓDULOS DE SERVIÇOS (NICHO ESTÉTICA / EVENTOS) ---
-        window.renderizarAgenda = (cid) => {
+       window.renderizarAgenda = async (cid) => {
             document.getElementById('app').innerHTML = `
                 <div class="space-y-6">
                     <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 text-center">
                         <h2 class="text-white font-black text-lg uppercase mb-2">Minha Agenda</h2>
                         <p class="text-gray-400 text-xs">Gerenciamento de horários e serviços</p>
                     </div>
-                    <div id="container-agenda" class="bg-gray-900 p-4 rounded-xl border border-gray-800 min-h-[200px]">
-                        <p class="text-center text-gray-500 text-xs py-10">Buscando agendamentos...</p>
+                    <div id="container-agenda" class="bg-gray-900 p-4 rounded-xl border border-gray-800 min-h-[200px] text-xs">
+                        <p class="text-center text-gray-500 py-10">Buscando agendamentos...</p>
                     </div>
                     <button onclick="window.enviarRelatorioWhatsApp()" class="w-full bg-[#25D366] text-white font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-[#128C7E] transition-all">
                         Falar com Atendimento 📱
                     </button>
                 </div>
             `;
-            console.log("Renderizando interface de agenda para o cid:", cid);
-        };
 
+            try {
+                const q = query(collection(db, "clients", cid, "agendamentos"), orderBy("dataHora", "asc"));
+                const snapshot = await getDocs(q);
+                const container = document.getElementById('container-agenda');
+                
+                if (snapshot.empty) {
+                    container.innerHTML = '<p class="text-center text-gray-500 py-10">Nenhum agendamento encontrado.</p>';
+                } else {
+                    container.innerHTML = snapshot.docs.map(doc => {
+                        const d = doc.data();
+                        return `
+                            <div class="border-b border-gray-800 py-3 flex justify-between items-center">
+                                <div>
+                                    <p class="text-white font-bold">${d.servico || 'Serviço'}</p>
+                                    <p class="text-blue-400">${d.data} às ${d.hora}</p>
+                                </div>
+                                <span class="px-2 py-1 bg-gray-800 rounded text-[9px] uppercase font-bold">${d.status || 'Agendado'}</span>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            } catch (e) {
+                console.error("Erro ao buscar agenda:", e);
+                document.getElementById('container-agenda').innerHTML = '<p class="text-center text-red-500 py-10">Erro ao carregar agenda.</p>';
+            }
+        };
         window.verificarDisponibilidade = async (cid, data, hora) => {
             // Lógica de verificação será implementada aqui
             return true;
