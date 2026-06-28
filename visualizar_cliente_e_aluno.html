@@ -54,8 +54,8 @@
                 const config = clienteSnap.data().configuracaoPersonalizada;
                 const dados = alunoSnap.data();
 
-                // ESTRUTURA PREMIUM DASHBOARD
-               document.getElementById('app').innerHTML = `
+               // ESTRUTURA PREMIUM DASHBOARD
+                document.getElementById('app').innerHTML = `
                     <div class="space-y-6">
                         <!-- HEADER: Saudação e Status -->
                         <div class="flex items-center justify-between p-4 bg-gray-900 rounded-xl border border-gray-800">
@@ -63,7 +63,10 @@
                                 <h1 class="text-lg font-black text-white uppercase">Olá, ${dados.alunoNome?.split(' ')[0] || 'Aluno'}!</h1>
                                 <p class="text-[9px] text-blue-400 font-bold uppercase tracking-widest">Treino de hoje: ${new Date().toLocaleDateString('pt-BR', { weekday: 'long' })}</p>
                             </div>
-                            <img id="aluno-foto-display" src="${dados.alunoFoto || 'https://via.placeholder.com/150'}" class="w-12 h-12 rounded-full object-cover border border-blue-500">
+                            <div class="relative">
+                                <img id="aluno-foto-display" src="${dados.alunoFoto || 'https://via.placeholder.com/150'}" class="w-12 h-12 rounded-full object-cover border border-blue-500 cursor-pointer" onclick="document.getElementById('upload-foto-aluno').click()">
+                                <input type="file" id="upload-foto-aluno" accept="image/*" class="hidden" onchange="window.subirFoto(this)">
+                            </div>
                         </div>
 
                         <!-- CORPO PRINCIPAL: Treino do dia -->
@@ -74,9 +77,11 @@
                             Marcar treino de hoje como Concluído ✅
                         </button>
                         
+                        <!-- RODAPÉ: Onde o JS irá injetar a ficha e o histórico -->
                         <div id="container-footer"></div>
                     </div>
                 `;
+                
                // Bloqueio de edição, mantendo o input de foto habilitado
                 document.querySelectorAll('input, select, textarea').forEach(el => {
                     if (el.id !== 'upload-foto-aluno') {
