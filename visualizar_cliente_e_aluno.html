@@ -92,7 +92,7 @@
                 
                 // Lógica de filtro por dia da semana
                 const hoje = new Date().toLocaleDateString('pt-BR', { weekday: 'long' }).split('-')[0].toLowerCase();
-                const mapa = { "segunda": "Segunda", "terça": "Terca", "quarta": "Quarta", "quinta": "Quinta", "sexta": "Sexta", "sábado": "Sabado" };
+                const mapa = { "segunda": "Segunda", "terça": "Terca", "quarta": "Quarta", "quinta": "Quinta", "sexta": "Sexta", "sábado": "Sabado", "domingo": "Domingo" };
                 const diaAtual = mapa[hoje] || "Segunda"; // Default para Segunda caso não encontre
                 
                 const treinoFiltrado = rotina.filter(ex => ex.dia === diaAtual);
