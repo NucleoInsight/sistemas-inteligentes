@@ -815,6 +815,18 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
         el.innerHTML = alertas.length > 0 ? alertas.join('<br>') : "Tudo ok com os treinos!";
     }
 };
+        window.salvarVideoDireto = () => {
+    const titulo = document.getElementById('videoTitulo').value;
+    const link = document.getElementById('linkVideoTreino').value;
+
+    if (!titulo || !link) {
+        alert("⚠️ Preencha Título e Link para salvar!");
+        return;
+    }
+
+    // Chama a função que já existe no seu sistema, forçando "Privado"
+    window.salvarNaBiblioteca(titulo, link, 'Privado');
+};
 </script>
 </body>
 </html>
