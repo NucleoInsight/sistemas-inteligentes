@@ -458,7 +458,7 @@ document.documentElement.style.setProperty('--cor-cliente', corPrincipal);
                             <button type="button" onclick="window.carregarDados('${d.id}')" class="bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 px-3 py-1.5 rounded-md border border-blue-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Editar</button>
                             <button type="button" onclick="window.marcarConcluidoAdmin('${d.id}')" class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 px-3 py-1.5 rounded-md border border-emerald-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Concluir</button>
                             <button type="button" onclick="window.copiarGatilhoAluno('${d.alunoNome}', 'https://nucleoinsight.github.io/sistemas-inteligentes/template-central/index.html?cid=' + new URLSearchParams(window.location.search).get('cid'))" class="bg-green-500/10 hover:bg-green-500/20 text-green-400 px-3 py-1.5 rounded-md border border-green-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Enviar Ficha</button>
-                            <button type="button" onclick="window.copiarConviteParaCadastro('${d.id}', '${d.alunoNome}')" class="bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 px-3 py-1.5 rounded-md border border-purple-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Copiar Cadastro</button>
+                            <button type="button" onclick="window.copiarConviteParaCadastro('${d.id}', '${d.alunoNome}')" class="bg-purple-500/10 ...">Copiar Cadastro</button>
                             <button type="button" onclick="window.limparRotinaAluno('${d.id}')" class="bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 px-3 py-1.5 rounded-md border border-yellow-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Limpar</button>
                             <button type="button" onclick="window.excluirAluno('${d.id}')" class="bg-red-500/10 hover:bg-red-500/20 text-red-500 px-3 py-1.5 rounded-md border border-red-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Excluir</button>
                         </div>
@@ -725,18 +725,20 @@ window.abrirModalBiblioteca = async (nicho = "global") => {
                 // Alias para o botão do professor/admin não quebrar
                 window.marcarConcluidoAdmin = (id) => window.marcarConcluido(id);
         
-        window.copiarConviteParaCadastro = (aid, nome) => {
+       window.copiarConviteParaCadastro = (aid, nome) => {
     const cid = new URLSearchParams(window.location.search).get('cid');
-    const link = `https://nucleoinsight.github.io/sistemas-inteligentes/visualizar_cliente_e_aluno.html?cid=${cid}&aid=${aid}`;
     
-    const texto = `*🚀 ACESSE SUA FICHA DE TREINO*\n\n` +
+    // ATENÇÃO: Se você renomeou o arquivo para 'portal.html', altere abaixo:
+    const link = `https://nucleoinsight.github.io/sistemas-inteligentes/template-central/portal.html?cid=${cid}&aid=${aid}`;
+    
+    const texto = `*🚀 ACESSE SUA FICHA DE ACOMPANHAMENTO*\n\n` +
                   `Olá, ${nome || 'aluno(a)'}!\n\n` +
-                  `Aqui está o link para acessar sua ficha e marcar seu treino:\n\n` +
+                  `Aqui está o link para acessar sua central:\n\n` +
                   `${link}\n\n` +
                   `Qualquer dúvida, estou à disposição!`;
     
     navigator.clipboard.writeText(texto).then(() => {
-        alert("✅ Convite correto copiado, envie para seu cliente ou aluno!");
+        alert("✅ Convite atualizado e copiado para o WhatsApp!");
     }).catch(err => {
         alert("Erro ao copiar.");
     });
