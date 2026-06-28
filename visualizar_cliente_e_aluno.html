@@ -41,9 +41,10 @@
             }
 
             try {
-                const [clienteSnap, alunoSnap] = await Promise.all([
+                const [clienteSnap, alunoSnap, checkinsSnap] = await Promise.all([
                     getDoc(doc(db, "clients", cid)),
-                    getDoc(doc(db, "clients", cid, "dados", aid))
+                    getDoc(doc(db, "clients", cid, "dados", aid)),
+                    getDocs(collection(db, "clients", cid, "dados", aid, "checkins"))
                 ]);
 
                 if (!clienteSnap.exists() || !alunoSnap.exists()) {
