@@ -442,21 +442,17 @@
                                 ${statusVisual} ${d.dataVencimento ? '(Vence dia ' + d.dataVencimento + ')' : ''}
                             </span>
                         </div>
-                    `;
-                }).join('')}
                         <div class="flex gap-2">
-                            ${d.statusPagamento === 'Debito' ? `
-                                <button type="button" onclick="window.registrarPagamento('${d.id}', 'Pago')" class="bg-emerald-900/30 text-emerald-400 px-2 py-1 rounded border border-emerald-500/20">Pagar</button>
-                            ` : ''}
+                            ${d.statusPagamento === 'Debito' ? `<button type="button" onclick="window.registrarPagamento('${d.id}', 'Pago')" class="bg-emerald-900/30 text-emerald-400 px-2 py-1 rounded border border-emerald-500/20">Pagar</button>` : ''}
                             <button type="button" onclick="window.excluirAluno('${d.id}')" class="text-red-500 hover:text-red-300 underline">Excluir</button>
-                                <button type="button" onclick="window.carregarDados('${d.id}')" class="text-blue-400 underline">Editar</button>
-                                <button type="button" onclick="window.limparRotinaAluno('${d.id}')" class="text-yellow-500 underline">Limpar Treino</button>
+                            <button type="button" onclick="window.carregarDados('${d.id}')" class="text-blue-400 underline">Editar</button>
+                            <button type="button" onclick="window.limparRotinaAluno('${d.id}')" class="text-yellow-500 underline">Limpar Treino</button>
                             <button type="button" onclick="window.marcarConcluidoAdmin('${d.id}')" class="text-emerald-400 underline">Concluir Presencial</button>
                             <button type="button" onclick="window.copiarConviteParaCadastro('${d.id}', '${d.alunoNome}')" class="text-purple-400 underline">Copiar Cadastro</button>
                             <button type="button" onclick="window.copiarGatilhoAluno('${d.alunoNome}', 'https://nucleoinsight.github.io/sistemas-inteligentes/template-central/index.html?cid=' + new URLSearchParams(window.location.search).get('cid'))" class="text-green-400 underline">Enviar Ficha</button>
                         </div>
-                    </div>
-                `).join('')}
+                    </div>`;
+                }).join('')}
             </div>
         </div>`;
     
