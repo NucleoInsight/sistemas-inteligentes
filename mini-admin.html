@@ -47,7 +47,7 @@
                             <div class="space-y-6 max-w-sm mx-auto">
                                 <h1 class="text-3xl font-black text-blue-500">Olá, ${dados.nome}!</h1>
                                 <p class="text-gray-400 text-sm">Este é o seu sistema inteligente. Clique abaixo para fixá-lo na tela inicial do seu celular.</p>
-                                <button onclick="alert('Para instalar No iPhone: Clique em Compartilhar > depois clique em Adicionar à Tela de Início. No Android: Clique nos 3 pontinhos > Depois clique em Adicionar à Tela Inicial.')" class="bg-blue-600 p-4 rounded-xl w-full font-bold">📥 Instalar no Celular</button>
+                                <button onclick="document.getElementById('modal-instalacao').classList.remove('hidden')" class="bg-blue-600 p-4 rounded-xl w-full font-bold">📥 Instalar no Celular</button>
                                 <input type="password" id="senha-input" placeholder="Digite sua senha..." class="w-full p-3 bg-gray-800 rounded-lg text-center border border-gray-700">
                                 <button onclick="verificarSenha('${dados.senhaMestra}', '${cid}')" class="bg-green-600 p-3 rounded-lg w-full font-bold">Acessar Painel</button>
                             </div>
