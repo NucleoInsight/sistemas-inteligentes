@@ -452,8 +452,18 @@
             return linkGerado;
         };
 
-        window.notificacaoAutomatica = (telefone, evento) => {
-            window.open(`https://wa.me/55${telefone.replace(/\D/g, "")}`, '_blank');
+        window.notificacaoAutomatica = (telefone, nomeCliente, servico, data, hora) => {
+            // Remove caracteres não numéricos do telefone
+            const celular = telefone.replace(/\D/g, "");
+            
+            // Monta a mensagem personalizada
+            const mensagem = `Olá, ${nomeCliente}! Passando para confirmar seu agendamento: *${servico}* marcado para o dia *${data}* às *${hora}*. Estamos ansiosos pela sua visita!`;
+            
+            // Codifica a mensagem para o formato de URL
+            const urlWhatsApp = `https://wa.me/55${celular}?text=${encodeURIComponent(mensagem)}`;
+            
+            console.log("Notificação enviada via WhatsApp:", urlWhatsApp);
+            window.open(urlWhatsApp, '_blank');
         };
 
         carregarVisualizacao();
