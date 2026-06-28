@@ -820,7 +820,7 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
         el.innerHTML = alertas.length > 0 ? alertas.join('<br>') : "Tudo ok com os treinos!";
     }
 };
-        window.salvarVideoDireto = () => {
+       window.salvarVideoDireto = () => {
     const titulo = document.getElementById('videoTitulo').value;
     const link = document.getElementById('linkVideoTreino').value;
 
@@ -829,8 +829,9 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
         return;
     }
 
-    // Chama a função que já existe no seu sistema, forçando "Privado"
-    window.salvarNaBiblioteca(titulo, link, 'Privado');
+    const destino = confirm("Deseja salvar na Biblioteca GLOBAL?\n(Clique em 'Cancelar' para salvar na sua Biblioteca PRIVADA)") ? 'Global' : 'Privado';
+
+    window.salvarNaBiblioteca(titulo, link, destino);
 };
 </script>
 </body>
