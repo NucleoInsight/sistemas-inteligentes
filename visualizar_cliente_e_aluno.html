@@ -96,7 +96,11 @@
                 const mapa = { "segunda": "Segunda", "terça": "Terca", "quarta": "Quarta", "quinta": "Quinta", "sexta": "Sexta", "sábado": "Sabado", "domingo": "Domingo" };
                 const diaAtual = mapa[hoje] || "Segunda"; // Default para Segunda caso não encontre
                 
-                const treinoFiltrado = rotina.filter(ex => ex.dia === diaAtual);
+               const treinoFiltrado = rotina.filter(ex => ex.dia === diaAtual);
+                
+                // Cria um dicionário com os exercícios já marcados
+                const marcados = {};
+                checkinsSnap.forEach(doc => marcados[doc.id] = true);
 
                 if (container) {
                     container.innerHTML = treinoFiltrado.length > 0 ? `
