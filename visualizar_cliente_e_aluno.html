@@ -100,7 +100,18 @@
                 `).join('');
 
                // RENDERIZAÇÃO DO RODAPÉ (Menu de Acesso)
+                // RENDERIZAÇÃO DO RODAPÉ (Menu de Acesso)
                 const footer = document.getElementById('container-footer');
+                const historico = dados.historicoTreinos || {};
+                
+                // Monta a lista de histórico aqui dentro
+                const listaHistorico = Object.keys(historico).sort((a, b) => new Date(b) - new Date(a)).map(data => `
+                    <li class="flex justify-between text-xs border-b border-gray-800 py-2">
+                        <span class="text-gray-400">${new Date(data).toLocaleDateString('pt-BR')}</span>
+                        <span class="text-emerald-500 font-bold">CONCLUÍDO (${historico[data].marcadoPor})</span>
+                    </li>
+                `).join('');
+
                 if (footer) {
                     footer.innerHTML = `
                         <div class="space-y-3 pt-6 border-t border-gray-800">
