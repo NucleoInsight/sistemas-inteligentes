@@ -463,8 +463,8 @@
     listaArea.innerHTML = html;
     console.log("✅ Lista de alunos re-renderizada (Painel mantido).");
 };
-    
-    window.filtrarAlunos = () => {
+
+window.filtrarAlunos = () => {
         const termo = document.getElementById('buscaAluno').value.toLowerCase();
         const itens = document.querySelectorAll('.aluno-item');
         itens.forEach(item => {
