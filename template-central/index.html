@@ -673,8 +673,13 @@ window.abrirModalBiblioteca = async (nicho = "global") => {
             document.getElementById('videoTitulo').value = video.titulo;
             document.getElementById('linkVideoTreino').value = video.link;
             modal.classList.add('hidden');
+            
+            // Renderiza o vídeo na área de prescrição
             const videoId = video.link.split('v=')[1] || video.link.split('/').pop().split('?')[0];
             document.getElementById('container-players-renderizados').innerHTML = `<iframe class="w-full h-48 rounded-lg" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
+            
+            // Executa automaticamente a função de adicionar à rotina
+            window.adicionarExercicioNaRotina();
         };
         lista.appendChild(div);
     });
