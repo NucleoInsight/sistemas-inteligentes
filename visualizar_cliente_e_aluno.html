@@ -57,7 +57,6 @@
                // ESTRUTURA PREMIUM DASHBOARD
                 document.getElementById('app').innerHTML = `
                     <div class="space-y-6">
-                        <!-- HEADER: Saudação e Status -->
                         <div class="flex items-center justify-between p-4 bg-gray-900 rounded-xl border border-gray-800">
                             <div>
                                 <h1 class="text-lg font-black text-white uppercase">Olá, ${dados.alunoNome?.split(' ')[0] || 'Aluno'}!</h1>
@@ -68,105 +67,55 @@
                                 <input type="file" id="upload-foto-aluno" accept="image/*" class="hidden" onchange="window.subirFoto(this)">
                             </div>
                         </div>
-
-                        <!-- CORPO PRINCIPAL: Treino do dia -->
                         <div id="container-video"></div>
-
-                        <!-- AÇÕES: Botão de Conclusão -->
                         <button type="button" onclick="window.marcarConcluido()" class="w-full bg-emerald-600 text-white font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-900/20">
                             Marcar treino de hoje como Concluído ✅
                         </button>
-                        
-                        <!-- RODAPÉ: Onde o JS irá injetar a ficha e o histórico -->
                         <div id="container-footer"></div>
                     </div>
                 `;
-                
-               // Bloqueio de edição, mantendo o input de foto habilitado
-                document.querySelectorAll('input, select, textarea').forEach(el => {
-                    if (el.id !== 'upload-foto-aluno') {
-                        el.disabled = true;
-                        el.classList.add('opacity-70');
-                    }
-                });
-              
-                // Renderização do Histórico Semanal
-                const historico = dados.historicoTreinos || {};
-                const listaHistorico = Object.keys(historico).map(data => `
-                    <li class="flex justify-between text-xs border-b border-gray-800 py-2">
-                        <span class="text-gray-400">${new Date(data).toLocaleDateString('pt-BR')}</span>
-                        <span class="text-emerald-500 font-bold">CONCLUÍDO (${historico[data].marcadoPor})</span>
-                    </li>
-                `).join('');
 
-               // RENDERIZAÇÃO DO RODAPÉ (Menu de Acesso)
-                // RENDERIZAÇÃO DO RODAPÉ (Menu de Acesso)
-                const footer = document.getElementById('container-footer');
-                const historico = dados.historicoTreinos || {};
-                
-                // Monta a lista de histórico aqui dentro
-                const listaHistorico = Object.keys(historico).sort((a, b) => new Date(b) - new Date(a)).map(data => `
-                    <li class="flex justify-between text-xs border-b border-gray-800 py-2">
-                        <span class="text-gray-400">${new Date(data).toLocaleDateString('pt-BR')}</span>
-                        <span class="text-emerald-500 font-bold">CONCLUÍDO (${historico[data].marcadoPor})</span>
-                    </li>
-                `).join('');
-
-                if (footer) {
-                    footer.innerHTML = `
-                        <div class="space-y-3 pt-6 border-t border-gray-800">
-                            <h3 class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2">Informações Adicionais</h3>
-                            
-                            <!-- Botão Ficha Completa -->
-                            <details class="group bg-gray-900 p-4 rounded-lg border border-gray-800 cursor-pointer">
-                                <summary class="font-bold text-xs uppercase text-gray-300">📂 Ver Minha Ficha Completa</summary>
-                                <div class="mt-4 pt-4 border-t border-gray-800 opacity-80 text-xs">${config.campos}</div>
-                            </details>
-
-                            <!-- Botão Histórico -->
-                            <details class="group bg-gray-900 p-4 rounded-lg border border-gray-800 cursor-pointer">
-                                <summary class="font-bold text-xs uppercase text-gray-300">📜 Histórico de Treinos</summary>
-                                <div class="mt-4 pt-4 border-t border-gray-800">
-                                    <ul class="space-y-2">${listaHistorico || '<li class="text-xs text-gray-500 italic">Nenhum treino concluído ainda.</li>'}</ul>
-                                </div>
-                            </details>
-                        </div>
-                    `;
-                }
-                Object.keys(dados).forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) {
-                        el.type === 'checkbox' ? el.checked = dados[id] : el.value = dados[id];
-                    }
-                });
-
-                // Motor de Vídeos
-                // Motor de Renderização de Treino Completo
                 const container = document.getElementById('container-video');
                 const rotina = dados.rotinaTreino || [];
-
                 if (container) {
-                    if (rotina.length > 0) {
-                        container.innerHTML = `
-                            <h3 class="text-sm font-bold text-white uppercase mb-4 tracking-widest text-center">🏋️ Seu Treino do Dia</h3>
-                            ${rotina.map((ex, index) => {
-                                const videoId = ex.link ? (ex.link.includes('shorts/') ? ex.link.split('shorts/')[1].split('?')[0] : (ex.link.includes('youtu.be/') ? ex.link.split('/').pop() : ex.link.split('v=')[1]?.substring(0, 11))) : null;
-                                return `
-                                    <div class="bg-gray-900 p-4 rounded-xl border border-gray-800 mb-4 shadow-lg">
-                                        <h4 class="text-white font-black text-sm uppercase">${ex.titulo}</h4>
-                                        <p class="text-blue-400 text-xs mt-1 font-bold">${ex.series} Séries x ${ex.reps} Repetições</p>
-                                        <p class="text-gray-400 text-[10px] mt-1 italic">Obs: ${ex.obs || 'Sem observações'}</p>
-                                        ${videoId ? `
-                                            <iframe class="w-full h-48 rounded-lg mt-3" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
-                                        ` : '<p class="text-[9px] text-gray-600 mt-2">Sem vídeo de apoio.</p>'}
-                                    </div>
-                                `;
-                            }).join('')}
-                        `;
-                    } else {
-                        container.innerHTML = `<p class="text-center text-gray-500 text-xs py-4">Nenhum treino definido para hoje.</p>`;
-                    }
+                    container.innerHTML = rotina.length > 0 ? `
+                        <h3 class="text-sm font-bold text-white uppercase mb-4 tracking-widest text-center">🏋️ Seu Treino do Dia</h3>
+                        ${rotina.map(ex => {
+                            const videoId = ex.link ? (ex.link.includes('shorts/') ? ex.link.split('shorts/')[1].split('?')[0] : (ex.link.includes('youtu.be/') ? ex.link.split('/').pop() : ex.link.split('v=')[1]?.substring(0, 11))) : null;
+                            return `<div class="bg-gray-900 p-4 rounded-xl border border-gray-800 mb-4 shadow-lg">
+                                <h4 class="text-white font-black text-sm uppercase">${ex.titulo}</h4>
+                                <p class="text-blue-400 text-xs mt-1 font-bold">${ex.series} Séries x ${ex.reps} Repetições</p>
+                                <p class="text-gray-400 text-[10px] mt-1 italic">Obs: ${ex.obs || 'Sem observações'}</p>
+                                ${videoId ? `<iframe class="w-full h-48 rounded-lg mt-3" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>` : '<p class="text-[9px] text-gray-600 mt-2">Sem vídeo de apoio.</p>'}
+                            </div>`;
+                        }).join('')}` : `<p class="text-center text-gray-500 text-xs py-4">Nenhum treino definido.</p>`;
                 }
+
+                const footer = document.getElementById('container-footer');
+                const listaH = Object.keys(dados.historicoTreinos || {}).sort((a, b) => new Date(b) - new Date(a)).map(d => `
+                    <li class="flex justify-between text-xs border-b border-gray-800 py-2">
+                        <span class="text-gray-400">${new Date(d).toLocaleDateString('pt-BR')}</span>
+                        <span class="text-emerald-500 font-bold">CONCLUÍDO (${dados.historicoTreinos[d].marcadoPor})</span>
+                    </li>`).join('');
+
+                footer.innerHTML = `<div class="space-y-3 pt-6 border-t border-gray-800">
+                    <h3 class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2">Informações Adicionais</h3>
+                    <details class="group bg-gray-900 p-4 rounded-lg border border-gray-800 cursor-pointer">
+                        <summary class="font-bold text-xs uppercase text-gray-300">📂 Ver Minha Ficha Completa</summary>
+                        <div class="mt-4 pt-4 border-t border-gray-800 opacity-80 text-xs">${config.campos}</div>
+                    </details>
+                    <details class="group bg-gray-900 p-4 rounded-lg border border-gray-800 cursor-pointer">
+                        <summary class="font-bold text-xs uppercase text-gray-300">📜 Histórico de Treinos</summary>
+                        <div class="mt-4 pt-4 border-t border-gray-800">
+                            <ul class="space-y-2">${listaH || '<li class="text-xs text-gray-500 italic">Nenhum concluído.</li>'}</ul>
+                        </div>
+                    </details>
+                </div>`;
+
+                Object.keys(dados).forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.type === 'checkbox' ? el.checked = dados[id] : el.value = dados[id];
+                });
            } catch (e) {
                 console.error("Erro na renderização:", e);
                 document.getElementById('app').innerHTML = "Erro ao carregar dados.";
