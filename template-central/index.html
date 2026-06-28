@@ -156,7 +156,17 @@
             
             // Injeta o HTML vindo da Fábrica
             document.getElementById("container-apresentacao").innerHTML = config.apresentacao || "";
-            document.getElementById("container-dinamico").innerHTML = config.campos || "";
+document.getElementById("container-dinamico").innerHTML = config.campos || "";
+
+// APLICAÇÃO DINÂMICA DA COR
+const corPrincipal = config.cor || "#3B82F6";
+const elementosColoridos = document.querySelectorAll('.bg-blue-600, .text-blue-500, .bg-blue-900\\/30, .border-blue-500');
+
+elementosColoridos.forEach(el => {
+    if (el.classList.contains('bg-blue-600')) el.style.backgroundColor = corPrincipal;
+    if (el.classList.contains('text-blue-500')) el.style.color = corPrincipal;
+    if (el.classList.contains('border-blue-500')) el.style.borderColor = corPrincipal;
+});
             
             // NOVO: Força a exibição do Painel do Gestor se ele estiver configurado
             const painelGestor = document.getElementById("container-painel-gestor");
