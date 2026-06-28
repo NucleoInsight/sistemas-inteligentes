@@ -110,7 +110,7 @@
                             const isTreino = ex.series !== '-';
                             return `<div class="bg-gray-900 p-4 rounded-xl border border-gray-800 mb-4 shadow-lg">
                                 <div class="flex items-center gap-3 mb-2">
-                                    ${isTreino ? `<input type="checkbox" onchange="window.salvarCheck('${ex.titulo.replace(/'/g, "\\'")}', this.checked)" class="w-6 h-6 rounded border-gray-700 bg-black text-emerald-500 focus:ring-emerald-500 cursor-pointer">` : ''}
+                                    ${isTreino ? `<input type="checkbox" ${marcados[ex.titulo] ? 'checked' : ''} onchange="window.salvarCheck('${ex.titulo.replace(/'/g, "\\'")}', this.checked)" class="w-6 h-6 rounded border-gray-700 bg-black text-emerald-500 focus:ring-emerald-500 cursor-pointer">` : ''}
                                     <h4 class="text-white font-black text-sm uppercase">${ex.titulo}</h4>
                                 </div>
                                 ${isTreino ? `<p class="text-blue-400 text-xs mt-1 font-bold">${ex.series} Séries x ${ex.reps} Repetições</p>` : ''}
