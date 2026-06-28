@@ -427,14 +427,23 @@
                 class="w-full bg-gray-900 border border-gray-800 rounded p-2 text-white text-xs mb-3"
                 onkeyup="window.filtrarAlunos()">
             <div id="lista-alunos-scroll" class="space-y-2 overflow-y-auto custom-scrollbar pr-2" style="height: 60vh;">
-                ${alunos.map(d => `
-                    <div class="aluno-item flex justify-between items-center bg-gray-900 p-3 rounded border ${d.statusPagamento === 'Debito' ? 'border-red-500/50' : 'border-gray-800'} text-xs">
+               ${alunos.map(d => {
+                    const diaHoje = new Date().getDate();
+                    const venceu = d.dataVencimento && diaHoje >= parseInt(d.dataVencimento) && d.statusPagamento !== 'Pago';
+                    const statusVisual = venceu ? '🔴 Em Débito' : '🟢 Em Dia';
+                    const corStatus = venceu ? 'text-red-500' : 'text-emerald-500';
+                    const borda = venceu ? 'border-red-500/50' : 'border-gray-800';
+
+                    return `
+                    <div class="aluno-item flex justify-between items-center bg-gray-900 p-3 rounded border ${borda} text-xs">
                         <div class="flex flex-col">
                             <span class="nome-aluno text-gray-300 font-bold">${d.alunoNome || 'Sem Nome'}</span>
-                            <span class="text-[9px] ${d.statusPagamento === 'Debito' ? 'text-red-500' : 'text-emerald-500'} font-black uppercase">
-                                ${d.statusPagamento === 'Debito' ? '🔴 Em Débito' : '🟢 Em Dia'}
+                            <span class="text-[9px] ${corStatus} font-black uppercase">
+                                ${statusVisual} ${d.dataVencimento ? '(Vence dia ' + d.dataVencimento + ')' : ''}
                             </span>
                         </div>
+                    `;
+                }).join('')}
                         <div class="flex gap-2">
                             ${d.statusPagamento === 'Debito' ? `
                                 <button type="button" onclick="window.registrarPagamento('${d.id}', 'Pago')" class="bg-emerald-900/30 text-emerald-400 px-2 py-1 rounded border border-emerald-500/20">Pagar</button>
