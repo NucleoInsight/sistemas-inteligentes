@@ -68,9 +68,21 @@
                             </div>
                         </div>
                         <div id="container-video"></div>
-                        <button type="button" onclick="window.marcarConcluido()" class="w-full bg-emerald-600 text-white font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-900/20">
-                            Marcar treino de hoje como Concluído ✅
-                        </button>
+                        <!-- AÇÕES: Feedback e Conclusão -->
+                        <div class="bg-gray-900 p-4 rounded-xl border border-gray-800 space-y-3">
+                            <h3 class="text-xs font-bold text-gray-400 uppercase">Como foi o treino?</h3>
+                            <select id="feedback-intensidade" class="w-full bg-black border border-gray-700 text-white p-2 rounded text-xs">
+                                <option value="Muito Fácil">Muito Fácil</option>
+                                <option value="Fácil">Fácil</option>
+                                <option value="Ideal">Ideal (Dentro do esperado)</option>
+                                <option value="Difícil">Difícil</option>
+                                <option value="Muito Difícil">Muito Difícil</option>
+                            </select>
+                            <textarea id="feedback-obs" placeholder="Alguma dor ou dificuldade?" class="w-full bg-black border border-gray-700 text-white p-2 rounded text-xs h-20"></textarea>
+                            <button type="button" onclick="window.marcarConcluido()" class="w-full bg-emerald-600 text-white font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-emerald-500 transition-all">
+                                Finalizar e enviar feedback ✅
+                            </button>
+                        </div>
                         <div id="container-footer"></div>
                     </div>
                 `;
