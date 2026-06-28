@@ -374,6 +374,25 @@
     win.print();
 };
         
+       // --- BLOCO DE MÓDULOS DE SERVIÇOS (NICHO ESTÉTICA / EVENTOS) ---
+        window.renderizarAgenda = (cid) => {
+            document.getElementById('app').innerHTML = `<div class="text-center py-20">⚙️ Módulo de Agenda carregado para: ${cid}</div>`;
+            console.log("Executando lógica de agenda...");
+        };
+
+        window.verificarDisponibilidade = async (cid, data, hora) => {
+            // Lógica de verificação será implementada aqui
+            return true;
+        };
+
+        window.gerarLinkPagamento = (valor, descricao) => {
+            return `https://pagamento.exemplo.com?v=${valor}&d=${descricao}`;
+        };
+
+        window.notificacaoAutomatica = (telefone, evento) => {
+            window.open(`https://wa.me/55${telefone.replace(/\D/g, "")}`, '_blank');
+        };
+
         carregarVisualizacao();
     </script>
 
