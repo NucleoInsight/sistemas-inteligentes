@@ -178,11 +178,9 @@
             const params = new URLSearchParams(window.location.search);
             const cid = params.get('cid');
             const aid = params.get('aid');
-
-            if (!cid || !aid) {
-                alert("Erro: Identificação do aluno não encontrada.");
-                return;
-            }
+            
+            const intensidade = document.getElementById('feedback-intensidade').value;
+            const obs = document.getElementById('feedback-obs').value;
 
             try {
                 const hoje = new Date().toISOString().split('T')[0];
@@ -192,18 +190,19 @@
                     [`historicoTreinos.${hoje}`]: {
                         status: "Concluído",
                         data: agora,
-                        marcadoPor: "Aluno"
+                        marcadoPor: "Aluno",
+                        intensidade: intensidade,
+                        feedback: obs
                     },
                     statusTreino: "Concluído",
-                    dataConclusao: agora,
-                    marcadoPor: "Aluno"
+                    dataConclusao: agora
                 });
                 
-                alert("✅ Treino marcado como concluído!");
+                alert("✅ Treino finalizado! Feedback enviado.");
                 window.location.reload();
             } catch (error) {
-                console.error("Erro no Firestore:", error);
-                alert("Erro ao salvar no banco de dados.");
+                console.error("Erro:", error);
+                alert("Erro ao salvar feedback.");
             }
         };
 
