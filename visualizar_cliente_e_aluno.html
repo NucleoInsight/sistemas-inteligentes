@@ -125,10 +125,10 @@
                 }
 
                 const footer = document.getElementById('container-footer');
-                const listaH = Object.keys(dados.historicoTreinos || {}).sort((a, b) => new Date(b) - new Date(a)).map(d => `
+                const listaH = Object.keys(window.dadosAluno.historicoTreinos || {}).sort((a, b) => new Date(b) - new Date(a)).map(d => `
                     <li class="flex justify-between text-xs border-b border-gray-800 py-2">
                         <span class="text-gray-400">${new Date(d).toLocaleDateString('pt-BR')}</span>
-                        <span class="text-emerald-500 font-bold">CONCLUÍDO (${dados.historicoTreinos[d].marcadoPor})</span>
+                        <span class="text-emerald-500 font-bold">CONCLUÍDO (${window.dadosAluno.historicoTreinos[d].marcadoPor})</span>
                     </li>`).join('');
 
                 footer.innerHTML = `<div class="space-y-3 pt-6 border-t border-gray-800">
@@ -145,9 +145,9 @@
                     </details>
                 </div>`;
 
-                Object.keys(dados).forEach(id => {
+                Object.keys(window.dadosAluno).forEach(id => {
                     const el = document.getElementById(id);
-                    if (el) el.type === 'checkbox' ? el.checked = dados[id] : el.value = dados[id];
+                    if (el) el.type === 'checkbox' ? el.checked = window.dadosAluno[id] : el.value = window.dadosAluno[id];
                 });
            } catch (e) {
                 console.error("Erro na renderização:", e);
