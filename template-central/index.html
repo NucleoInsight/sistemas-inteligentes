@@ -262,15 +262,15 @@
                 delete dados.videoTitulo;
                 delete dados.linkVideoTreino;
                 
-                // Adiciona os dados novos à estrutura
+               // Adiciona os dados novos à estrutura
                 dados.videos = listaVideos;
-                dados.rotinaTreino = window.listaExercicios;
+                dados.rotinaTreino = window.rotinaTemporaria;
                 
                 await setDoc(docRef, dados, { merge: true });
-                alert(`✅ Ficha salva com ${listaVideos.length} vídeos e ${window.listaExercicios.length} exercícios!`);
+                alert(`✅ Ficha salva com ${listaVideos.length} vídeos e ${window.rotinaTemporaria.length} exercícios!`);
                 
                 // Reset da lista de exercícios na memória e no HTML
-                window.listaExercicios = [];
+                window.rotinaTemporaria = [];
                 document.getElementById('container-rotina-preview').innerHTML = '<p class="text-[9px] text-gray-500 uppercase italic">Nenhum exercício adicionado.</p>';
                 
                 // Reset do formulário e limpeza do ID para evitar duplicidade
