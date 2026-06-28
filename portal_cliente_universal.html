@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minha Ficha - Portal do Cliente</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes pular-5-vezes {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        .pulsar-limitado {
+            animation: pular-5-vezes 0.8s ease-in-out 5;
+        }
+    </style>
 </head>
 <body class="bg-[#0F1115] text-white p-4 font-sans">
 
