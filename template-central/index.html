@@ -9,6 +9,12 @@
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #0F1115; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #171A21; border-radius: 3px; }
+        
+        /* Variáveis de cores dinâmicas */
+        :root { --cor-cliente: #3B82F6; }
+        .bg-tema-principal { background-color: var(--cor-cliente); }
+        .text-tema-principal { color: var(--cor-cliente); }
+        .border-tema-principal { border-color: var(--cor-cliente); }
     </style>
 </head>
 <body class="min-h-screen bg-[#0F1115] text-white font-sans custom-scrollbar flex flex-col justify-between">
