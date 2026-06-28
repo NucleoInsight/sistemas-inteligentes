@@ -434,8 +434,22 @@
             }
         };
 
-        window.gerarLinkPagamento = (valor, descricao) => {
-            return `https://pagamento.exemplo.com?v=${valor}&d=${descricao}`;
+        window.gerarLinkPagamento = (valor, descricao, alunoNome, alunoTelefone) => {
+            // Exemplo configurado para um sistema de cobrança via Pix Dinâmico
+            const baseUrl = "https://api.gateway-pagamento.com/v1/pix"; 
+            
+            // Constrói a query string com os dados dinâmicos do cliente
+            const params = new URLSearchParams({
+                valor: valor.toString(),
+                descricao: descricao,
+                nome: alunoNome,
+                contato: alunoTelefone,
+                timestamp: new Date().getTime()
+            });
+
+            const linkGerado = `${baseUrl}?${params.toString()}`;
+            console.log("Link de pagamento gerado:", linkGerado);
+            return linkGerado;
         };
 
         window.notificacaoAutomatica = (telefone, evento) => {
