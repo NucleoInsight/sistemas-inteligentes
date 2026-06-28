@@ -351,5 +351,40 @@
         
         carregarVisualizacao();
     </script>
+
+    <!-- Botão de Instalação -->
+<div class="fixed bottom-20 right-5 z-[900]">
+    <button onclick="abrirModalInstalacao()" class="bg-blue-600 hover:bg-blue-500 text-white p-4 rounded-full shadow-2xl transition-all animate-bounce">
+        📥
+    </button>
+</div>
+
+<!-- Modal de Instalação -->
+<div id="modal-instalacao" class="fixed inset-0 z-[1000] hidden flex items-center justify-center p-4 bg-black/90">
+    <div class="bg-[#171A21] border border-gray-700 p-6 rounded-2xl w-full max-w-sm shadow-2xl">
+        <h2 class="text-white font-black text-lg mb-4 text-center">Instalar no seu Celular</h2>
+        <div class="text-xs text-gray-400 space-y-4 mb-6">
+            <p>Tenha acesso rápido ao seu portal como um aplicativo!</p>
+            <div class="bg-gray-900 p-3 rounded border border-gray-800">
+                <span class="font-bold text-blue-400">📱 iPhone (iOS):</span><br>
+                Clique no botão de <b>Compartilhar</b> (ícone no centro inferior) e escolha <b>"Adicionar à Tela de Início"</b>.
+            </div>
+            <div class="bg-gray-900 p-3 rounded border border-gray-800">
+                <span class="font-bold text-green-400">🤖 Android:</span><br>
+                Clique nos <b>3 pontinhos</b> no canto superior e escolha <b>"Adicionar à Tela Inicial"</b>.
+            </div>
+        </div>
+        <button onclick="document.getElementById('modal-instalacao').classList.add('hidden')" class="w-full bg-gray-700 text-white font-bold py-3 rounded-xl uppercase text-xs">
+            Entendido
+        </button>
+    </div>
+</div>
+
+<script>
+    function abrirModalInstalacao() {
+        document.getElementById('modal-instalacao').classList.remove('hidden');
+    }
+</script>
+    
 </body>
 </html>
