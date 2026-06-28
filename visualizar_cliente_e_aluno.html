@@ -56,8 +56,25 @@
                 window.dadosAluno = alunoSnap.data();
 
                // ESTRUTURA PREMIUM DASHBOARD
+                // Lógica de Vencimento
+                const diaHoje = new Date().getDate();
+                const vencimento = parseInt(window.dadosAluno.dataVencimento || 0);
+                const diasParaVencer = vencimento - diaHoje;
+                
+                let avisoFinanceiro = "";
+                if (window.dadosAluno.statusPagamento !== 'Pago') {
+                    if (diasParaVencer < 0) {
+                        avisoFinanceiro = `<div class="bg-red-900/20 border border-red-500 p-3 rounded-xl text-center text-red-500 text-xs font-bold uppercase">⚠️ Mensalidade Vencida! Entre em contato com seu Personal.</div>`;
+                    } else if (diasParaVencer <= 5) {
+                        avisoFinanceiro = `<div class="bg-yellow-900/20 border border-yellow-500 p-3 rounded-xl text-center text-yellow-500 text-xs font-bold uppercase">⚠️ Atenção: Sua mensalidade vence em ${diasParaVencer} dias.</div>`;
+                    } else if (vencimento > 0) {
+                        avisoFinanceiro = `<div class="bg-emerald-900/20 border border-emerald-500 p-3 rounded-xl text-center text-emerald-500 text-xs font-bold uppercase">✅ Sua mensalidade vence no dia ${vencimento}.</div>`;
+                    }
+                }
+
                 document.getElementById('app').innerHTML = `
                     <div class="space-y-6">
+                        ${avisoFinanceiro}
                         <div class="flex items-center justify-between p-4 bg-gray-900 rounded-xl border border-gray-800">
                             <div>
                                <h1 class="text-lg font-black text-white uppercase">Olá, ${window.dadosAluno.alunoNome?.split(' ')[0] || 'Aluno'}!</h1>
