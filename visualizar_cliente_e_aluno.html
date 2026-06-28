@@ -130,26 +130,31 @@
                 });
 
                 // Motor de Vídeos
-                const linkTreino = dados.linkVideoTreino;
-                const containerVideo = document.getElementById('container-video');
-                if (containerVideo && linkTreino) {
-                    const links = linkTreino.split(',');
-                    containerVideo.innerHTML = `
-                        <h3 class="text-sm font-bold text-white uppercase mb-4 tracking-widest text-center">📺 O que temos para você</h3>
-                        <p class="text-xs text-gray-400 mb-6 text-center italic">Clique no play e veja o conteúdo exclusivo:</p>
-                        ${links.map((url, i) => {
-                            const u = url.trim();
-                            const videoId = u.includes('youtu.be/') ? u.split('/').pop() : u.split('v=')[1]?.substring(0,11);
-                            return `
-                                <div class="mb-6">
-                                    <iframe class="w-full h-64 rounded-xl border border-gray-800 shadow-2xl" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
-                                    <div class="flex items-center gap-2 p-3 mt-2 bg-[#0F1115] border border-gray-800 rounded">
-                                        <input type="checkbox" onchange="window.salvarCheck('video-${i}', this.checked)" class="w-5 h-5 accent-blue-600">
-                                        <label class="text-white text-xs uppercase font-bold">Treino Realizado</label>
+                // Motor de Renderização de Treino Completo
+                const container = document.getElementById('container-video');
+                const rotina = dados.rotinaTreino || [];
+
+                if (container) {
+                    if (rotina.length > 0) {
+                        container.innerHTML = `
+                            <h3 class="text-sm font-bold text-white uppercase mb-4 tracking-widest text-center">🏋️ Seu Treino do Dia</h3>
+                            ${rotina.map((ex, index) => {
+                                const videoId = ex.link ? (ex.link.includes('youtu.be/') ? ex.link.split('/').pop() : ex.link.split('v=')[1]?.substring(0, 11)) : null;
+                                return `
+                                    <div class="bg-gray-900 p-4 rounded-xl border border-gray-800 mb-4 shadow-lg">
+                                        <h4 class="text-white font-black text-sm uppercase">${ex.titulo}</h4>
+                                        <p class="text-blue-400 text-xs mt-1 font-bold">${ex.series} Séries x ${ex.reps} Repetições</p>
+                                        <p class="text-gray-400 text-[10px] mt-1 italic">Obs: ${ex.obs || 'Sem observações'}</p>
+                                        ${videoId ? `
+                                            <iframe class="w-full h-48 rounded-lg mt-3" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+                                        ` : '<p class="text-[9px] text-gray-600 mt-2">Sem vídeo de apoio.</p>'}
                                     </div>
-                                </div>`;
-                        }).join('')}
-                    `;
+                                `;
+                            }).join('')}
+                        `;
+                    } else {
+                        container.innerHTML = `<p class="text-center text-gray-500 text-xs py-4">Nenhum treino definido para hoje.</p>`;
+                    }
                 }
            } catch (e) {
                 console.error("Erro na renderização:", e);
