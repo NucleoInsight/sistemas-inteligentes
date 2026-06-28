@@ -824,7 +824,7 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
         el.innerHTML = alertas.length > 0 ? alertas.join('<br>') : "Tudo ok com os treinos!";
     }
 };
-       window.salvarVideoDireto = () => {
+      window.salvarVideoDireto = () => {
     const titulo = document.getElementById('videoTitulo').value;
     const link = document.getElementById('linkVideoTreino').value;
 
@@ -833,9 +833,42 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
         return;
     }
 
-    const destino = confirm("Deseja salvar na Biblioteca GLOBAL?\n(Clique em 'Cancelar' para salvar na sua Biblioteca PRIVADA)") ? 'Global' : 'Privado';
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4';
+    modal.innerHTML = `
+        <div class="bg-[#171A21] border border-gray-700 p-6 rounded-2xl w-full max-w-sm text-center shadow-2xl">
+            <h2 class="text-white font-bold text-lg mb-2">Onde salvar?</h2>
+            <p class="text-gray-400 text-xs mb-6">Escolha o destino do seu vídeo na biblioteca.</p>
+            
+            <div class="space-y-3">
+                <button id="btn-global" class="w-full bg-green-600 hover:bg-green-500 text-white py-3 rounded-xl font-bold text-xs uppercase">
+                    Salvar na Global
+                    <p class="text-[9px] opacity-70 font-normal normal-case">Todos os profissionais verão este vídeo.</p>
+                </button>
+                <button id="btn-privado" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl font-bold text-xs uppercase">
+                    Salvar na Privada
+                    <p class="text-[9px] opacity-70 font-normal normal-case">Apenas você terá acesso ao vídeo.</p>
+                </button>
+                <button id="btn-cancelar" class="w-full text-gray-500 py-2 text-[10px] font-bold uppercase mt-2">Cancelar</button>
+            </div>
+        </div>
+    `;
 
-    window.salvarNaBiblioteca(titulo, link, destino);
+    document.body.appendChild(modal);
+
+    const fechar = () => document.body.removeChild(modal);
+
+    document.getElementById('btn-global').onclick = () => {
+        window.salvarNaBiblioteca(titulo, link, 'Global');
+        fechar();
+    };
+
+    document.getElementById('btn-privado').onclick = () => {
+        window.salvarNaBiblioteca(titulo, link, 'Privado');
+        fechar();
+    };
+
+    document.getElementById('btn-cancelar').onclick = fechar;
 };
 </script>
 </body>
