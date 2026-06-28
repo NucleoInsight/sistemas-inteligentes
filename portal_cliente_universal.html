@@ -416,8 +416,22 @@
             }
         };
         window.verificarDisponibilidade = async (cid, data, hora) => {
-            // Lógica de verificação será implementada aqui
-            return true;
+            try {
+                // Busca na coleção de agendamentos se existe um documento com a mesma data e hora
+                const q = query(
+                    collection(db, "clients", cid, "agendamentos"), 
+                    where("data", "==", data), 
+                    where("hora", "==", hora)
+                );
+                const snapshot = await getDocs(q);
+                
+                // Se snapshot.empty for true, o horário está livre (retorna true)
+                // Se snapshot.empty for false, o horário já está ocupado (retorna false)
+                return snapshot.empty; 
+            } catch (e) {
+                console.error("Erro ao verificar disponibilidade:", e);
+                return false; // Em caso de erro, bloqueia por segurança
+            }
         };
 
         window.gerarLinkPagamento = (valor, descricao) => {
