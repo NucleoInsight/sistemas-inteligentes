@@ -136,11 +136,13 @@
                     } else {
                         avisoFinanceiro = `<div id="widget-financeiro" class="bg-emerald-900/20 border border-emerald-500 p-3 rounded-xl text-center text-emerald-500 text-xs font-bold uppercase mb-4">✅ Sua mensalidade vence no dia ${vencimento}.</div>`;
                     }
-                    // Injeta diretamente após o elemento ser criado
-                    setTimeout(() => {
-                        const appDiv = document.querySelector('.space-y-6');
-                        if (appDiv) appDiv.insertAdjacentHTML('afterbegin', avisoFinanceiro);
-                    }, 100);
+                    // Remove widget existente antes de injetar para evitar duplicidade
+                const widgetExistente = document.getElementById('widget-financeiro');
+                if (widgetExistente) widgetExistente.remove();
+
+                // Injeta no topo do contêiner principal
+                const appDiv = document.querySelector('.space-y-6');
+                if (appDiv) appDiv.insertAdjacentHTML('afterbegin', avisoFinanceiro);
                 }
 
                 document.getElementById('app').innerHTML = `
