@@ -320,25 +320,26 @@
     win.document.close();
     win.print();
 };
-        // Verificar se o aluno já aceitou o termo
-if (!window.dadosAluno.termoAceite) {
-    document.getElementById('modal-termo').classList.remove('hidden');
-}
+        window.dadosAluno = alunoSnap.data();
+                
+                // --- AJUSTE DE POSIÇÃO DO TERMO ---
+                if (!window.dadosAluno.termoAceite) {
+                    document.getElementById('modal-termo').classList.remove('hidden');
+                }
 
-// Função para salvar o aceite
-window.aceitarTermo = async () => {
-    const params = new URLSearchParams(window.location.search);
-    const cid = params.get('cid');
-    const aid = params.get('aid');
-    
-    try {
-        await updateDoc(doc(db, "clients", cid, "dados", aid), { termoAceite: true });
-        document.getElementById('modal-termo').classList.add('hidden');
-        alert("✅ Termo aceito com sucesso!");
-    } catch (e) {
-        alert("Erro ao salvar aceite.");
-    }
-};
+                window.aceitarTermo = async () => {
+                    const params = new URLSearchParams(window.location.search);
+                    const cid = params.get('cid');
+                    const aid = params.get('aid');
+                    try {
+                        await updateDoc(doc(db, "clients", cid, "dados", aid), { termoAceite: true });
+                        document.getElementById('modal-termo').classList.add('hidden');
+                        alert("✅ Termo aceito com sucesso!");
+                    } catch (e) {
+                        alert("Erro ao salvar aceite.");
+                    }
+                };
+                // ----------------------------------
         
         carregarVisualizacao();
     </script>
