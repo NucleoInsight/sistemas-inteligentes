@@ -894,6 +894,17 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
         alert("Erro ao limpar rotina.");
     }
 };
+
+        window.moverExercicio = (index, direcao) => {
+            const novaPosicao = index + direcao;
+            if (novaPosicao < 0 || novaPosicao >= window.rotinaTemporaria.length) return;
+            
+            // Troca os elementos de lugar
+            const item = window.rotinaTemporaria.splice(index, 1)[0];
+            window.rotinaTemporaria.splice(novaPosicao, 0, item);
+            
+            window.renderizarPreviewRotina();
+        };
         
 </script>
 </body>
