@@ -444,6 +444,7 @@
                         </div>
                         <div class="flex flex-wrap gap-2 mt-3">
                             ${(d.statusPagamento !== 'Pago') ? `<button type="button" onclick="window.registrarPagamento('${d.id}', 'Pago')" class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded-md border border-emerald-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Pagar</button>` : ''}
+                            <button type="button" onclick="window.alternarAcesso('${d.id}', '${d.statusAcesso === 'Bloqueado' ? 'Ativo' : 'Bloqueado'}')" class="${d.statusAcesso === 'Bloqueado' ? 'bg-orange-500/10 text-orange-500 border-orange-500/30' : 'bg-gray-500/10 text-gray-400 border-gray-500/30'} px-3 py-1.5 rounded-md border text-[10px] font-bold uppercase tracking-wider transition-all">${d.statusAcesso === 'Bloqueado' ? 'Desbloquear' : 'Bloquear'}</button>
                             <button type="button" onclick="window.carregarDados('${d.id}')" class="bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 px-3 py-1.5 rounded-md border border-blue-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Editar</button>
                             <button type="button" onclick="window.marcarConcluidoAdmin('${d.id}')" class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 px-3 py-1.5 rounded-md border border-emerald-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Concluir</button>
                             <button type="button" onclick="window.copiarGatilhoAluno('${d.alunoNome}', 'https://nucleoinsight.github.io/sistemas-inteligentes/template-central/index.html?cid=' + new URLSearchParams(window.location.search).get('cid'))" class="bg-green-500/10 hover:bg-green-500/20 text-green-400 px-3 py-1.5 rounded-md border border-green-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Enviar Ficha</button>
@@ -914,6 +915,15 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
             
             window.renderizarPreviewRotina();
         };
+
+        window.alternarAcesso = async (idFicha, novoStatus) => {
+    const params = new URLSearchParams(window.location.search);
+    const cid = params.get('cid');
+    await updateDoc(doc(db, "clients", cid, "dados", idFicha), { statusAcesso: novoStatus });
+    alert("✅ Status de acesso alterado para: " + novoStatus);
+    window.renderizarGestaoAlunos();
+};
+        
         
 </script>
 </body>
