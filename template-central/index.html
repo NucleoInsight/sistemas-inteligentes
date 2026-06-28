@@ -779,12 +779,16 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
             window.renderizarPreviewRotina();
         };
 
-        window.renderizarPreviewRotina = () => {
+        wwindow.renderizarPreviewRotina = () => {
             const container = document.getElementById('container-rotina-preview');
             container.innerHTML = window.rotinaTemporaria.map((ex, i) => `
-                <div class="flex justify-between items-center bg-black p-2 rounded text-[9px] text-white">
-                    <span>${ex.dia} - ${ex.titulo} (${ex.series}x${ex.reps})</span>
-                    <button type="button" onclick="window.removerExercicio(${i})" class="text-red-500 font-bold px-2">X</button>
+                <div class="flex justify-between items-center bg-black p-2 rounded text-[9px] text-white gap-2">
+                    <span class="truncate">${ex.dia} - ${ex.titulo}</span>
+                    <div class="flex gap-1">
+                        <button type="button" onclick="window.moverExercicio(${i}, -1)" class="text-blue-400 font-bold px-1">▲</button>
+                        <button type="button" onclick="window.moverExercicio(${i}, 1)" class="text-blue-400 font-bold px-1">▼</button>
+                        <button type="button" onclick="window.removerExercicio(${i})" class="text-red-500 font-bold px-2">X</button>
+                    </div>
                 </div>
             `).join('');
         };
