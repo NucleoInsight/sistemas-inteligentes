@@ -93,7 +93,7 @@
                 `;
 
                const container = document.getElementById('container-video');
-                const rotina = dados.rotinaTreino || [];
+               const rotina = window.dadosAluno.rotinaTreino || [];
                 
                 // Lógica de filtro por dia da semana
                 const hoje = new Date().toLocaleDateString('pt-BR', { weekday: 'long' }).split('-')[0].toLowerCase();
