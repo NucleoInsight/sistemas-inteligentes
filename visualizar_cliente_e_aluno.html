@@ -254,6 +254,26 @@
         alert("Erro ao salvar progresso.");
     }
 };
+
+        window.enviarRelatorioWhatsApp = () => {
+    const nomeAluno = dados.alunoNome || "Aluno";
+    const dia = "${diaAtual}";
+    const exercicios = Array.from(document.querySelectorAll('h4')).map(h => h.innerText);
+    const checks = Array.from(document.querySelectorAll('input[type="checkbox"]'));
+    
+    let resumo = `*Relatório de Treino - ${dia}*\n`;
+    resumo += `*Aluno:* ${nomeAluno}\n\n`;
+    
+    checks.forEach((c, i) => {
+        const status = c.checked ? "✅ Realizado" : "❌ Não realizado";
+        resumo += `${i + 1}. ${exercicios[i]}: ${status}\n`;
+    });
+
+    const mensagem = encodeURIComponent(resumo);
+    // Substitua pelo seu número formatado corretamente
+    window.open(`https://wa.me/5575998649927?text=${mensagem}`, '_blank');
+};
+        
         carregarVisualizacao();
     </script>
 </body>
