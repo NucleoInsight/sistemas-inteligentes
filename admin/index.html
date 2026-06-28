@@ -573,8 +573,12 @@ async function cadastrarCliente() {
         window.carregarTemplatesParaTodos = async () => {
             try {
                 const snap = await getDocs(collection(db, "templates"));
-                let options = '<option value="">-- Escolha um Template --</option>';
-                snap.forEach(d => options += `<option value="${d.id}">${d.id}</option>`);
+                // Criamos uma lista específica de nichos baseada no ID do template
+                let options = '<option value="">-- Selecione o Nicho --</option>';
+                snap.forEach(d => {
+                    // O ID do template (ex: capoeira_base) vira a opção
+                    options += `<option value="${d.id}">${d.id.replace('_base', '').toUpperCase()}</option>`;
+                });
                 
                 document.getElementById("tpl-id").innerHTML = options;
                 document.getElementById("cli-nicho").innerHTML = options;
