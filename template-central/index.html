@@ -946,7 +946,40 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
     alert("✅ Status de acesso alterado para: " + novoStatus);
     window.renderizarGestaoAlunos();
 };
-        
+
+        // --- BLOCO DE MÓDULOS DE SERVIÇOS (NICHO ESTÉTICA / EVENTOS / CONSULTORIA) ---
+
+// 1. GESTÃO DE AGENDA: Lê agendamentos ordenados por data
+window.gestaoDeAgenda = async (cid) => {
+    const { collection, getDocs, query, orderBy, where } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    const q = query(collection(db, "clients", cid, "agendamentos"), orderBy("dataHora", "asc"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+};
+
+// 2. VERIFICAR DISPONIBILIDADE: Checa se já existe alguém no mesmo horário
+window.verificarDisponibilidade = async (cid, data, hora) => {
+    const { collection, getDocs, query, where } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    const q = query(collection(db, "clients", cid, "agendamentos"), 
+                    where("data", "==", data), 
+                    where("hora", "==", hora));
+    const snapshot = await getDocs(q);
+    return snapshot.empty; // Se retornar true, está livre
+};
+
+// 3. GERAR LINK DE PAGAMENTO (Pix/Stripe): Retorna uma URL formatada
+window.gerarLinkPagamento = (valor, descricao, clienteWhatsApp) => {
+    // Exemplo usando Pix Dinâmico (pode ser substituído por link de checkout)
+    const baseUrl = "https://sua-plataforma-pagamento.com/pagar";
+    const link = `${baseUrl}?valor=${valor}&ref=${encodeURIComponent(descricao)}&contato=${clienteWhatsApp}`;
+    return link;
+};
+
+// 4. NOTIFICAÇÃO AUTOMÁTICA VIA WHATSAPP
+window.notificacaoAutomatica = (telefone, nomeEvento, hora) => {
+    const mensagem = `Olá! Lembrete: você tem um compromisso agendado: ${nomeEvento} às ${hora}. Te esperamos!`;
+    window.open(`https://wa.me/55${telefone.replace(/\D/g, "")}?text=${encodeURIComponent(mensagem)}`, '_blank');
+};
         
 </script>
 
