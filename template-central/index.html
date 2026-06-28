@@ -786,7 +786,35 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
             window.rotinaTemporaria.splice(index, 1);
             window.renderizarPreviewRotina();
         };
+
+        window.atualizarFeedbackKPI = async () => {
+    const params = new URLSearchParams(window.location.search);
+    const cid = params.get('cid');
+    const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    
+    // Busca em todos os alunos
+    const snapshot = await getDocs(collection(db, "clients", cid, "dados"));
+    let alertas = [];
+
+    snapshot.forEach(doc => {
+        const d = doc.data();
+        const historico = d.historicoTreinos || {};
+        const datas = Object.keys(historico).sort((a, b) => new Date(b) - new Date(a));
         
+        if (datas.length > 0) {
+            const ultimaData = datas[0];
+            const ultimoFeedback = historico[ultimaData];
+            if (ultimoFeedback.intensidade === "Muito Difícil" || ultimoFeedback.feedback) {
+                alertas.push(`${d.alunoNome}: ${ultimoFeedback.intensidade}`);
+            }
+        }
+    });
+
+    const el = document.getElementById('kpi-feedback-alerta');
+    if (el) {
+        el.innerHTML = alertas.length > 0 ? alertas.join('<br>') : "Tudo ok com os treinos!";
+    }
+};
 </script>
 </body>
 </html>
