@@ -756,13 +756,17 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
             const obs = document.getElementById('novoExercicioObs').value;
             const link = document.getElementById('linkVideoTreino').value;
             const dia = document.getElementById('rotinaDiaSelect').value;
+            const tipoDia = document.getElementById('tipoDiaSelect').value;
 
-            if (!titulo || !series || !reps) {
+            // Se for descanso, permitimos salvar sem preencher título/series/reps
+            if (tipoDia !== 'Treino' && !titulo) {
+                window.rotinaTemporaria.push({ dia, titulo: tipoDia.toUpperCase(), series: '-', reps: '-', obs: 'Dia de ' + tipoDia, link: '' });
+            } else if (!titulo || !series || !reps) {
                 alert("Preencha título, séries e repetições!");
                 return;
+            } else {
+                window.rotinaTemporaria.push({ dia, titulo, series, reps, obs, link, tipoDia });
             }
-
-            window.rotinaTemporaria.push({ dia, titulo, series, reps, obs, link });
             
             // Limpar campos
             document.getElementById('novoExercicioTitulo').value = '';
