@@ -759,15 +759,16 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
             const dia = document.getElementById('rotinaDiaSelect').value;
             const tipoDia = document.getElementById('tipoDiaSelect').value;
 
-            // Se for descanso, permitimos salvar sem preencher título/series/reps
-            if (tipoDia !== 'Treino' && !titulo) {
-                window.rotinaTemporaria.push({ dia, titulo: tipoDia.toUpperCase(), series: '-', reps: '-', obs: 'Dia de ' + tipoDia, link: '' });
-            } else if (!titulo || !series || !reps) {
-                alert("Preencha título, séries e repetições!");
-                return;
-            } else {
-                window.rotinaTemporaria.push({ dia, titulo, series, reps, obs, link, tipoDia });
-            }
+            // Adiciona o exercício independentemente de estarem preenchidos ou não
+            window.rotinaTemporaria.push({ 
+                dia, 
+                titulo: titulo || tipoDia.toUpperCase(), 
+                series: series || '-', 
+                reps: reps || '-', 
+                obs: obs || '', 
+                link: link, 
+                tipoDia 
+            });
             
             // Limpar campos
             document.getElementById('novoExercicioTitulo').value = '';
