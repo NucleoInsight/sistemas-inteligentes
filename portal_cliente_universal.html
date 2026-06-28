@@ -466,6 +466,20 @@
             window.open(urlWhatsApp, '_blank');
         };
 
+        window.bloqueioDeDatas = async (cid, data) => {
+            try {
+                // Consulta se a data específica consta na coleção de datas bloqueadas do profissional
+                const docSnap = await getDoc(doc(db, "clients", cid, "datas_bloqueadas", data));
+                
+                // Se o documento existir, significa que a data está bloqueada (retorna true)
+                // Se não existir, a data está livre para agendamento (retorna false)
+                return docSnap.exists();
+            } catch (e) {
+                console.error("Erro ao verificar bloqueio de data:", e);
+                return true; // Bloqueia a data por segurança em caso de erro no banco
+            }
+        };
+
         carregarVisualizacao();
     </script>
 
