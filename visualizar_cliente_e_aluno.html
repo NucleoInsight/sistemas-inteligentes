@@ -256,34 +256,32 @@
 };
 
        window.enviarRelatorioWhatsApp = () => {
-    if (!window.dadosAluno) {
-        alert("Erro: Dados do aluno não carregados.");
-        return;
-    }
+    if (!window.dadosAluno) return alert("Erro: Dados não carregados.");
 
     const nomeAluno = window.dadosAluno.alunoNome || "Aluno";
-    // Seleção segura do título do dia
-    const tituloElemento = document.querySelector('h3');
-    const dia = tituloElemento ? tituloElemento.innerText.replace('🏋️ Treino de ', '') : "Indefinido";
-    
-    const exercicios = Array.from(document.querySelectorAll('h4')).map(h => h.innerText);
-    const checks = Array.from(document.querySelectorAll('input[type="checkbox"]'));
-    
-    if (exercicios.length === 0) {
-        alert("Nenhum exercício encontrado para enviar.");
-        return;
-    }
+    const titulo = document.querySelector('h3')?.innerText || "Relatório de Treino";
+    const exercicios = Array.from(document.querySelectorAll('.bg-gray-900.p-4'));
 
-    let resumo = `*Relatório de Treino - ${dia}*\n`;
-    resumo += `*Aluno:* ${nomeAluno}\n\n`;
-    
-    checks.forEach((c, i) => {
-        const status = c.checked ? "✅ Realizado" : "❌ Não realizado";
-        resumo += `${i + 1}. ${exercicios[i]}: ${status}\n`;
+    let htmlRelatorio = `
+        <div style="font-family: sans-serif; padding: 20px; color: #000;">
+            <h1 style="text-align: center; color: #10b981;">RELATÓRIO DE TREINO</h1>
+            <p><strong>Aluno:</strong> ${nomeAluno}</p>
+            <p><strong>Data:</strong> ${new Date().toLocaleDateString()}</p>
+            <h2 style="border-bottom: 2px solid #10b981;">${titulo}</h2>
+            <ul style="list-style: none; padding: 0;">`;
+
+    exercicios.forEach((div, i) => {
+        const nome = div.querySelector('h4')?.innerText || "Exercício";
+        const status = div.querySelector('input[type="checkbox"]')?.checked ? "✅ Realizado" : "❌ Pendente";
+        htmlRelatorio += `<li style="padding: 10px; border-bottom: 1px solid #ccc;"><strong>${i + 1}. ${nome}</strong> - ${status}</li>`;
     });
 
-    const mensagem = encodeURIComponent(resumo);
-    window.open(`https://wa.me/5575998649927?text=${mensagem}`, '_blank');
+    htmlRelatorio += `</ul></div>`;
+
+    const win = window.open('', '_blank');
+    win.document.write(htmlRelatorio);
+    win.document.close();
+    win.print();
 };
         
         carregarVisualizacao();
