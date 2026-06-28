@@ -871,6 +871,26 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
 
     document.getElementById('btn-cancelar').onclick = fechar;
 };
+
+        window.limparRotinaAluno = async (idFicha) => {
+    if (!confirm("⚠️ Atenção: Isso removerá TODOS os exercícios da rotina deste aluno. Deseja continuar?")) return;
+    
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const cid = params.get('cid');
+        
+        await updateDoc(doc(db, "clients", cid, "dados", idFicha), { 
+            rotinaTreino: [] 
+        });
+        
+        alert("✅ Rotina de treinos limpa com sucesso!");
+        window.renderizarGestaoAlunos();
+    } catch (e) {
+        console.error("Erro ao limpar rotina:", e);
+        alert("Erro ao limpar rotina.");
+    }
+};
+        
 </script>
 </body>
 </html>
