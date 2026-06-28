@@ -255,9 +255,9 @@
     }
 };
 
-        window.enviarRelatorioWhatsApp = () => {
-    const nomeAluno = dados.alunoNome || "Aluno";
-    const dia = "${diaAtual}";
+       window.enviarRelatorioWhatsApp = () => {
+    const nomeAluno = window.dadosAluno.alunoNome || "Aluno";
+    const dia = document.querySelector('h3').innerText.replace('🏋️ Treino de ', '');
     const exercicios = Array.from(document.querySelectorAll('h4')).map(h => h.innerText);
     const checks = Array.from(document.querySelectorAll('input[type="checkbox"]'));
     
@@ -270,7 +270,6 @@
     });
 
     const mensagem = encodeURIComponent(resumo);
-    // Substitua pelo seu número formatado corretamente
     window.open(`https://wa.me/5575998649927?text=${mensagem}`, '_blank');
 };
         
