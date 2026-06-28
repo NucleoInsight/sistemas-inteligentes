@@ -69,15 +69,13 @@
                 const nicho = clienteSnap.data().nicho || 'Treino'; 
                 console.log("Nicho detectado:", nicho);
 
-                switch(nicho) {
+               switch(nicho) {
                     case 'Estetica':
-                        // Aqui você chamaria a renderização do módulo de Estética
-                        break;
                     case 'Eventos':
-                        // Aqui você chamaria a renderização do módulo de Eventos
-                        break;
+                        console.log("Carregando módulo especializado de Serviços");
+                        window.renderizarAgenda(cid);
+                        return; // Interrompe o fluxo para não renderizar treinos
                     default:
-                        // O padrão atual de Treino/Personal
                         console.log("Carregando módulo padrão de Treino");
                 }
 
