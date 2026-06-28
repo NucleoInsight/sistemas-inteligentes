@@ -780,7 +780,7 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
             window.renderizarPreviewRotina();
         };
 
-        wwindow.renderizarPreviewRotina = () => {
+        window.renderizarPreviewRotina = () => {
             const container = document.getElementById('container-rotina-preview');
             container.innerHTML = window.rotinaTemporaria.map((ex, i) => `
                 <div class="flex justify-between items-center bg-black p-2 rounded text-[9px] text-white gap-2">
