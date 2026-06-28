@@ -475,8 +475,11 @@ window.filtrarAlunos = () => {
         if (!cid) return;
 
         try {
-            await updateDoc(doc(db, "clients", cid, "dados", idFicha), { statusPagamento: status });
-            alert("✅ Status atualizado!");
+           await updateDoc(doc(db, "clients", cid, "dados", idFicha), { 
+                statusPagamento: status,
+                ultimaDataPagamento: new Date().toISOString()
+            });
+            alert("✅ Pagamento registrado com sucesso!");
             
             // Recarrega o painel e os KPIs para refletir a mudança na hora
             window.atualizarDashboard();
