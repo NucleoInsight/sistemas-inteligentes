@@ -65,6 +65,22 @@
                // ... logo após o const config = ...
                 window.dadosAluno = alunoSnap.data();
 
+                // --- O "NORTE" DO SISTEMA (Switch de Nicho) ---
+                const nicho = clienteSnap.data().nicho || 'Treino'; 
+                console.log("Nicho detectado:", nicho);
+
+                switch(nicho) {
+                    case 'Estetica':
+                        // Aqui você chamaria a renderização do módulo de Estética
+                        break;
+                    case 'Eventos':
+                        // Aqui você chamaria a renderização do módulo de Eventos
+                        break;
+                    default:
+                        // O padrão atual de Treino/Personal
+                        console.log("Carregando módulo padrão de Treino");
+                }
+
                 // NOVA LÓGICA DE TERMO DE RESPONSABILIDADE (UNIVERSAL)
                 if (!window.dadosAluno.termoAceite) {
                     const termoTexto = config.termoResponsabilidade || "Declaro que as informações acima são verdadeiras e estou apto para realizar as atividades físicas propostas.";
