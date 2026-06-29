@@ -71,10 +71,12 @@
 
               // Roteador de Módulos (Isolado por nicho)
                 switch(nicho) {
-                    case 'Estetica':
+                   case 'Estetica':
                     case 'Eventos':
+                    case 'Barbearia':
+                    case 'Consultoria':
                         console.log("Carregando módulo especializado de Serviços");
-                        window.renderizarAgenda(cid);
+                        window.renderizarModuloServicos(cid, aid, window.dadosAluno);
                         break;
                     case 'capoeira_base':
                         console.log("Carregando módulo especializado de Capoeira");
