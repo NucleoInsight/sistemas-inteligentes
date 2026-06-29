@@ -324,17 +324,19 @@ document.documentElement.style.setProperty('--cor-cliente', corPrincipal);
             if (docSnap.exists()) {
                 const dados = docSnap.data();
                 
-               // Função de preenchimento inteligente (não trava mais em campos específicos)
+               // Função de preenchimento inteligente (detecta o que existe no formulário atual)
                 const preencher = () => {
-
                     const container = document.getElementById('container-conteudos');
                     if (container) container.innerHTML = ''; 
 
                     Object.keys(dados).forEach(id => {
                         const el = document.getElementById(id);
                         if (el) {
-                            if (el.type === 'checkbox') el.checked = dados[id];
-                            else el.value = dados[id];
+                            if (el.type === 'checkbox') {
+                                el.checked = dados[id];
+                            } else {
+                                el.value = dados[id] !== undefined ? dados[id] : '';
+                            }
                         }
                     });
 
