@@ -190,7 +190,7 @@ document.documentElement.style.setProperty('--cor-cliente', corPrincipal);
             // FORÇA O CARREGAMENTO DOS MOTORES COM O CID CORRETO
             window.atualizarDashboard();
             window.renderizarGestaoAlunos();
-            window.atualizarFeedbackKPI();
+            window.inicializarModulos(dados);
         }
 
         window.registrarAcao = async (exercicio) => {
@@ -846,6 +846,42 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
                 }
             }
         };
+
+        window.atualizarFeedbackKPI = async () => {
+            const params = new URLSearchParams(window.location.search);
+            const cid = params.get('cid');
+            // Só executa se for nicho de Treino
+            if (window.statusCliente && window.statusCliente !== 'Treino' && window.statusCliente !== 'Capoeira') return;
+
+            try {
+                const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+                const snapshot = await getDocs(collection(db, "clients", cid, "dados"));
+                let alertas = [];
+                const agora = new Date();
+
+                snapshot.forEach(doc => {
+                    const d = doc.data();
+                    const historico = d.historicoTreinos || {};
+                    const datas = Object.keys(historico);
+
+                    datas.forEach(dataStr => {
+                        const dataFeedback = new Date(dataStr);
+                        const diffHoras = (agora - dataFeedback) / (1000 * 60 * 60);
+                        if (diffHoras < 48 && historico[dataStr].feedback) {
+                            alertas.push(`${d.alunoNome || 'Aluno'}: "${historico[dataStr].feedback}" (${historico[dataStr].intensidade})`);
+                        }
+                    });
+                });
+
+                const el = document.getElementById('kpi-feedback-alerta');
+                if (el) {
+                    el.innerHTML = alertas.length > 0 ? alertas.join('<br>') : "Tudo ok com os treinos!";
+                }
+            } catch (e) {
+                console.log("Info: KPI de feedback não disponível ou não aplicável a este nicho.");
+            }
+        };
+        
       window.salvarVideoDireto = () => {
     const titulo = document.getElementById('videoTitulo').value;
     const link = document.getElementById('linkVideoTreino').value;
