@@ -324,13 +324,8 @@ document.documentElement.style.setProperty('--cor-cliente', corPrincipal);
             if (docSnap.exists()) {
                 const dados = docSnap.data();
                 
-                // Função recursiva de espera para garantir que os inputs existam no DOM
+               // Função de preenchimento inteligente (não trava mais em campos específicos)
                 const preencher = () => {
-                    const elTitulo = document.getElementById('videoTitulo');
-                    if (!elTitulo) {
-                        setTimeout(preencher, 100);
-                        return;
-                    }
 
                     const container = document.getElementById('container-conteudos');
                     if (container) container.innerHTML = ''; 
