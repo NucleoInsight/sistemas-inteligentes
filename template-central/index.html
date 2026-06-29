@@ -824,41 +824,22 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
         };
 
         window.removerExercicio = (index) => {
-            window.rotinaTemporaria.splice(index, 1);
-            window.renderizarPreviewRotina();
+            if (window.rotinaTemporaria) {
+                window.rotinaTemporaria.splice(index, 1);
+                window.renderizarPreviewRotina();
+            }
         };
 
-        window.atualizarFeedbackKPI = async () => {
-    const params = new URLSearchParams(window.location.search);
-    const cid = params.get('cid');
-    const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-    
-    const snapshot = await getDocs(collection(db, "clients", cid, "dados"));
-    let alertas = [];
-    const agora = new Date();
+        // Roteador de Módulos Centralizado
+        window.inicializarModulos = (dadosCliente) => {
+            const nicho = dadosCliente.nicho || 'Treino';
+            console.log("🛠️ Inicializando módulo para o nicho:", nicho);
 
-    snapshot.forEach(doc => {
-        const d = doc.data();
-        const historico = d.historicoTreinos || {};
-        const datas = Object.keys(historico);
-
-        // Pega a data mais recente dentro do histórico
-        datas.forEach(dataStr => {
-            const dataFeedback = new Date(dataStr);
-            const diffHoras = (agora - dataFeedback) / (1000 * 60 * 60);
-
-            // Verifica se o feedback foi nas últimas 48h (para evitar erro de fuso)
-            if (diffHoras < 48 && historico[dataStr].feedback) {
-                alertas.push(`${d.alunoNome || 'Aluno'}: "${historico[dataStr].feedback}" (${historico[dataStr].intensidade})`);
+            if (nicho !== 'Treino') {
+                const containerRotina = document.getElementById('container-rotina-preview');
+                if (containerRotina) containerRotina.closest('.bg-[#171A21]').style.display = 'none';
             }
-        });
-    });
-
-    const el = document.getElementById('kpi-feedback-alerta');
-    if (el) {
-        el.innerHTML = alertas.length > 0 ? alertas.join('<br>') : "Tudo ok com os treinos!";
-    }
-};
+        };
       window.salvarVideoDireto = () => {
     const titulo = document.getElementById('videoTitulo').value;
     const link = document.getElementById('linkVideoTreino').value;
