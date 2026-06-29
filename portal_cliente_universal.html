@@ -154,7 +154,7 @@
                                 <p class="text-[9px] text-blue-400 font-bold uppercase tracking-widest">Treino de hoje: ${new Date().toLocaleDateString('pt-BR', { weekday: 'long' })}</p>
                             </div>
                             <div class="relative">
-                                <img id="aluno-foto-display" src="${window.dadosAluno.alunoFoto || 'https://via.placeholder.com/150'}" class="w-12 h-12 rounded-full object-cover border border-blue-500 cursor-pointer" onclick="document.getElementById('upload-foto-aluno').click()">
+                                <img id="aluno-foto-display" src="${window.dadosAluno.alunoFoto || 'https://i.imgur.com/v111111.png'}" onerror="this.src='https://i.imgur.com/v111111.png'" class="w-12 h-12 rounded-full object-cover border border-blue-500 cursor-pointer" onclick="document.getElementById('upload-foto-aluno').click()">
                                 <input type="file" id="upload-foto-aluno" accept="image/*" class="hidden" onchange="window.subirFoto(this)">
                             </div>
                         </div>
