@@ -264,21 +264,6 @@
             }
         };
 
-        window.renderizarModuloTreino = (cid, aid, config, checkinsSnap) => {
-            // Lógica de Renderização do Módulo de Treino (antigo padrão)
-            const hoje = new Date().toLocaleDateString('pt-BR', { weekday: 'long' }).split('-')[0].toLowerCase();
-            const mapa = { "segunda": "Segunda", "terça": "Terca", "quarta": "Quarta", "quinta": "Quinta", "sexta": "Sexta", "sábado": "Sabado", "domingo": "Domingo" };
-            const diaAtual = mapa[hoje] || "Segunda";
-            const rotina = window.dadosAluno.rotinaTreino || [];
-            const treinoFiltrado = rotina.filter(ex => ex.dia === diaAtual);
-            const marcados = {};
-            checkinsSnap.forEach(doc => marcados[doc.id] = true);
-
-            // Renderização dinâmica baseada no roteador já definido acima
-                if (nicho === 'Treino' || nicho === 'TreinoPadrao') {
-                    window.renderizarModuloTreino(cid, aid, config, checkinsSnap);
-                }
-
         window.renderizarModuloCapoeira = (cid, aid, config, dadosAluno) => {
             document.getElementById('app').innerHTML = `
                 <div class="space-y-6">
