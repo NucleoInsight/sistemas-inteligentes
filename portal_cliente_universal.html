@@ -309,7 +309,32 @@
                 if (el) el.value = dadosAluno[id];
             });
         };
-        
+
+            window.renderizarModuloServicos = (cid, aid, dadosAluno) => {
+            document.getElementById('app').innerHTML = `
+                <div class="space-y-6">
+                    <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 text-center">
+                        <h2 class="text-white font-black text-lg uppercase mb-2">Painel de Atendimento</h2>
+                        <p class="text-gray-400 text-xs">${dadosAluno.alunoNome || 'Bem-vindo(a)'}</p>
+                    </div>
+
+                    <div class="bg-gray-900 p-4 rounded-xl border border-gray-800 space-y-4">
+                        <h3 class="text-blue-400 font-bold uppercase text-xs tracking-widest">Opções Disponíveis</h3>
+                        <button onclick="window.renderizarAgenda('${cid}')" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg text-xs uppercase hover:bg-blue-500 transition-all">
+                            Ver minha agenda 📅
+                        </button>
+                        <button onclick="window.enviarRelatorioWhatsApp()" class="w-full bg-[#25D366] text-white font-bold py-3 rounded-lg text-xs uppercase hover:bg-[#128C7E] transition-all">
+                            Falar com suporte 📱
+                        </button>
+                    </div>
+
+                    <div id="container-agenda" class="bg-gray-900 p-4 rounded-xl border border-gray-800 min-h-[100px] text-xs">
+                        <p class="text-center text-gray-500 py-4">Selecione uma opção acima para visualizar.</p>
+                    </div>
+                </div>
+            `;
+        };
+            
         window.verificarDisponibilidade = async (cid, data, hora) => {
             try {
                 // Busca na coleção de agendamentos se existe um documento com a mesma data e hora
