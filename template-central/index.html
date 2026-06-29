@@ -267,16 +267,20 @@ document.documentElement.style.setProperty('--cor-cliente', corPrincipal);
                 const docSnap = await getDoc(docRef);
                 let listaVideos = docSnap.exists() ? (docSnap.data().videos || []) : [];
                 
-                // Captura vídeos apenas se o usuário preencheu os campos antes de salvar
-                const t = document.getElementById('videoTitulo')?.value;
-                const l = document.getElementById('linkVideoTreino')?.value;
-                if (t && l && !listaVideos.find(v => v.link === l)) {
-                    listaVideos.push({ titulo: t, link: l, data: new Date().toISOString() });
+               // Captura vídeos apenas se o usuário preencheu os campos antes de salvar
+                const elTitulo = document.getElementById('videoTitulo');
+                const elLink = document.getElementById('linkVideoTreino');
+                
+                if (elTitulo && elLink) {
+                    const t = elTitulo.value;
+                    const l = elLink.value;
+                    if (t && l && !listaVideos.find(v => v.link === l)) {
+                        listaVideos.push({ titulo: t, link: l, data: new Date().toISOString() });
+                    }
+                    // 3. Remove campos temporários e prepara dados para salvar
+                    delete dados.videoTitulo;
+                    delete dados.linkVideoTreino;
                 }
-
-               // 3. Remove campos temporários e prepara dados para salvar
-                delete dados.videoTitulo;
-                delete dados.linkVideoTreino;
                 
                // Adiciona os dados novos à estrutura
                 dados.videos = listaVideos;
