@@ -836,8 +836,14 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
             console.log("🛠️ Inicializando módulo para o nicho:", nicho);
 
             if (nicho !== 'Treino') {
+                // Esconde áreas de treino
                 const containerRotina = document.getElementById('container-rotina-preview');
                 if (containerRotina) containerRotina.closest('.bg-[#171A21]').style.display = 'none';
+            } else {
+                // Só executa o KPI se for nicho de Treino
+                if (typeof window.atualizarFeedbackKPI === 'function') {
+                    window.atualizarFeedbackKPI();
+                }
             }
         };
       window.salvarVideoDireto = () => {
