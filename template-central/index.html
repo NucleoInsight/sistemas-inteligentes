@@ -267,24 +267,23 @@ document.documentElement.style.setProperty('--cor-cliente', corPrincipal);
                 const docSnap = await getDoc(docRef);
                 let listaVideos = docSnap.exists() ? (docSnap.data().videos || []) : [];
                 
-               // Captura vídeos apenas se o usuário preencheu os campos antes de salvar
-                const elTitulo = document.getElementById('videoTitulo');
-                const elLink = document.getElementById('linkVideoTreino');
-                
-                if (elTitulo && elLink) {
-                    const t = elTitulo.value;
-                    const l = elLink.value;
-                    if (t && l && !listaVideos.find(v => v.link === l)) {
-                        listaVideos.push({ titulo: t, link: l, data: new Date().toISOString() });
+              // Captura vídeos e rotina APENAS se o nicho for de treino
+                if (dados.nicho === 'Treino' || !dados.nicho) {
+                    const elTitulo = document.getElementById('videoTitulo');
+                    const elLink = document.getElementById('linkVideoTreino');
+                    
+                    if (elTitulo && elLink) {
+                        const t = elTitulo.value;
+                        const l = elLink.value;
+                        if (t && l && !listaVideos.find(v => v.link === l)) {
+                            listaVideos.push({ titulo: t, link: l, data: new Date().toISOString() });
+                        }
+                        delete dados.videoTitulo;
+                        delete dados.linkVideoTreino;
                     }
-                    // 3. Remove campos temporários e prepara dados para salvar
-                    delete dados.videoTitulo;
-                    delete dados.linkVideoTreino;
+                    dados.videos = listaVideos;
+                    dados.rotinaTreino = window.rotinaTemporaria;
                 }
-                
-               // Adiciona os dados novos à estrutura
-                dados.videos = listaVideos;
-                dados.rotinaTreino = window.rotinaTemporaria;
                 // Captura o nicho definido na tela ou salva como "Treino" por padrão
                 dados.nicho = document.getElementById('nicho')?.value || "Treino";
                 
