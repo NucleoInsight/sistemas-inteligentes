@@ -336,6 +336,33 @@
                 </div>
             `;
         };
+
+            window.renderizarModuloProtecao = (cid, aid, dadosAluno) => {
+            document.getElementById('app').innerHTML = `
+                <div class="space-y-6">
+                    <div class="bg-gradient-to-br from-blue-900 to-black p-6 rounded-xl border border-blue-500 shadow-2xl">
+                        <h1 class="text-white font-black text-xl uppercase tracking-tighter">Área do Associado</h1>
+                        <p class="text-blue-300 text-[10px] font-bold uppercase tracking-widest">Proteção Veicular Premium</p>
+                    </div>
+
+                    <div class="bg-gray-900 p-4 rounded-xl border border-gray-800 space-y-3">
+                        <h3 class="text-blue-400 font-bold uppercase text-xs">Dados do Veículo</h3>
+                        <p class="text-white text-sm"><strong>Associado:</strong> ${dadosAluno.alunoNome || 'Não informado'}</p>
+                        <p class="text-white text-sm"><strong>Placa:</strong> <span class="bg-yellow-600 text-black px-2 py-0.5 rounded font-bold">${dadosAluno.placaVeiculo || 'XXX-0000'}</span></p>
+                        <p class="text-white text-sm"><strong>Contrato:</strong> ${dadosAluno.numeroContrato || '0000'}</p>
+                        <p class="text-white text-sm"><strong>Status:</strong> <span class="${dadosAluno.statusAcesso === 'Bloqueado' ? 'text-red-500' : 'text-emerald-500'} font-bold">${dadosAluno.statusAcesso || 'Ativo'}</span></p>
+                    </div>
+
+                    <button onclick="window.enviarRelatorioWhatsApp()" class="w-full bg-red-600 text-white font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-red-500 transition-all shadow-lg animate-pulse">
+                        ⚠️ Assistência 24h 📱
+                    </button>
+
+                    <button onclick="window.location.href='https://wa.me/5575998649927'" class="w-full bg-gray-800 text-white font-bold py-3 rounded-xl uppercase text-[10px] hover:bg-gray-700 transition-all">
+                        Enviar 2ª Via de Boleto
+                    </button>
+                </div>
+            `;
+        };
             
         window.verificarDisponibilidade = async (cid, data, hora) => {
             try {
