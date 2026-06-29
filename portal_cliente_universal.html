@@ -69,22 +69,16 @@
                 const nicho = clienteSnap.data().nicho || 'Treino'; 
                 console.log("Nicho detectado:", nicho);
 
-               switch(nicho) {
-                    case 'Estetica':
-                    case 'Eventos':
-                        console.log("Carregando módulo especializado de Serviços");
-                        window.renderizarAgenda(cid);
-                        return; // Interrompe o fluxo para não renderizar treinos
-                    default:
-                        console.log("Carregando módulo padrão de Treino");
-                }
-
-                // Roteador de Módulos (Isolado por nicho)
+              // Roteador de Módulos (Isolado por nicho)
                 switch(nicho) {
                     case 'Estetica':
                     case 'Eventos':
                         console.log("Carregando módulo especializado de Serviços");
                         window.renderizarAgenda(cid);
+                        break;
+                    case 'capoeira_base':
+                        console.log("Carregando módulo especializado de Capoeira");
+                        window.renderizarModuloCapoeira(cid, aid, config, window.dadosAluno);
                         break;
                     default:
                         console.log("Carregando módulo padrão de Treino");
