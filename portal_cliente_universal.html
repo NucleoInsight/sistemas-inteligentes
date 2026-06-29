@@ -79,166 +79,17 @@
                         console.log("Carregando módulo padrão de Treino");
                 }
 
-                // NOVA LÓGICA DE TERMO DE RESPONSABILIDADE (UNIVERSAL)
-                if (!window.dadosAluno.termoAceite) {
-                    const termoTexto = config.termoResponsabilidade || "Declaro que as informações acima são verdadeiras e estou apto para realizar as atividades físicas propostas.";
-                    
-                    document.getElementById('app').insertAdjacentHTML('beforeend', `
-                        <div id="modal-termo" class="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/90">
-                            <div class="bg-gray-900 border border-gray-700 p-6 rounded-2xl w-full max-w-md shadow-2xl">
-                                <h2 class="text-white font-black text-lg mb-4 text-center">Termo de Responsabilidade</h2>
-                                <div class="text-[10px] text-gray-400 text-justify mb-6 h-40 overflow-y-auto pr-2 border border-gray-800 p-2 rounded">
-                                    ${termoTexto}
-                                </div>
-                                <button id="btn-aceitar" class="w-full bg-emerald-600 text-white font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-emerald-500 transition-all">
-                                    Li e Aceito os Termos
-                                </button>
-                            </div>
-                        </div>
-                    `);
-
-                    document.getElementById('btn-aceitar').onclick = async () => {
-                        const params = new URLSearchParams(window.location.search);
-                        await updateDoc(doc(db, "clients", params.get('cid'), "dados", params.get('aid')), { termoAceite: true });
-                        document.getElementById('modal-termo').remove();
-                        window.location.reload();
-                    };
-                    return; 
+                // Roteador de Módulos (Isolado por nicho)
+                switch(nicho) {
+                    case 'Estetica':
+                    case 'Eventos':
+                        console.log("Carregando módulo especializado de Serviços");
+                        window.renderizarAgenda(cid);
+                        break;
+                    default:
+                        console.log("Carregando módulo padrão de Treino");
+                        window.renderizarModuloTreino(cid, aid, config, checkinsSnap);
                 }
-
-                // SISTEMA DE BLOQUEIO DE ACESSO
-                if (window.dadosAluno.statusAcesso === 'Bloqueado') {
-                    document.getElementById('app').innerHTML = `
-                        <div class="text-center py-20 px-6">
-                            <div class="w-16 h-16 bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500">
-                                <span class="text-2xl">🚫</span>
-                            </div>
-                            <h2 class="text-white font-black text-xl uppercase mb-2">Acesso Bloqueado</h2>
-                            <p class="text-gray-400 text-xs mb-6">Sua ficha está temporariamente indisponível. Entre em contato com seu Personal para regularizar sua situação.</p>
-                            <button onclick="window.enviarRelatorioWhatsApp()" class="bg-[#25D366] text-white font-bold py-3 px-6 rounded-lg text-xs uppercase w-full">Contatar Personal via WhatsApp 📱</button>
-                        </div>
-                    `;
-                    return;
-                }
-
-               // ESTRUTURA PREMIUM DASHBOARD
-               // Renderização do Widget Financeiro
-                const diaHoje = new Date().getDate();
-                const vencimento = parseInt(window.dadosAluno.dataVencimento || 0);
-                const diasParaVencer = vencimento - diaHoje;
-                
-                let avisoFinanceiro = "";
-                if (window.dadosAluno.statusPagamento !== 'Pago' && vencimento > 0) {
-                    if (diasParaVencer < 0) {
-                        avisoFinanceiro = `<div id="widget-financeiro" class="bg-red-900/20 border border-red-500 p-3 rounded-xl text-center text-red-500 text-xs font-bold uppercase mb-4">⚠️ Mensalidade Vencida! Entre em contato com seu Personal.</div>`;
-                    } else if (diasParaVencer <= 5) {
-                        avisoFinanceiro = `<div id="widget-financeiro" class="bg-yellow-900/20 border border-yellow-500 p-3 rounded-xl text-center text-yellow-500 text-xs font-bold uppercase mb-4">⚠️ Atenção: Sua mensalidade vence em ${diasParaVencer} dias.</div>`;
-                    } else {
-                        avisoFinanceiro = `<div id="widget-financeiro" class="bg-emerald-900/20 border border-emerald-500 p-3 rounded-xl text-center text-emerald-500 text-xs font-bold uppercase mb-4">✅ Sua mensalidade vence no dia ${vencimento}.</div>`;
-                    }
-                    // Remove widget existente antes de injetar para evitar duplicidade
-                const widgetExistente = document.getElementById('widget-financeiro');
-                if (widgetExistente) widgetExistente.remove();
-
-                // Injeta no topo do contêiner principal
-                const appDiv = document.querySelector('.space-y-6');
-                if (appDiv) appDiv.insertAdjacentHTML('afterbegin', avisoFinanceiro);
-                }
-
-                document.getElementById('app').innerHTML = `
-                    <div class="space-y-6">
-                        ${avisoFinanceiro}
-                        <div class="flex items-center justify-between p-4 bg-gray-900 rounded-xl border border-gray-800">
-                            <div>
-                               <h1 class="text-lg font-black text-white uppercase">Olá, ${window.dadosAluno.alunoNome?.split(' ')[0] || 'Aluno'}!</h1>
-                                <p class="text-[9px] text-blue-400 font-bold uppercase tracking-widest">Treino de hoje: ${new Date().toLocaleDateString('pt-BR', { weekday: 'long' })}</p>
-                            </div>
-                            <div class="relative">
-                                <img id="aluno-foto-display" src="${window.dadosAluno.alunoFoto || 'https://i.imgur.com/v111111.png'}" onerror="this.src='https://i.imgur.com/v111111.png'" class="w-12 h-12 rounded-full object-cover border border-blue-500 cursor-pointer" onclick="document.getElementById('upload-foto-aluno').click()">
-                                <input type="file" id="upload-foto-aluno" accept="image/*" class="hidden" onchange="window.subirFoto(this)">
-                            </div>
-                        </div>
-                        <div id="container-video"></div>
-                        <!-- AÇÕES: Feedback e Conclusão -->
-                        <div class="bg-gray-900 p-4 rounded-xl border border-gray-800 space-y-3">
-                            <h3 class="text-xs font-bold text-gray-400 uppercase">Como foi o treino?</h3>
-                            <select id="feedback-intensidade" class="w-full bg-black border border-gray-700 text-white p-2 rounded text-xs">
-                                <option value="Muito Fácil">Muito Fácil</option>
-                                <option value="Fácil">Fácil</option>
-                                <option value="Ideal">Ideal (Dentro do esperado)</option>
-                                <option value="Difícil">Difícil</option>
-                                <option value="Muito Difícil">Muito Difícil</option>
-                            </select>
-                            <textarea id="feedback-obs" placeholder="Alguma dor ou dificuldade?" class="w-full bg-black border border-gray-700 text-white p-2 rounded text-xs h-20"></textarea>
-                            <button type="button" onclick="window.marcarConcluido()" class="w-full bg-emerald-600 text-white font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-emerald-500 transition-all">
-                                    Finalizar e enviar feedback ✅
-                                </button>
-                                <button type="button" onclick="window.enviarRelatorioWhatsApp()" class="w-full bg-[#25D366] text-white font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-[#128C7E] transition-all shadow-lg">
-                                    Enviar Relatório do Dia 📱
-                                </button>
-                            </div>
-                        </div>
-                        <div id="container-footer"></div>
-                    </div>
-                `;
-
-               const container = document.getElementById('container-video');
-               const rotina = window.dadosAluno.rotinaTreino || [];
-                
-                // Lógica de filtro por dia da semana
-                const hoje = new Date().toLocaleDateString('pt-BR', { weekday: 'long' }).split('-')[0].toLowerCase();
-                const mapa = { "segunda": "Segunda", "terça": "Terca", "quarta": "Quarta", "quinta": "Quinta", "sexta": "Sexta", "sábado": "Sabado", "domingo": "Domingo" };
-                const diaAtual = mapa[hoje] || "Segunda"; // Default para Segunda caso não encontre
-                
-               const treinoFiltrado = rotina.filter(ex => ex.dia === diaAtual);
-                
-                // Cria um dicionário com os exercícios já marcados
-                const marcados = {};
-                checkinsSnap.forEach(doc => marcados[doc.id] = true);
-
-                if (container) {
-                    container.innerHTML = treinoFiltrado.length > 0 ? `
-                        <h3 class="text-sm font-bold text-white uppercase mb-4 tracking-widest text-center">🏋️ Treino de ${diaAtual}</h3>
-                        ${treinoFiltrado.map(ex => {
-                            const videoId = ex.link ? (ex.link.includes('shorts/') ? ex.link.split('shorts/')[1].split('?')[0] : (ex.link.includes('youtu.be/') ? ex.link.split('/').pop() : ex.link.split('v=')[1]?.substring(0, 11))) : null;
-                            const isTreino = ex.series !== '-';
-                            return `<div class="bg-gray-900 p-4 rounded-xl border border-gray-800 mb-4 shadow-lg">
-                                <div class="flex items-center gap-3 mb-2">
-                                    ${isTreino ? `<input type="checkbox" ${marcados[ex.titulo] ? 'checked' : ''} onchange="window.salvarCheck('${ex.titulo.replace(/'/g, "\\'")}', this.checked)" class="w-6 h-6 rounded border-gray-700 bg-black text-emerald-500 focus:ring-emerald-500 cursor-pointer">` : ''}
-                                    <h4 class="text-white font-black text-sm uppercase">${ex.titulo}</h4>
-                                </div>
-                                ${isTreino ? `<p class="text-blue-400 text-xs mt-1 font-bold">${ex.series} Séries x ${ex.reps} Repetições</p>` : ''}
-                                <p class="text-gray-400 text-[10px] mt-1 italic">Obs: ${ex.obs || 'Sem observações'}</p>
-                                ${videoId ? `<iframe class="w-full h-48 rounded-lg mt-3" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>` : ''}
-                            </div>`;
-                        }).join('')}` : `<p class="text-center text-gray-500 text-xs py-4">Hoje é dia de descanso ou não há treino definido para ${diaAtual}.</p>`;
-                }
-
-                const footer = document.getElementById('container-footer');
-                const listaH = Object.keys(window.dadosAluno.historicoTreinos || {}).sort((a, b) => new Date(b) - new Date(a)).map(d => `
-                    <li class="flex justify-between text-xs border-b border-gray-800 py-2">
-                        <span class="text-gray-400">${new Date(d).toLocaleDateString('pt-BR')}</span>
-                        <span class="text-emerald-500 font-bold">CONCLUÍDO (${window.dadosAluno.historicoTreinos[d].marcadoPor})</span>
-                    </li>`).join('');
-
-                footer.innerHTML = `<div class="space-y-3 pt-6 border-t border-gray-800">
-                    <h3 class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2">Informações Adicionais</h3>
-                    <details class="group bg-gray-900 p-4 rounded-lg border border-gray-800 cursor-pointer">
-                        <summary class="font-bold text-xs uppercase text-gray-300">📂 Ver Minha Ficha Completa</summary>
-                        <div class="mt-4 pt-4 border-t border-gray-800 opacity-80 text-xs">${config.campos}</div>
-                    </details>
-                    <details class="group bg-gray-900 p-4 rounded-lg border border-gray-800 cursor-pointer">
-                        <summary class="font-bold text-xs uppercase text-gray-300">📜 Histórico de Treinos</summary>
-                        <div class="mt-4 pt-4 border-t border-gray-800">
-                            <ul class="space-y-2">${listaH || '<li class="text-xs text-gray-500 italic">Nenhum concluído.</li>'}</ul>
-                        </div>
-                    </details>
-                </div>`;
-
-                Object.keys(window.dadosAluno).forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.type === 'checkbox' ? el.checked = window.dadosAluno[id] : el.value = window.dadosAluno[id];
-                });
            } catch (e) {
                 console.error("Erro na renderização:", e);
                 document.getElementById('app').innerHTML = "Erro ao carregar dados.";
