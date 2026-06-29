@@ -835,11 +835,15 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
             const nicho = dadosCliente.nicho || 'Treino';
             console.log("🛠️ Inicializando módulo para o nicho:", nicho);
 
+            // Seleção segura de elementos
+            const containerRotina = document.getElementById('container-rotina-preview');
+            const parent = containerRotina ? containerRotina.parentElement : null;
+
             if (nicho !== 'Treino') {
-                // Esconde áreas de treino
-                const containerRotina = document.getElementById('container-rotina-preview');
-                if (containerRotina) containerRotina.closest('.bg-[#171A21]').style.display = 'none';
+                // Esconde a área de treino de forma segura
+                if (parent) parent.style.display = 'none';
             } else {
+                if (parent) parent.style.display = 'block';
                 // Só executa o KPI se for nicho de Treino
                 if (typeof window.atualizarFeedbackKPI === 'function') {
                     window.atualizarFeedbackKPI();
