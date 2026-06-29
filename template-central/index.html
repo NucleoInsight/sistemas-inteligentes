@@ -835,19 +835,21 @@ window.salvarRotina = async (idFicha, rotinaDados) => {
             const nicho = dadosCliente.nicho || 'Treino';
             console.log("🛠️ Inicializando módulo para o nicho:", nicho);
 
-            const containerRotina = document.getElementById('container-rotina-preview');
-            const parent = containerRotina ? containerRotina.closest('.bg-[#171A21]') : null;
+           // Seleciona o container principal dos treinos pelo ID fixo do seu HTML
+            const containerTreino = document.getElementById('container-dinamico');
 
-            // Se for nicho de SERVIÇOS, escondemos a parte de treinos
+            // Lista de nichos que NÃO usam a interface de treino
             const nichosDeServico = ['Estetica', 'Eventos', 'Barbearia', 'Consultoria', 'ProtecaoVeicular'];
             
-            if (nichosDeServico.includes(nicho)) {
-                if (parent) parent.style.display = 'none';
-            } else {
-                // Se for Treino ou Capoeira, garantimos que apareça
-                if (parent) parent.style.display = 'block';
-                if (typeof window.atualizarFeedbackKPI === 'function') {
-                    window.atualizarFeedbackKPI();
+            if (containerTreino) {
+                if (nichosDeServico.includes(nicho)) {
+                    containerTreino.style.display = 'none';
+                } else {
+                    containerTreino.style.display = 'block';
+                    // Só executa o KPI se for nicho de Treino
+                    if (typeof window.atualizarFeedbackKPI === 'function') {
+                        window.atualizarFeedbackKPI();
+                    }
                 }
             }
         };
