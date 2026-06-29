@@ -354,30 +354,27 @@ document.documentElement.style.setProperty('--cor-cliente', corPrincipal);
                         elIdOculto.value = subcolecao;
                     }
 
-                  // Renderização de todos os vídeos (Array completo)
-                    const containerPlayers = document.getElementById('container-players-renderizados');
-                    if (containerPlayers) {
-                        containerPlayers.innerHTML = ''; // Limpa players anteriores
-                        if (dados.videos && Array.isArray(dados.videos)) {
-                            dados.videos.forEach(v => {
-                                const videoId = v.link.split('v=')[1] || v.link.split('/').pop().split('?')[0];
-                                const div = document.createElement('div');
-                                div.className = "mt-4 p-2 border border-gray-800 rounded";
-                                div.innerHTML = `
-                                    <p class="text-xs font-bold text-blue-400 mb-1">${v.titulo}</p>
-                                    <iframe class="w-full h-48 rounded-lg" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
-                                    <div class="flex gap-2 mt-2">
-                                        <button onclick="window.salvarNaBiblioteca('${v.titulo}', '${v.link}', 'Privado')" class="flex-1 bg-blue-900/30 text-blue-400 text-[9px] font-bold uppercase py-1 rounded border border-blue-500/20">
-                                            ⭐ Salvar (Privado)
-                                        </button>
-                                        <button onclick="window.salvarNaBiblioteca('${v.titulo}', '${v.link}', 'Global')" class="flex-1 bg-green-900/30 text-green-400 text-[9px] font-bold uppercase py-1 rounded border border-green-500/20">
-                                            🌐 Salvar (Global)
-                                        </button>
-                                    </div>
-                                    <p class="text-[8px] text-gray-500 mt-1 italic">*Privado: Só você vê. Global: Todos os profissionais acessam.</p>
-                                `;
-                                containerPlayers.appendChild(div);
-                            });
+                 // Renderização de vídeos apenas se o nicho for de treino e o container existir
+                    if (dados.nicho === 'Treino' || !dados.nicho) {
+                        const containerPlayers = document.getElementById('container-players-renderizados');
+                        if (containerPlayers) {
+                            containerPlayers.innerHTML = '';
+                            if (dados.videos && Array.isArray(dados.videos)) {
+                                dados.videos.forEach(v => {
+                                    const videoId = v.link.split('v=')[1] || v.link.split('/').pop().split('?')[0];
+                                    const div = document.createElement('div');
+                                    div.className = "mt-4 p-2 border border-gray-800 rounded";
+                                    div.innerHTML = `
+                                        <p class="text-xs font-bold text-blue-400 mb-1">${v.titulo}</p>
+                                        <iframe class="w-full h-48 rounded-lg" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+                                        <div class="flex gap-2 mt-2">
+                                            <button onclick="window.salvarNaBiblioteca('${v.titulo}', '${v.link}', 'Privado')" class="flex-1 bg-blue-900/30 text-blue-400 text-[9px] font-bold uppercase py-1 rounded border border-blue-500/20">⭐ Salvar (Privado)</button>
+                                            <button onclick="window.salvarNaBiblioteca('${v.titulo}', '${v.link}', 'Global')" class="flex-1 bg-green-900/30 text-green-400 text-[9px] font-bold uppercase py-1 rounded border border-green-500/20">🌐 Salvar (Global)</button>
+                                        </div>
+                                    `;
+                                    containerPlayers.appendChild(div);
+                                });
+                            }
                         }
                     }
                     console.log(`✅ Dados carregados com sucesso para: ${subcolecao}`);
