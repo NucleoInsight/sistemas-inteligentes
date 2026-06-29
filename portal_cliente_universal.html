@@ -91,6 +91,38 @@
             }
         }
 
+        window.renderizarModuloTreino = (cid, aid, config, checkinsSnap) => {
+            const hoje = new Date().toLocaleDateString('pt-BR', { weekday: 'long' }).split('-')[0].toLowerCase();
+            const mapa = { "segunda": "Segunda", "terça": "Terca", "quarta": "Quarta", "quinta": "Quinta", "sexta": "Sexta", "sábado": "Sabado", "domingo": "Domingo" };
+            const diaAtual = mapa[hoje] || "Segunda";
+            const rotina = window.dadosAluno.rotinaTreino || [];
+            const treinoFiltrado = rotina.filter(ex => ex.dia === diaAtual);
+            const marcados = {};
+            checkinsSnap.forEach(doc => marcados[doc.id] = true);
+
+            document.getElementById('app').innerHTML = `
+                <div class="space-y-6">
+                    <div class="flex items-center justify-between p-4 bg-gray-900 rounded-xl border border-gray-800">
+                        <div>
+                           <h1 class="text-lg font-black text-white uppercase">Olá, ${window.dadosAluno.alunoNome?.split(' ')[0] || 'Aluno'}!</h1>
+                            <p class="text-[9px] text-blue-400 font-bold uppercase tracking-widest">Treino de hoje: ${diaAtual}</p>
+                        </div>
+                    </div>
+                    <div id="container-video">
+                        <h3 class="text-sm font-bold text-white uppercase mb-4 tracking-widest text-center">🏋️ Treino de ${diaAtual}</h3>
+                        ${treinoFiltrado.length > 0 ? treinoFiltrado.map(ex => {
+                            const videoId = ex.link ? (ex.link.includes('shorts/') ? ex.link.split('shorts/')[1].split('?')[0] : (ex.link.includes('youtu.be/') ? ex.link.split('/').pop() : ex.link.split('v=')[1]?.substring(0, 11))) : null;
+                            return `<div class="bg-gray-900 p-4 rounded-xl border border-gray-800 mb-4 shadow-lg">
+                                <h4 class="text-white font-black text-sm uppercase">${ex.titulo}</h4>
+                                <p class="text-blue-400 text-xs mt-1 font-bold">${ex.series} Séries x ${ex.reps} Repetições</p>
+                                ${videoId ? `<iframe class="w-full h-48 rounded-lg mt-3" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>` : ''}
+                            </div>`;
+                        }).join('') : '<p class="text-center text-gray-500 text-xs">Sem treino para hoje.</p>'}
+                    </div>
+                </div>
+            `;
+        };
+        
         window.subirFoto = async function(input) {
             const file = input.files[0];
             if (!file) return;
