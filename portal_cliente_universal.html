@@ -273,76 +273,10 @@
             const marcados = {};
             checkinsSnap.forEach(doc => marcados[doc.id] = true);
 
-            document.getElementById('app').innerHTML = `
-                <div class="space-y-6">
-                    <div class="flex items-center justify-between p-4 bg-gray-900 rounded-xl border border-gray-800">
-                        <div>
-                           <h1 class="text-lg font-black text-white uppercase">Olá, ${window.dadosAluno.alunoNome?.split(' ')[0] || 'Aluno'}!</h1>
-                            <p class="text-[9px] text-blue-400 font-bold uppercase tracking-widest">Treino de hoje: ${new Date().toLocaleDateString('pt-BR', { weekday: 'long' })}</p>
-                        </div>
-                        <div class="relative">
-                            <img id="aluno-foto-display" src="${window.dadosAluno.alunoFoto || 'https://i.imgur.com/v111111.png'}" onerror="this.src='https://i.imgur.com/v111111.png'" class="w-12 h-12 rounded-full object-cover border border-blue-500 cursor-pointer" onclick="document.getElementById('upload-foto-aluno').click()">
-                            <input type="file" id="upload-foto-aluno" accept="image/*" class="hidden" onchange="window.subirFoto(this)">
-                        </div>
-                    </div>
-                    <div id="container-video"></div>
-                    <div class="bg-gray-900 p-4 rounded-xl border border-gray-800 space-y-3">
-                        <h3 class="text-xs font-bold text-gray-400 uppercase">Como foi o treino?</h3>
-                        <select id="feedback-intensidade" class="w-full bg-black border border-gray-700 text-white p-2 rounded text-xs">
-                            <option value="Muito Fácil">Muito Fácil</option>
-                            <option value="Fácil">Fácil</option>
-                            <option value="Ideal">Ideal (Dentro do esperado)</option>
-                            <option value="Difícil">Difícil</option>
-                            <option value="Muito Difícil">Muito Difícil</option>
-                        </select>
-                        <textarea id="feedback-obs" placeholder="Alguma dor ou dificuldade?" class="w-full bg-black border border-gray-700 text-white p-2 rounded text-xs h-20"></textarea>
-                        <button type="button" onclick="window.marcarConcluido()" class="w-full bg-emerald-600 text-white font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-emerald-500 transition-all">Finalizar e enviar feedback ✅</button>
-                        <button type="button" onclick="window.enviarRelatorioWhatsApp()" class="w-full bg-[#25D366] text-white font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-[#128C7E] transition-all shadow-lg">Enviar Relatório do Dia 📱</button>
-                    </div>
-                    <div id="container-footer"></div>
-                </div>
-            `;
-
-            const container = document.getElementById('container-video');
-            if (container) {
-                container.innerHTML = treinoFiltrado.length > 0 ? `
-                    <h3 class="text-sm font-bold text-white uppercase mb-4 tracking-widest text-center">🏋️ Treino de ${diaAtual}</h3>
-                    ${treinoFiltrado.map(ex => {
-                        const videoId = ex.link ? (ex.link.includes('shorts/') ? ex.link.split('shorts/')[1].split('?')[0] : (ex.link.includes('youtu.be/') ? ex.link.split('/').pop() : ex.link.split('v=')[1]?.substring(0, 11))) : null;
-                        const isTreino = ex.series !== '-';
-                        return `<div class="bg-gray-900 p-4 rounded-xl border border-gray-800 mb-4 shadow-lg">
-                            <div class="flex items-center gap-3 mb-2">
-                                ${isTreino ? `<input type="checkbox" ${marcados[ex.titulo] ? 'checked' : ''} onchange="window.salvarCheck('${ex.titulo.replace(/'/g, "\\'")}', this.checked)" class="w-6 h-6 rounded border-gray-700 bg-black text-emerald-500 focus:ring-emerald-500 cursor-pointer">` : ''}
-                                <h4 class="text-white font-black text-sm uppercase">${ex.titulo}</h4>
-                            </div>
-                            ${isTreino ? `<p class="text-blue-400 text-xs mt-1 font-bold">${ex.series} Séries x ${ex.reps} Repetições</p>` : ''}
-                            <p class="text-gray-400 text-[10px] mt-1 italic">Obs: ${ex.obs || 'Sem observações'}</p>
-                            ${videoId ? `<iframe class="w-full h-48 rounded-lg mt-3" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>` : ''}
-                        </div>`;
-                    }).join('')}` : `<p class="text-center text-gray-500 text-xs py-4">Hoje é dia de descanso ou não há treino definido para ${diaAtual}.</p>`;
-            }
-
-            const footer = document.getElementById('container-footer');
-            const listaH = Object.keys(window.dadosAluno.historicoTreinos || {}).sort((a, b) => new Date(b) - new Date(a)).map(d => `
-                <li class="flex justify-between text-xs border-b border-gray-800 py-2">
-                    <span class="text-gray-400">${new Date(d).toLocaleDateString('pt-BR')}</span>
-                    <span class="text-emerald-500 font-bold">CONCLUÍDO (${window.dadosAluno.historicoTreinos[d].marcadoPor})</span>
-                </li>`).join('');
-
-            footer.innerHTML = `<div class="space-y-3 pt-6 border-t border-gray-800">
-                <h3 class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2">Informações Adicionais</h3>
-                <details class="group bg-gray-900 p-4 rounded-lg border border-gray-800 cursor-pointer">
-                    <summary class="font-bold text-xs uppercase text-gray-300">📂 Ver Minha Ficha Completa</summary>
-                    <div class="mt-4 pt-4 border-t border-gray-800 opacity-80 text-xs">${config.campos}</div>
-                </details>
-                <details class="group bg-gray-900 p-4 rounded-lg border border-gray-800 cursor-pointer">
-                    <summary class="font-bold text-xs uppercase text-gray-300">📜 Histórico de Treinos</summary>
-                    <div class="mt-4 pt-4 border-t border-gray-800">
-                        <ul class="space-y-2">${listaH || '<li class="text-xs text-gray-500 italic">Nenhum concluído.</li>'}</ul>
-                    </div>
-                </details>
-            </div>`;
-        };
+            // Renderização dinâmica baseada no roteador já definido acima
+                if (nicho === 'Treino' || nicho === 'TreinoPadrao') {
+                    window.renderizarModuloTreino(cid, aid, config, checkinsSnap);
+                }
 
         window.renderizarModuloCapoeira = (cid, aid, config, dadosAluno) => {
             document.getElementById('app').innerHTML = `
