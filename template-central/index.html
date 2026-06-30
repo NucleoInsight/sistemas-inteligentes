@@ -455,10 +455,17 @@ document.documentElement.style.setProperty('--cor-cliente', corPrincipal);
                     const corStatus = venceu ? 'text-red-500' : 'text-emerald-500';
                     const borda = venceu ? 'border-red-500/50 border-l-4' : 'border-gray-800 border-l';
 
-                    return `
-                    <div class="aluno-item flex justify-between items-center bg-gray-900 p-3 rounded border ${borda} text-xs">
-                        <div class="flex flex-col">
-                            <span class="nome-aluno text-gray-300 font-bold">${d.alunoNome || 'Sem Nome'}</span>
+                    <div class="aluno-item flex flex-col bg-gray-900 p-3 rounded border ${borda} text-xs">
+                        <div class="flex justify-between items-center cursor-pointer" onclick="this.parentElement.querySelector('.detalhes-aluno').classList.toggle('hidden')">
+                            <div class="flex flex-col">
+                                <span class="nome-aluno text-gray-300 font-bold">${d.alunoNome || 'Sem Nome'}</span>
+                                <span class="text-[9px] ${corStatus} font-black uppercase">
+                                    ${statusVisual} ${d.dataVencimento ? '(Vence dia ' + d.dataVencimento + ')' : ''}
+                                </span>
+                            </div>
+                            <span class="text-gray-500 font-bold text-sm">▼</span>
+                        </div>
+                        <div class="detalhes-aluno hidden mt-3 pt-3 border-t border-gray-800">
                             <span class="text-[9px] ${corStatus} font-black uppercase">
                                 ${statusVisual} ${d.dataVencimento ? '(Vence dia ' + d.dataVencimento + ')' : ''}
                             </span>
