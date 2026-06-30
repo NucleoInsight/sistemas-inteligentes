@@ -306,8 +306,15 @@
                     dataConclusao: agora
                 });
                 
-                alert("✅ Treino finalizado! Feedback enviado.");
-                window.location.reload();
+               // Pergunta se quer compartilhar no Mural
+if (confirm("✅ Treino finalizado! Deseja compartilhar sua conclusão no Mural da Comunidade?")) {
+    await setDoc(doc(collection(db, "mural_comunidade")), {
+        alunoNome: window.dadosAluno.alunoNome || "Aluno",
+        data: agora,
+        mensagem: `Completou o treino de ${hoje} com intensidade ${intensidade}`
+    });
+}
+window.location.reload();
             } catch (error) {
                 console.error("Erro:", error);
                 alert("Erro ao salvar feedback.");
