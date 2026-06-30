@@ -445,12 +445,15 @@ document.documentElement.style.setProperty('--cor-cliente', corPrincipal);
                 class="w-full bg-gray-900 border border-gray-800 rounded p-2 text-white text-xs mb-3"
                 onkeyup="window.filtrarAlunos()">
             <div id="lista-alunos-scroll" class="space-y-2 overflow-y-auto custom-scrollbar pr-2" style="height: 60vh;">
-               ${alunos.map(d => {
+              ${alunos.map(d => {
                     const diaHoje = new Date().getDate();
-                    const venceu = d.dataVencimento && diaHoje >= parseInt(d.dataVencimento) && d.statusPagamento !== 'Pago';
+                    // Lógica robusta de vencimento
+                    const dataVenc = parseInt(d.dataVencimento);
+                    const venceu = (d.dataVencimento && diaHoje >= dataVenc && d.statusPagamento !== 'Pago');
+                    
                     const statusVisual = venceu ? '🔴 Em Débito' : '🟢 Em Dia';
                     const corStatus = venceu ? 'text-red-500' : 'text-emerald-500';
-                    const borda = venceu ? 'border-red-500/50' : 'border-gray-800';
+                    const borda = venceu ? 'border-red-500/50 border-l-4' : 'border-gray-800 border-l';
 
                     return `
                     <div class="aluno-item flex justify-between items-center bg-gray-900 p-3 rounded border ${borda} text-xs">
