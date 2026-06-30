@@ -1066,12 +1066,25 @@ window.carregarHistoricoInteracao = async (aid) => {
     }
 };
 
-window.salvarRespostaInteracao = async (aid) => {
+window.salvarRespostaInteracao = async (aid, alunoNome) => {
     const resposta = document.getElementById('resposta-personal').value;
     const params = new URLSearchParams(window.location.search);
     const cid = params.get('cid');
+    
+    // Atualiza na ficha do aluno
     await updateDoc(doc(db, "clients", cid, "dados", aid), { respostaPersonal: resposta });
-    alert("✅ Nota enviada ao aluno!");
+
+    // Atualiza no mural (busca o post mais recente do aluno)
+    const { query, where, getDocs, collection, updateDoc, doc, orderBy, limit } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    const q = query(collection(db, "mural_comunidade"), where("alunoNome", "==", alunoNome), orderBy("data", "desc"), limit(1));
+    const snap = await getDocs(q);
+
+    if (!snap.empty) {
+        await updateDoc(doc(db, "mural_comunidade", snap.docs[0].id), { respostaPersonal: resposta });
+    }
+
+    alert("✅ Resposta enviada ao aluno e publicada no Mural!");
+    window.renderizarMural();
 };
 
         window.renderizarMural = async () => {
