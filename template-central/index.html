@@ -1089,34 +1089,37 @@ window.salvarRespostaInteracao = async (aid, alunoNome) => {
     window.renderizarMural();
 };
 
-        window.renderizarMural = async () => {
-    const { collection, getDocs, query, orderBy, limit } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-    const container = document.getElementById('container-mural'); // Crie uma div com este ID no seu HTML do Painel
-    if(!container) return;
+       window.renderizarMural = async (idDestino = 'container-mural') => {
+    const container = document.getElementById(idDestino);
+    if (!container) return console.error("Container não encontrado:", idDestino);
 
+    container.innerHTML = '<h3 class="text-emerald-500 font-bold uppercase text-xs mb-3">Mural da Comunidade</h3>';
+    
     const q = query(collection(db, "mural_comunidade"), orderBy("data", "desc"), limit(10));
     const snap = await getDocs(q);
-    container.innerHTML = snap.docs.map(doc => {
+    
+    snap.forEach(doc => {
         const d = doc.data();
-        return `
-            <div class="bg-gray-950 p-4 rounded-2xl border border-gray-800 mb-4 shadow-sm">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center font-bold text-[10px] text-blue-200">${(d.alunoNome || "A")[0].toUpperCase()}</div>
-                    <p class="text-[11px] text-white font-bold">${d.alunoNome || "Aluno"}</p>
-                </div>
-               <p class="text-xs text-gray-300 bg-gray-900 p-3 rounded-lg mb-3 italic">"${d.mensagem}"</p>
-                ${d.respostaPersonal ? `
-                    <div class="mt-2 p-3 bg-blue-900/20 border-l-2 border-blue-500 rounded-r-lg mb-3">
-                        <p class="text-[9px] text-blue-400 font-bold uppercase mb-1">Resposta do Personal:</p>
-                        <p class="text-xs text-blue-100">${d.respostaPersonal}</p>
-                    </div>
-                ` : ''}
-                <button onclick="window.curtirPost('${doc.id}')" class="flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-red-500 transition-colors">
-                    ❤️ <span>${d.likes || 0}</span>
-                </button>
+        const post = document.createElement('div');
+        post.className = 'bg-gray-950 p-4 rounded-2xl border border-gray-800 mb-4 shadow-sm';
+        post.innerHTML = `
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center font-bold text-[10px] text-blue-200">${(d.alunoNome || "A")[0].toUpperCase()}</div>
+                <p class="text-[11px] text-white font-bold">${d.alunoNome || "Aluno"}</p>
             </div>
+            <p class="text-xs text-gray-300 bg-gray-900 p-3 rounded-lg mb-3 italic">"${d.mensagem}"</p>
+            ${d.respostaPersonal ? `
+                <div class="mt-2 p-3 bg-blue-900/20 border-l-2 border-blue-500 rounded-r-lg mb-3">
+                    <p class="text-[9px] text-blue-400 font-bold uppercase mb-1">Resposta do Personal:</p>
+                    <p class="text-xs text-blue-100">${d.respostaPersonal}</p>
+                </div>
+            ` : ''}
+            <button onclick="window.curtirPost('${doc.id}')" class="flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-red-500 transition-colors">
+                ❤️ <span>${d.likes || 0}</span>
+            </button>
         `;
-    }).join('');
+        container.appendChild(post);
+    });
 };
 
         window.abrirModalMural = () => {
