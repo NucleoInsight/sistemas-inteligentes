@@ -672,7 +672,7 @@ window.abrirModalBiblioteca = async (nicho = "global") => {
     if (!document.getElementById('container-nichos')) {
         lista.insertAdjacentHTML('beforebegin', `
             <div id="container-nichos" class="flex flex-col gap-2 mb-4">
-                <button onclick="window.abrirModalBiblioteca('global')" class="bg-yellow-600 text-white p-2 rounded font-bold">🌐 BIBLIOTECA GLOBAL</button>
+                <button onclick="window.abrirModalBiblioteca('global')" class="bg-yellow-600 text-white p-2 rounded font-bold text-xs">🌐 BIBLIOTECA GLOBAL</button>
                 <div class="grid grid-cols-2 gap-2">
                     <button onclick="window.abrirModalBiblioteca('estetica')" class="bg-gray-800 text-white p-2 rounded text-[10px]">ESTÉTICA</button>
                     <button onclick="window.abrirModalBiblioteca('performance')" class="bg-gray-800 text-white p-2 rounded text-[10px]">PERFORMANCE</button>
@@ -683,59 +683,32 @@ window.abrirModalBiblioteca = async (nicho = "global") => {
         `);
     }
 
-    const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
     const params = new URLSearchParams(window.location.search);
     const personalId = params.get('cid');
     
-    lista.innerHTML = '<p class="text-gray-500 text-xs">Carregando ' + nicho + '...</p>';
+    lista.innerHTML = '<p class="text-gray-500 text-xs">Carregando vídeos...</p>';
     
     const caminho = (nicho === 'privado') ? ["owners", personalId, "biblioteca_videos"] : ["owners", "EPaByse2kuWCpsfAeF7Kn409MhI3", "nichos", nicho, "videos"];
     
     const querySnapshot = await getDocs(collection(db, ...caminho));
     lista.innerHTML = '';
     
-    if (nicho !== 'privado') {
-        lista.innerHTML += `<div onclick="window.abrirModalBiblioteca('privado')" class="bg-blue-900 p-3 mb-4 rounded text-white text-xs font-bold text-center cursor-pointer uppercase">⭐ Ver meus vídeos privados</div>`;
-    }
-
     querySnapshot.forEach((doc) => {
         const d = doc.data();
         const div = document.createElement('div');
-        div.className = 'bg-gray-950 p-4 rounded-2xl border border-gray-800 mb-4 shadow-sm cursor-pointer hover:border-blue-500 transition';
-        div.innerHTML = `
-            <div class="flex items-center gap-3 mb-3">
-                <div class="w-8 h-8 rounded-full bg-blue-900/50 flex items-center justify-center font-bold text-[10px] text-blue-200">
-                    ${(d.alunoNome || "A")[0].toUpperCase()}
-                </div>
-                <p class="text-[11px] text-white font-bold">${d.alunoNome || "Aluno"}</p>
-            </div>
-            <p class="text-xs text-gray-300 bg-gray-900 p-3 rounded-lg mb-3 italic">"${d.mensagem}"</p>
-            ${d.respostaPersonal ? `
-                <div class="mt-2 p-3 bg-blue-900/20 border-l-2 border-blue-500 rounded-r-lg mb-3">
-                    <p class="text-[9px] text-blue-400 font-bold uppercase mb-1">Resposta do Personal:</p>
-                    <p class="text-xs text-blue-100">${d.respostaPersonal}</p>
-                </div>
-            ` : ''}
-            <button onclick="window.curtirPost('${doc.id}')" class="flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-red-500 transition-colors">
-                ❤️ <span>${d.likes || 0}</span>
-            </button>
-        `;
+        div.className = 'bg-gray-950 p-4 rounded-xl border border-gray-800 mb-2 cursor-pointer hover:border-blue-500';
+        div.innerHTML = `<p class="text-white text-xs font-bold">${d.titulo || "Sem título"}</p>`;
+        
         div.onclick = () => {
-            document.getElementById('videoTitulo').value = video.titulo;
-            document.getElementById('linkVideoTreino').value = video.link;
-            modal.classList.add('hidden');
-            
-            // Renderiza o vídeo na área de prescrição
-            const videoId = video.link.split('v=')[1] || video.link.split('/').pop().split('?')[0];
+            const videoId = d.link.split('v=')[1] || d.link.split('/').pop().split('?')[0];
+            document.getElementById('videoTitulo').value = d.titulo;
+            document.getElementById('linkVideoTreino').value = d.link;
             document.getElementById('container-players-renderizados').innerHTML = `<iframe class="w-full h-48 rounded-lg" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
-            
-            // Executa automaticamente a função de adicionar à rotina
-            window.adicionarExercicioNaRotina();
+            modal.classList.add('hidden');
         };
         lista.appendChild(div);
     });
 };
-
          // Função inteligente para ambos (Aluno e Personal)
                 window.marcarConcluido = async (idFicha = null) => {
                     // Se não passar ID, pega o da URL (caso do aluno na ficha dele)
