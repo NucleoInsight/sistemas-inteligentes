@@ -1041,7 +1041,7 @@ window.abrirInteracaoAluno = (aid, nome) => {
                         <p class="text-gray-500 text-xs italic">Carregando histórico...</p>
                     </div>
                     <textarea id="resposta-personal" placeholder="Deixe uma nota ou resposta para o aluno..." class="w-full bg-gray-900 border border-gray-800 rounded-2xl p-4 text-white text-xs mt-6 focus:border-blue-500 outline-none" rows="3"></textarea>
-                    <button onclick="window.salvarRespostaInteracao('${aid}')" class="w-full bg-blue-600 text-white font-black py-4 rounded-2xl mt-4 uppercase text-xs hover:bg-blue-500 transition-all">Enviar Nota ao Aluno</button>
+                    <button onclick="window.salvarRespostaInteracao('${aid}', '${nome}')" class="w-full bg-blue-600 text-white font-black py-4 rounded-2xl mt-4 uppercase text-xs hover:bg-blue-500 transition-all">Enviar Nota ao Aluno</button>
                 </div>
             `;
     document.body.appendChild(modal);
