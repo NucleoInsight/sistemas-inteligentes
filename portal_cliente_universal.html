@@ -172,12 +172,14 @@
                         <h3 class="text-sm font-bold text-white uppercase mb-4 tracking-widest text-center">🏋️ Treino de ${diaAtual}</h3>
                         ${treinoFiltrado.length > 0 ? treinoFiltrado.map(ex => {
                             const videoId = ex.link ? (ex.link.includes('shorts/') ? ex.link.split('shorts/')[1].split('?')[0] : (ex.link.includes('youtu.be/') ? ex.link.split('/').pop() : ex.link.split('v=')[1]?.substring(0, 11))) : null;
+                            const isTreino = ex.series !== '-';
                             return `<div class="bg-gray-900 p-4 rounded-xl border border-gray-800 mb-4 shadow-lg">
                                 <div class="flex items-center gap-3 mb-2">
-                                    <input type="checkbox" ${marcados[ex.titulo] ? 'checked' : ''} onchange="window.salvarCheck('${ex.titulo.replace(/'/g, "\\'")}', this.checked)" class="w-6 h-6 rounded border-gray-700 bg-black text-emerald-500 focus:ring-emerald-500 cursor-pointer">
+                                    ${isTreino ? `<input type="checkbox" ${marcados[ex.titulo] ? 'checked' : ''} onchange="window.salvarCheck('${ex.titulo.replace(/'/g, "\\'")}', this.checked)" class="w-6 h-6 rounded border-gray-700 bg-black text-emerald-500 focus:ring-emerald-500 cursor-pointer">` : ''}
                                     <h4 class="text-white font-black text-sm uppercase">${ex.titulo}</h4>
                                 </div>
-                                <p class="text-blue-400 text-xs mt-1 font-bold">${ex.series} Séries x ${ex.reps} Repetições</p>
+                                ${isTreino ? `<p class="text-blue-400 text-xs mt-1 font-bold">${ex.series} Séries x ${ex.reps} Repetições</p>` : ''}
+                                <p class="text-gray-400 text-[10px] mt-1 italic">Obs: ${ex.obs || 'Sem observações'}</p>
                                 ${videoId ? `<iframe class="w-full h-48 rounded-lg mt-3" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>` : ''}
                             </div>`;
                         }).join('') : '<p class="text-center text-gray-500 text-xs">Sem treino para hoje.</p>'}
@@ -198,6 +200,7 @@
                 </div>
             `;
             window.injetarWidgetFinanceiro(window.dadosAluno);
+        };
         
         window.subirFoto = async function(input) {
             const file = input.files[0];
