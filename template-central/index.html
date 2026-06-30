@@ -437,6 +437,8 @@ document.documentElement.style.setProperty('--cor-cliente', corPrincipal);
     
     let alunos = [];
     snapshot.forEach(doc => alunos.push({ id: doc.id, ...doc.data() }));
+    // Ordena alfabeticamente pelo nome
+    alunos.sort((a, b) => (a.alunoNome || "").localeCompare(b.alunoNome || ""));
 
     const html = `
         <div class="mt-6 bg-[#171A21] p-4 rounded-xl border border-gray-700">
@@ -444,45 +446,29 @@ document.documentElement.style.setProperty('--cor-cliente', corPrincipal);
             <input type="text" id="buscaAluno" placeholder="🔍 Pesquisar nome..." 
                 class="w-full bg-gray-900 border border-gray-800 rounded p-2 text-white text-xs mb-3"
                 onkeyup="window.filtrarAlunos()">
-            <div id="lista-alunos-scroll" class="space-y-2 overflow-y-auto custom-scrollbar pr-2" style="height: 60vh;">
+            <div id="lista-alunos-scroll" class="space-y-1 overflow-y-auto custom-scrollbar pr-2" style="height: 60vh;">
              ${alunos.map(d => {
-                    const diaHoje = new Date().getDate();
-                    const dataVenc = parseInt(d.dataVencimento);
-                    const venceu = (d.dataVencimento && diaHoje >= dataVenc && d.statusPagamento !== 'Pago');
-                    
-                    const statusVisual = venceu ? '🔴 Em Débito' : '🟢 Em Dia';
-                    const corStatus = venceu ? 'text-red-500' : 'text-emerald-500';
-                    const borda = venceu ? 'border-red-500/50 border-l-4' : 'border-gray-800 border-l';
+                 const diaHoje = new Date().getDate();
+                 const dataVenc = parseInt(d.dataVencimento);
+                 const venceu = (d.dataVencimento && diaHoje >= dataVenc && d.statusPagamento !== 'Pago');
+                 const statusVisual = venceu ? '🔴 Em Débito' : '🟢 Em Dia';
+                 const corStatus = venceu ? 'text-red-500' : 'text-emerald-500';
 
-                    return `
-                    <div class="aluno-item flex flex-col bg-gray-900 p-3 rounded border ${borda} text-xs">
-                        <div class="flex justify-between items-center cursor-pointer" onclick="this.parentElement.querySelector('.detalhes-aluno').classList.toggle('hidden')">
-                            <div class="flex flex-col">
-                                <span class="nome-aluno text-gray-300 font-bold">${d.alunoNome || 'Sem Nome'}</span>
-                                <span class="text-[9px] ${corStatus} font-black uppercase">
-                                    ${statusVisual} ${d.dataVencimento ? '(Vence dia ' + d.dataVencimento + ')' : ''}
-                                </span>
-                            </div>
-                            <span class="text-gray-500 font-bold text-sm">▼</span>
-                        </div>
-                        <div class="detalhes-aluno hidden mt-3 pt-3 border-t border-gray-800">
-                            <span class="text-[9px] ${corStatus} font-black uppercase">
-                                ${statusVisual} ${d.dataVencimento ? '(Vence dia ' + d.dataVencimento + ')' : ''}
-                            </span>
-                        </div>
-                        <div class="flex flex-wrap gap-2 mt-3">
-                            ${(d.statusPagamento !== 'Pago') ? `<button type="button" onclick="window.registrarPagamento('${d.id}', 'Pago')" class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded-md border border-emerald-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Pagar</button>` : ''}
-                           <button type="button" onclick="window.alternarAcesso('${d.id}', '${d.statusAcesso === 'Bloqueado' ? 'Ativo' : 'Bloqueado'}')" class="${d.statusAcesso === 'Bloqueado' ? 'bg-orange-500/10 text-orange-500 border-orange-500/30' : 'bg-gray-500/10 text-gray-400 border-gray-500/30'} px-3 py-1.5 rounded-md border text-[10px] font-bold uppercase tracking-wider transition-all">${d.statusAcesso === 'Bloqueado' ? 'Desbloquear' : 'Bloquear'}</button>
-                            <button type="button" onclick="window.carregarDados('${d.id}')" class="bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 px-3 py-1.5 rounded-md border border-blue-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Editar</button>
-                            <button type="button" onclick="window.marcarConcluidoAdmin('${d.id}')" class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 px-3 py-1.5 rounded-md border border-emerald-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Concluir</button>
-                            <button type="button" onclick="window.copiarGatilhoAluno('${d.alunoNome}', 'https://nucleoinsight.github.io/sistemas-inteligentes/template-central/index.html?cid=' + new URLSearchParams(window.location.search).get('cid'))" class="bg-green-500/10 hover:bg-green-500/20 text-green-400 px-3 py-1.5 rounded-md border border-green-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Enviar Ficha</button>
-                            <button type="button" onclick="window.copiarConviteParaCadastro('${d.id}', '${d.alunoNome}')" class="bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 px-3 py-1.5 rounded-md border border-purple-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Copiar Cadastro</button>
-                            <button type="button" onclick="window.limparRotinaAluno('${d.id}')" class="bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 px-3 py-1.5 rounded-md border border-yellow-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Limpar</button>
-                            <button type="button" onclick="window.excluirAluno('${d.id}')" class="bg-red-500/10 hover:bg-red-500/20 text-red-500 px-3 py-1.5 rounded-md border border-red-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Excluir</button>
-                        </div>
-                    </div>
-                </div>`;
-            }).join('')}
+                 return `
+                 <div class="aluno-item bg-gray-900 p-2 rounded border border-gray-800 text-xs">
+                     <div class="flex justify-between items-center cursor-pointer" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                         <span class="nome-aluno text-gray-300 font-bold truncate">${d.alunoNome || 'Sem Nome'}</span>
+                         <span class="text-[9px] ${corStatus} font-black uppercase">${statusVisual}</span>
+                     </div>
+                     <div class="detalhes-aluno hidden mt-2 flex flex-wrap gap-1">
+                         <button type="button" onclick="window.registrarPagamento('${d.id}', 'Pago')" class="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded border border-emerald-500/20 text-[9px] font-bold uppercase">Pagar</button>
+                         <button type="button" onclick="window.alternarAcesso('${d.id}', '${d.statusAcesso === 'Bloqueado' ? 'Ativo' : 'Bloqueado'}')" class="bg-gray-700 text-white px-2 py-1 rounded text-[9px] font-bold uppercase">${d.statusAcesso === 'Bloqueado' ? 'Desbloquear' : 'Bloquear'}</button>
+                         <button type="button" onclick="window.carregarDados('${d.id}')" class="bg-blue-500/10 text-blue-400 px-2 py-1 rounded border border-blue-500/20 text-[9px] font-bold uppercase">Editar</button>
+                         <button type="button" onclick="window.copiarGatilhoAluno('${d.alunoNome}', 'https://nucleoinsight.github.io/sistemas-inteligentes/portal_cliente_universal.html?cid=' + new URLSearchParams(window.location.search).get('cid'))" class="bg-green-500/10 text-green-400 px-2 py-1 rounded border border-green-500/20 text-[9px] font-bold uppercase">Ficha</button>
+                         <button type="button" onclick="window.excluirAluno('${d.id}')" class="bg-red-500/10 text-red-500 px-2 py-1 rounded border border-red-500/20 text-[9px] font-bold uppercase">X</button>
+                     </div>
+                 </div>`;
+             }).join('')}
         </div>
     </div>`;
 
