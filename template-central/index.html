@@ -156,6 +156,23 @@
             } catch (e) { console.error("Erro ao configurar cliente:", e); }
         }
 
+    window.verificarEAtualizarStatusAutomatico = async (cid) => {
+    const diaHoje = new Date().getDate();
+    const snapshot = await getDocs(collection(db, "clients", cid, "dados"));
+    
+    snapshot.forEach(async (docSnap) => {
+        const d = docSnap.data();
+        const vencimento = parseInt(d.dataVencimento || 0);
+        
+        if (d.statusPagamento === 'Pago' && diaHoje >= vencimento && vencimento !== 0) {
+            await updateDoc(doc(db, "clients", cid, "dados", docSnap.id), {
+                statusPagamento: 'Debito'
+            });
+            console.log("⚠️ Status alterado para Debito automaticamente: " + d.alunoNome);
+        }
+    });
+};
+    
     async function inicializarCentralDinamica() {
             const params = new URLSearchParams(window.location.search);
             const cid = params.get('cid'); 
