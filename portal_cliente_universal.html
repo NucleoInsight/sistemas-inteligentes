@@ -617,12 +617,15 @@ window.location.reload();
     snap.forEach(doc => {
         const d = doc.data();
         const post = document.createElement('div');
-        post.className = 'bg-black p-3 rounded border border-gray-800 mb-2';
+        post.className = 'bg-gray-950 p-4 rounded-2xl border border-gray-800 mb-4 shadow-sm';
         post.innerHTML = `
-            <p class="text-[10px] text-emerald-500 font-bold uppercase">${d.alunoNome || "Aluno"}</p>
-            <p class="text-xs text-gray-300">${d.mensagem}</p>
-            <button onclick="window.curtirPost('${doc.id}')" class="text-[9px] text-blue-400 font-bold mt-2 hover:text-blue-300">
-                👍 Curtir (${d.likes || 0})
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center font-bold text-[10px]">${(d.alunoNome || "A")[0].toUpperCase()}</div>
+                <p class="text-[11px] text-white font-bold">${d.alunoNome || "Aluno"}</p>
+            </div>
+            <p class="text-xs text-gray-300 bg-gray-900 p-3 rounded-lg mb-3 italic">"${d.mensagem}"</p>
+            <button onclick="window.curtirPost('${doc.id}')" class="flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-red-500 transition-colors">
+                ❤️ <span>${d.likes || 0}</span>
             </button>
         `;
         muralContainer.appendChild(post);
