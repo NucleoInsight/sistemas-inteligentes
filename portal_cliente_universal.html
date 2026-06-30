@@ -72,6 +72,25 @@
             }
             return false;
         };
+
+        window.injetarWidgetFinanceiro = (dadosAluno) => {
+            const diaHoje = new Date().getDate();
+            const vencimento = parseInt(dadosAluno.dataVencimento || 0);
+            const diasParaVencer = vencimento - diaHoje;
+            
+            if (dadosAluno.statusPagamento !== 'Pago' && vencimento > 0) {
+                let htmlFinanceiro = "";
+                if (diasParaVencer < 0) {
+                    htmlFinanceiro = `<div id="widget-financeiro" class="bg-red-900/20 border border-red-500 p-3 rounded-xl text-center text-red-500 text-xs font-bold uppercase mb-4">⚠️ Mensalidade Vencida! Entre em contato com seu Personal.</div>`;
+                } else if (diasParaVencer <= 5) {
+                    htmlFinanceiro = `<div id="widget-financeiro" class="bg-yellow-900/20 border border-yellow-500 p-3 rounded-xl text-center text-yellow-500 text-xs font-bold uppercase mb-4">⚠️ Atenção: Sua mensalidade vence em ${diasParaVencer} dias.</div>`;
+                } else {
+                    htmlFinanceiro = `<div id="widget-financeiro" class="bg-emerald-900/20 border border-emerald-500 p-3 rounded-xl text-center text-emerald-500 text-xs font-bold uppercase mb-4">✅ Sua mensalidade vence no dia ${vencimento}.</div>`;
+                }
+                const appDiv = document.querySelector('.space-y-6');
+                if (appDiv) appDiv.insertAdjacentHTML('afterbegin', htmlFinanceiro);
+            }
+        };
         
         async function carregarVisualizacao() {
             const params = new URLSearchParams(window.location.search);
