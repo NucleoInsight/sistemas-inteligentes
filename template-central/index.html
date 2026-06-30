@@ -1160,6 +1160,19 @@ window.salvarRespostaInteracao = async (aid, alunoNome) => {
     alert("✅ Você curtiu este post!");
     window.renderizarMural();
 };
+
+        window.excluirPostDoMural = async (postId) => {
+    if (!confirm("⚠️ Deseja excluir este post do mural?")) return;
+    
+    try {
+        await deleteDoc(doc(db, "mural_comunidade", postId));
+        alert("✅ Post excluído!");
+        window.renderizarMural();
+    } catch (e) {
+        console.error("Erro ao excluir post:", e);
+        alert("Erro ao excluir.");
+    }
+};
         
 </script>
 
