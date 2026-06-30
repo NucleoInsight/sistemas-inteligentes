@@ -455,7 +455,7 @@ document.documentElement.style.setProperty('--cor-cliente', corPrincipal);
                  const corStatus = venceu ? 'text-red-500' : 'text-emerald-500';
 
                  return `
-                 <div class="aluno-item bg-gray-900 p-2 rounded border border-gray-800 text-xs">
+                 <div class="aluno-item flex flex-col bg-gray-900 p-2 rounded border border-gray-800 text-xs">
                      <div class="flex justify-between items-center cursor-pointer" onclick="this.nextElementSibling.classList.toggle('hidden')">
                          <span class="nome-aluno text-gray-300 font-bold truncate">${d.alunoNome || 'Sem Nome'}</span>
                          <span class="text-[9px] ${corStatus} font-black uppercase">${statusVisual}</span>
