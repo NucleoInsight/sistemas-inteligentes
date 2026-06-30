@@ -163,6 +163,10 @@
                            <h1 class="text-lg font-black text-white uppercase">Olá, ${window.dadosAluno.alunoNome?.split(' ')[0] || 'Aluno'}!</h1>
                             <p class="text-[9px] text-blue-400 font-bold uppercase tracking-widest">Treino de hoje: ${diaAtual}</p>
                         </div>
+                        <div class="relative">
+                            <img id="aluno-foto-display" src="${window.dadosAluno.alunoFoto || 'https://via.placeholder.com/150'}" class="w-12 h-12 rounded-full object-cover border border-blue-500 cursor-pointer" onclick="document.getElementById('upload-foto-aluno').click()">
+                            <input type="file" id="upload-foto-aluno" accept="image/*" class="hidden" onchange="window.subirFoto(this)">
+                        </div>
                     </div>
                     <div id="container-video">
                         <h3 class="text-sm font-bold text-white uppercase mb-4 tracking-widest text-center">🏋️ Treino de ${diaAtual}</h3>
@@ -178,7 +182,6 @@
                             </div>`;
                         }).join('') : '<p class="text-center text-gray-500 text-xs">Sem treino para hoje.</p>'}
                     </div>
-
                     <div class="bg-gray-900 p-4 rounded-xl border border-gray-800 space-y-3">
                         <h3 class="text-xs font-bold text-gray-400 uppercase">Como foi o treino?</h3>
                         <select id="feedback-intensidade" class="w-full bg-black border border-gray-700 text-white p-2 rounded text-xs">
@@ -190,12 +193,11 @@
                         </select>
                         <textarea id="feedback-obs" placeholder="Alguma dor ou dificuldade?" class="w-full bg-black border border-gray-700 text-white p-2 rounded text-xs h-20"></textarea>
                         <button type="button" onclick="window.marcarConcluido()" class="w-full bg-emerald-600 text-white font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-emerald-500 transition-all">Finalizar e enviar feedback ✅</button>
+                        <button type="button" onclick="window.enviarRelatorioWhatsApp()" class="w-full bg-[#25D366] text-white font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-[#128C7E] transition-all">Enviar Relatório do Dia 📱</button>
                     </div>
                 </div>
             `;
-
             window.injetarWidgetFinanceiro(window.dadosAluno);
-        };
         
         window.subirFoto = async function(input) {
             const file = input.files[0];
