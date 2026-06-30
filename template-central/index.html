@@ -316,6 +316,9 @@ document.documentElement.style.setProperty('--cor-cliente', corPrincipal);
                 dados.statusAcesso = "Ativo";
                 dados.ultimaDataPagamento = new Date().toISOString();
                 
+                dados.seriesPadrao = dados.seriesPadrao || "0";
+                dados.repsPadrao = dados.repsPadrao || "0";
+                
                 await setDoc(docRef, dados, { merge: true });
                 alert(`✅ Ficha salva com ${listaVideos.length} vídeos e ${window.rotinaTemporaria.length} exercícios!`);
                 
