@@ -582,6 +582,17 @@ window.location.reload();
             await updateDoc(doc(db, "clients", cid, "dados", aid), { respostaPersonal: resposta });
             alert("✅ Nota enviada ao aluno!");
         };
+        window.curtirPost = async (postId) => {
+    const postRef = doc(db, "mural_comunidade", postId);
+    const postSnap = await getDoc(postRef);
+    const likesAtuais = postSnap.exists() ? (postSnap.data().likes || 0) : 0;
+    
+    await updateDoc(postRef, {
+        likes: likesAtuais + 1
+    });
+    alert("✅ Você curtiu este post!");
+    window.renderizarMural();
+};
     </script>
 
     <!-- Botão de Instalação -->
