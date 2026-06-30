@@ -100,6 +100,9 @@
                // ... logo após o const config = ...
                 window.dadosAluno = alunoSnap.data();
 
+                // --- NOVA EDIÇÃO 1: VALIDAÇÃO DE SEGURANÇA E TERMOS ---
+                if (await window.injetarValidacoes(cid, aid, config)) return;
+                
                 // --- O "NORTE" DO SISTEMA (Switch de Nicho) ---
                 const nicho = clienteSnap.data().nicho || 'Treino'; 
                 console.log("Nicho detectado:", nicho);
