@@ -608,6 +608,7 @@ window.location.reload();
         document.getElementById('app').appendChild(muralContainer);
     }
     
+    // Limpa apenas o conteúdo interno para evitar duplicar posts ao atualizar
     muralContainer.innerHTML = '<h3 class="text-emerald-500 font-bold uppercase text-xs mb-3">Mural da Comunidade</h3>';
     
     const q = query(collection(db, "mural_comunidade"), orderBy("data", "desc"), limit(10));
