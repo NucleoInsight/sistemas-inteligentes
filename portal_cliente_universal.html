@@ -565,6 +565,16 @@
         };
 
         carregarVisualizacao();
+
+        // CRM DE INTERAÇÃO E FEEDBACK
+        window.salvarRespostaInteracao = async (aid) => {
+            const resposta = document.getElementById('resposta-personal')?.value;
+            if(!resposta) return alert("Digite uma nota para o aluno.");
+            const params = new URLSearchParams(window.location.search);
+            const cid = params.get('cid');
+            await updateDoc(doc(db, "clients", cid, "dados", aid), { respostaPersonal: resposta });
+            alert("✅ Nota enviada ao aluno!");
+        };
     </script>
 
     <!-- Botão de Instalação -->
