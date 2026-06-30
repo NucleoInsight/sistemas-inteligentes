@@ -472,7 +472,9 @@ document.documentElement.style.setProperty('--cor-cliente', corPrincipal);
         </div>
     </div>`;
 
-    listaArea.innerHTML = html;
+    // Adiciona o estilo de grade ao HTML para forçar o alinhamento
+    const estiloGrid = `<style>#lista-alunos-scroll { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }</style>`;
+    listaArea.innerHTML = estiloGrid + html;
     console.log("✅ Lista de alunos re-renderizada (Painel mantido).");
 };
 
