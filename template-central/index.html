@@ -480,12 +480,12 @@ document.documentElement.style.setProperty('--cor-cliente', corPrincipal);
                             <button type="button" onclick="window.limparRotinaAluno('${d.id}')" class="bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 px-3 py-1.5 rounded-md border border-yellow-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Limpar</button>
                             <button type="button" onclick="window.excluirAluno('${d.id}')" class="bg-red-500/10 hover:bg-red-500/20 text-red-500 px-3 py-1.5 rounded-md border border-red-500/30 text-[10px] font-bold uppercase tracking-wider transition-all">Excluir</button>
                         </div>
-                        </div>
-                    </div>`;
-                }).join('')}
-            </div>
-        </div>`;
-    
+                    </div>
+                </div>`;
+            }).join('')}
+        </div>
+    </div>`;
+
     listaArea.innerHTML = html;
     console.log("✅ Lista de alunos re-renderizada (Painel mantido).");
 };
