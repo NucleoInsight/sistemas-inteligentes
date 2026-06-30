@@ -140,7 +140,9 @@
                         break;
                     default:
                         window.renderizarModuloTreino(cid, aid, config, checkinsSnap);
-                }
+               }
+                // Chama o mural para o aluno
+                window.renderizarMural();
            } catch (e) {
                 console.error("Erro na renderização:", e);
                 document.getElementById('app').innerHTML = "Erro ao carregar dados.";
