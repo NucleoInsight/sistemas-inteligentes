@@ -1055,6 +1055,24 @@ window.salvarRespostaInteracao = async (aid) => {
     await updateDoc(doc(db, "clients", cid, "dados", aid), { respostaPersonal: resposta });
     alert("✅ Nota enviada ao aluno!");
 };
+
+        window.renderizarMural = async () => {
+    const { collection, getDocs, query, orderBy, limit } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+    const container = document.getElementById('container-mural'); // Crie uma div com este ID no seu HTML do Painel
+    if(!container) return;
+
+    const q = query(collection(db, "mural_comunidade"), orderBy("data", "desc"), limit(10));
+    const snap = await getDocs(q);
+    container.innerHTML = snap.docs.map(doc => {
+        const d = doc.data();
+        return `
+            <div class="bg-gray-900 p-3 rounded border border-gray-800 mb-2">
+                <p class="text-[10px] text-emerald-500 font-bold uppercase">${d.alunoNome}</p>
+                <p class="text-xs text-gray-300">${d.mensagem}</p>
+            </div>
+        `;
+    }).join('');
+};
         
 </script>
 
