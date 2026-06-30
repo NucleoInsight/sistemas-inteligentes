@@ -455,7 +455,8 @@ document.documentElement.style.setProperty('--cor-cliente', corPrincipal);
             <div id="lista-alunos-scroll" class="space-y-2 overflow-y-auto custom-scrollbar pr-2" style="height: 60vh;">
                ${alunos.map(d => {
                     const diaHoje = new Date().getDate();
-                    const venceu = d.dataVencimento && diaHoje >= parseInt(d.dataVencimento) && d.statusPagamento !== 'Pago';
+                    // Se passou da data E ainda consta como 'Pago' (ou indefinido), o sistema força a exibição em débito
+                    const venceu = d.dataVencimento && (diaHoje >= parseInt(d.dataVencimento) && d.statusPagamento !== 'Pago');
                     const statusVisual = venceu ? '🔴 Em Débito' : '🟢 Em Dia';
                     const corStatus = venceu ? 'text-red-500' : 'text-emerald-500';
                     const borda = venceu ? 'border-red-500/50' : 'border-gray-800';
