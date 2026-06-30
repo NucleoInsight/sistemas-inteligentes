@@ -1115,9 +1115,14 @@ window.salvarRespostaInteracao = async (aid, alunoNome) => {
                     <p class="text-xs text-blue-100">${d.respostaPersonal}</p>
                 </div>
             ` : ''}
-            <button onclick="window.curtirPost('${doc.id}')" class="flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-red-500 transition-colors">
-                ❤️ <span>${d.likes || 0}</span>
-            </button>
+           <div class="flex justify-between items-center mt-3">
+                <button onclick="window.curtirPost('${doc.id}')" class="flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-red-500 transition-colors">
+                    ❤️ <span>${d.likes || 0}</span>
+                </button>
+                <button onclick="window.excluirPostDoMural('${doc.id}')" class="text-[10px] text-red-500 font-bold uppercase hover:text-white transition-colors">
+                    🗑️ Excluir
+                </button>
+            </div>
         `;
         container.appendChild(post);
     });
