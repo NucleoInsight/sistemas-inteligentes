@@ -697,7 +697,13 @@ window.abrirModalBiblioteca = async (nicho = "global") => {
         const video = doc.data();
         const div = document.createElement('div');
         div.className = "bg-[#0F1115] p-4 rounded border border-gray-700 hover:border-blue-500 transition mb-3 cursor-pointer";
-        div.innerHTML = `<div class="text-white text-sm font-bold">${video.titulo}</div><div class="text-[10px] text-gray-500 uppercase">${video.nicho || ''} • ${video.tags?.[0] || ''}</div>`;
+        div.innerHTML = `
+            <div class="text-white text-sm font-bold">${d.alunoNome || "Aluno"}</div>
+            <div class="text-xs text-gray-300">${d.mensagem}</div>
+            <button onclick="window.curtirPost('${doc.id}')" class="text-[9px] text-blue-400 font-bold mt-2 hover:text-blue-300">
+                👍 Curtir (${d.likes || 0})
+            </button>
+        `;
         div.onclick = () => {
             document.getElementById('videoTitulo').value = video.titulo;
             document.getElementById('linkVideoTreino').value = video.link;
