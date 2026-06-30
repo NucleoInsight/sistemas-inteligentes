@@ -209,9 +209,13 @@ document.documentElement.style.setProperty('--cor-cliente', corPrincipal);
             document.getElementById("loading").classList.add("hidden");
             document.getElementById("interface-dinamica").classList.remove("hidden");
 
-            // FORÇA O CARREGAMENTO DOS MOTORES COM O CID CORRETO
+           // FORÇA O CARREGAMENTO DOS MOTORES COM O CID CORRETO
             window.atualizarDashboard();
             window.renderizarGestaoAlunos();
+            
+            // Adicione esta linha:
+            await window.verificarEAtualizarStatusAutomatico(cid);
+            
             window.inicializarModulos(dados);
         }
 
