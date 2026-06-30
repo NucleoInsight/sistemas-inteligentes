@@ -624,6 +624,12 @@ window.location.reload();
                 <p class="text-[11px] text-white font-bold">${d.alunoNome || "Aluno"}</p>
             </div>
             <p class="text-xs text-gray-300 bg-gray-900 p-3 rounded-lg mb-3 italic">"${d.mensagem}"</p>
+            ${d.respostaPersonal ? `
+                <div class="mt-2 p-3 bg-blue-900/20 border-l-2 border-blue-500 rounded-r-lg">
+                    <p class="text-[9px] text-blue-400 font-bold uppercase mb-1">Resposta do Personal:</p>
+                    <p class="text-xs text-blue-100">${d.respostaPersonal}</p>
+                </div>
+            ` : ''}
             <button onclick="window.curtirPost('${doc.id}')" class="flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-red-500 transition-colors">
                 ❤️ <span>${d.likes || 0}</span>
             </button>
