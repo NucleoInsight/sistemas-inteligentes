@@ -229,6 +229,17 @@
                     </details>
                 </div>
             `;
+            // PREENCHIMENTO AUTOMÁTICO DA FICHA
+            setTimeout(() => {
+                Object.keys(window.dadosAluno).forEach(key => {
+                    const el = document.getElementById(key);
+                    if (el) {
+                        el.value = window.dadosAluno[key];
+                        el.disabled = true; // Torna apenas visual
+                        el.classList.add('bg-gray-800'); // Estilo visual de desativado
+                    }
+                });
+            }, 500);
         };
         
         window.subirFoto = async function(input) {
