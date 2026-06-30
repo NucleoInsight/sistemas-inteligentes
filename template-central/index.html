@@ -1079,6 +1079,18 @@ window.salvarRespostaInteracao = async (aid) => {
         `;
     }).join('');
 };
+
+        window.curtirPost = async (postId) => {
+    const postRef = doc(db, "mural_comunidade", postId);
+    const postSnap = await getDoc(postRef);
+    const likesAtuais = postSnap.exists() ? (postSnap.data().likes || 0) : 0;
+    
+    await updateDoc(postRef, {
+        likes: likesAtuais + 1
+    });
+    alert("✅ Você curtiu este post!");
+    window.renderizarMural();
+};
         
 </script>
 
