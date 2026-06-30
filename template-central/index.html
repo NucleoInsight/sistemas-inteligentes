@@ -291,6 +291,9 @@ document.documentElement.style.setProperty('--cor-cliente', corPrincipal);
                 }
                 // Captura o nicho definido na tela ou salva como "Treino" por padrão
                 dados.nicho = document.getElementById('nicho')?.value || "Treino";
+                dados.statusPagamento = "Pago";
+                dados.statusAcesso = "Ativo";
+                dados.ultimaDataPagamento = new Date().toISOString();
                 
                 await setDoc(docRef, dados, { merge: true });
                 alert(`✅ Ficha salva com ${listaVideos.length} vídeos e ${window.rotinaTemporaria.length} exercícios!`);
