@@ -1111,6 +1111,37 @@ window.salvarRespostaInteracao = async (aid, alunoNome) => {
     }).join('');
 };
 
+        window.abrirModalMural = () => {
+    // Cria o modal se não existir
+    let modal = document.getElementById('modal-mural-central');
+    if(!modal) {
+        modal = document.createElement('div');
+        modal.id = 'modal-mural-central';
+        modal.className = 'fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/90';
+        document.body.appendChild(modal);
+    }
+    
+    modal.innerHTML = `
+        <div class="bg-gray-950 border border-gray-800 p-6 rounded-3xl w-full max-w-lg max-h-[80vh] overflow-y-auto shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-white font-black uppercase text-sm tracking-widest">Mural da Comunidade</h2>
+                <button onclick="document.getElementById('modal-mural-central').remove()" class="text-gray-500 font-bold hover:text-white">X</button>
+            </div>
+            <div id="container-mural-modal"></div>
+        </div>
+    `;
+    
+    // Redireciona a renderização para dentro do modal
+    const originalContainer = document.getElementById('container-mural');
+    const modalContainer = document.getElementById('container-mural-modal');
+    
+    // Reaproveita sua função de renderizarMural, mas aponta para o modal
+    const tempContainer = document.getElementById('container-mural');
+    document.getElementById('container-mural-modal').id = 'container-mural';
+    window.renderizarMural();
+    document.getElementById('container-mural').id = 'container-mural-modal';
+};
+        
         window.curtirPost = async (postId) => {
     const postRef = doc(db, "mural_comunidade", postId);
     const postSnap = await getDoc(postRef);
