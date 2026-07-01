@@ -600,8 +600,7 @@ window.location.reload();
     window.renderizarMural();
 };
         window.renderizarMural = async () => {
-    const { collection, getDocs, query, orderBy, limit, where } = await import("[https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js](https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js)");
-    
+     
     // Cria ou limpa a área do mural na tela
     let muralContainer = document.getElementById('container-mural');
     if (!muralContainer) {
