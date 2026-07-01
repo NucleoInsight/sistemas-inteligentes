@@ -510,19 +510,22 @@ window.location.reload();
     }, 300);
 };
 
-            window.renderizarModuloServicos = (cid, aid, dadosAluno) => {
-    const nicho = window.dadosNicho || "Serviços"; 
-    
-    document.getElementById('app').innerHTML = `
-        <div class="space-y-6">
-            <!-- HEADER HIGH-END -->
-            <div class="bg-gradient-to-br from-gray-900 to-black p-8 rounded-3xl border border-gray-800 shadow-2xl text-center">
-                <h2 class="text-white font-black text-2xl uppercase tracking-tighter">${nicho}</h2>
-                <p class="text-blue-500 text-[10px] font-bold uppercase tracking-widest mt-2">${dadosAluno.alunoNome}</p>
-                <div class="mt-4 inline-block bg-blue-900/20 px-3 py-1 rounded-full border border-blue-500/30 text-[10px] text-blue-300 font-bold uppercase">
-                    ID: ${aid.substring(0, 8)}
+   // Exemplo de como deixar o botão "Serviços" 100% funcional
+window.renderizarServicos = async (cid) => {
+    const container = document.getElementById('container-servico-dinamico');
+    container.innerHTML = `
+        <div class="animate-in fade-in duration-300">
+            <h3 class="text-blue-400 font-bold uppercase text-[10px] mb-4">Selecione o Serviço</h3>
+            <div id="lista-servicos" class="space-y-2">
+                <!-- Aqui você puxa do banco os serviços ativos do cliente -->
+                <div class="bg-black p-4 rounded-xl border border-gray-800 flex justify-between items-center hover:border-blue-500 transition-all">
+                    <span class="text-white text-xs">Procedimento / Sessão</span>
+                    <button class="bg-blue-600 text-white px-3 py-1 rounded text-[9px] font-bold uppercase">Agendar</button>
                 </div>
             </div>
+        </div>
+    `;
+};
 
             <!-- HUB DE AÇÕES DE ALTO NÍVEL -->
             <div class="grid grid-cols-2 gap-3">
