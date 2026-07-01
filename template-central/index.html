@@ -1096,6 +1096,10 @@ window.salvarRespostaInteracao = async (aid, alunoNome) => {
 
     container.innerHTML = '<h3 class="text-emerald-500 font-bold uppercase text-xs mb-3">Mural da Comunidade</h3>';
     
+    // Adiciona limpeza para garantir que apenas os posts da consulta atual existam
+    const postsAntigos = container.querySelectorAll('.bg-gray-950');
+    postsAntigos.forEach(p => p.remove());
+
     const params = new URLSearchParams(window.location.search);
     const cid = params.get('cid');
     const q = query(collection(db, "mural_comunidade"), where("cid", "==", cid), orderBy("data", "desc"), limit(10));
