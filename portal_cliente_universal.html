@@ -511,29 +511,77 @@ window.location.reload();
 };
 
             window.renderizarModuloServicos = (cid, aid, dadosAluno) => {
-            document.getElementById('app').innerHTML = `
-                <div class="space-y-6">
-                    <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 text-center">
-                        <h2 class="text-white font-black text-lg uppercase mb-2">Painel de Atendimento</h2>
-                        <p class="text-gray-400 text-xs">${dadosAluno.alunoNome || 'Bem-vindo(a)'}</p>
-                    </div>
-
-                    <div class="bg-gray-900 p-4 rounded-xl border border-gray-800 space-y-4">
-                        <h3 class="text-blue-400 font-bold uppercase text-xs tracking-widest">Opções Disponíveis</h3>
-                        <button onclick="window.renderizarAgenda('${cid}')" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg text-xs uppercase hover:bg-blue-500 transition-all">
-                            Ver minha agenda 📅
-                        </button>
-                        <button onclick="window.enviarRelatorioWhatsApp()" class="w-full bg-[#25D366] text-white font-bold py-3 rounded-lg text-xs uppercase hover:bg-[#128C7E] transition-all">
-                            Falar com suporte 📱
-                        </button>
-                    </div>
-
-                    <div id="container-agenda" class="bg-gray-900 p-4 rounded-xl border border-gray-800 min-h-[100px] text-xs">
-                        <p class="text-center text-gray-500 py-4">Selecione uma opção acima para visualizar.</p>
-                    </div>
+    const nicho = window.dadosNicho || "Serviços"; 
+    
+    document.getElementById('app').innerHTML = `
+        <div class="space-y-6">
+            <!-- HEADER HIGH-END -->
+            <div class="bg-gradient-to-br from-gray-900 to-black p-8 rounded-3xl border border-gray-800 shadow-2xl text-center">
+                <h2 class="text-white font-black text-2xl uppercase tracking-tighter">${nicho}</h2>
+                <p class="text-blue-500 text-[10px] font-bold uppercase tracking-widest mt-2">${dadosAluno.alunoNome}</p>
+                <div class="mt-4 inline-block bg-blue-900/20 px-3 py-1 rounded-full border border-blue-500/30 text-[10px] text-blue-300 font-bold uppercase">
+                    ID: ${aid.substring(0, 8)}
                 </div>
-            `;
-        };
+            </div>
+
+            <!-- HUB DE AÇÕES DE ALTO NÍVEL -->
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="window.renderizarAgenda('${cid}')" class="bg-gray-900 p-5 rounded-2xl border border-gray-800 text-white hover:border-blue-500 transition-all text-center">
+                    <span class="block text-2xl mb-2">📅</span>
+                    <span class="text-[9px] font-black uppercase">Minha Agenda</span>
+                </button>
+                <button onclick="window.renderizarFinanceiro('${cid}', '${aid}')" class="bg-gray-900 p-5 rounded-2xl border border-gray-800 text-white hover:border-emerald-500 transition-all text-center">
+                    <span class="block text-2xl mb-2">💰</span>
+                    <span class="text-[9px] font-black uppercase">Financeiro</span>
+                </button>
+                <button onclick="window.renderizarHistorico('${cid}', '${aid}')" class="bg-gray-900 p-5 rounded-2xl border border-gray-800 text-white hover:border-purple-500 transition-all text-center">
+                    <span class="block text-2xl mb-2">📜</span>
+                    <span class="text-[9px] font-black uppercase">Histórico</span>
+                </button>
+                <button onclick="window.enviarRelatorioWhatsApp()" class="bg-gray-900 p-5 rounded-2xl border border-gray-800 text-white hover:border-green-500 transition-all text-center">
+                    <span class="block text-2xl mb-2">📱</span>
+                    <span class="text-[9px] font-black uppercase">Suporte</span>
+                </button>
+            </div>
+
+            <!-- CONTAINER DINÂMICO PARA OS MÓDULOS -->
+            <div id="container-servico-dinamico" class="bg-gray-900/30 p-6 rounded-3xl border border-gray-800/50 min-h-[250px]">
+                <div class="text-center text-gray-500 py-10">
+                    <p class="text-xs uppercase tracking-widest">Selecione uma opção para gerenciar seu atendimento.</p>
+                </div>
+            </div>
+        </div>
+    `;
+};
+
+// --- MÓDULOS INJETADOS (O QUE VOCÊ PEDIU) ---
+
+// 1. FINANCEIRO (Exibe Status e faturas)
+window.renderizarFinanceiro = async (cid, aid) => {
+    const docSnap = await getDoc(doc(db, "clients", cid, "dados", aid));
+    const d = docSnap.data();
+    document.getElementById('container-servico-dinamico').innerHTML = `
+        <h3 class="text-emerald-500 font-bold uppercase text-[10px] mb-4">💰 Status Financeiro</h3>
+        <div class="bg-black p-4 rounded-xl border border-gray-800 text-center">
+            <p class="text-gray-400 text-[9px] uppercase">Mensalidade Atual</p>
+            <p class="text-white font-black text-xl">${d.statusPagamento || 'Pendente'}</p>
+            <button class="mt-4 w-full bg-emerald-600 py-2 rounded text-[10px] font-bold uppercase">Gerar Pix / Boleto</button>
+        </div>
+    `;
+};
+
+// 2. HISTÓRICO DE ATENDIMENTOS (Igual ao do Personal, mas para Serviços)
+window.renderizarHistorico = async (cid, aid) => {
+    const docSnap = await getDoc(doc(db, "clients", cid, "dados", aid));
+    const d = docSnap.data();
+    const hist = d.historicoAtendimentos || []; // Assumindo essa estrutura
+    document.getElementById('container-servico-dinamico').innerHTML = `
+        <h3 class="text-purple-500 font-bold uppercase text-[10px] mb-4">📜 Histórico de Procedimentos</h3>
+        <div class="space-y-2">
+            ${hist.length ? hist.map(h => `<div class="bg-black p-3 rounded border border-gray-800 text-[10px] text-gray-300">${h.data}: ${h.servico}</div>`).join('') : '<p class="text-gray-600 text-[10px]">Nenhum histórico.</p>'}
+        </div>
+    `;
+};
 
             window.renderizarModuloProtecao = (cid, aid, dadosAluno) => {
             document.getElementById('app').innerHTML = `
