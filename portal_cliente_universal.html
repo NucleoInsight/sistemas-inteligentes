@@ -310,7 +310,10 @@
                 
                // Pergunta se quer compartilhar no Mural
 if (confirm("✅ Treino finalizado! Deseja compartilhar sua conclusão no Mural da Comunidade?")) {
+    const params = new URLSearchParams(window.location.search);
+    const cidAtual = params.get('cid');
     await setDoc(doc(collection(db, "mural_comunidade")), {
+        cid: cidAtual,
         alunoNome: window.dadosAluno.alunoNome || "Aluno",
         data: agora,
         mensagem: `Completou o treino de ${hoje} com intensidade ${intensidade}`
