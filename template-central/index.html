@@ -1096,7 +1096,9 @@ window.salvarRespostaInteracao = async (aid, alunoNome) => {
 
     container.innerHTML = '<h3 class="text-emerald-500 font-bold uppercase text-xs mb-3">Mural da Comunidade</h3>';
     
-    const q = query(collection(db, "mural_comunidade"), orderBy("data", "desc"), limit(10));
+    const params = new URLSearchParams(window.location.search);
+    const cid = params.get('cid');
+    const q = query(collection(db, "mural_comunidade"), where("cid", "==", cid), orderBy("data", "desc"), limit(10));
     const snap = await getDocs(q);
     
     snap.forEach(doc => {
