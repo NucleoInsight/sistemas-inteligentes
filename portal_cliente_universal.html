@@ -426,37 +426,89 @@ window.location.reload();
             }
         };
 
-        window.renderizarModuloCapoeira = (cid, aid, config, dadosAluno) => {
-            document.getElementById('app').innerHTML = `
-                <div class="space-y-6">
-                    <div class="bg-gradient-to-r from-gray-900 to-[#1a1500] p-6 rounded-xl border border-yellow-600 shadow-xl">
-                        <h1 class="text-white font-black text-xl uppercase tracking-tighter">Central de Capoeira</h1>
-                        <p class="text-yellow-500 text-[10px] font-bold uppercase tracking-widest">Cordão de Ouro - Ficha Técnica</p>
-                    </div>
+        window.renderizarModuloCapoeira = (cid, aid, config, dadosAluno, checkinsSnap) => {
+    // 1. Identifica o dia da semana atual para filtrar a rotina do mestre
+    const hoje = new Date().toLocaleDateString('pt-BR', { weekday: 'long' }).split('-')[0].toLowerCase();
+    const mapa = { "segunda": "Segunda", "terça": "Terca", "quarta": "Quarta", "quinta": "Quinta", "sexta": "Sexta", "sábado": "Sabado", "domingo": "Domingo" };
+    const diaAtual = mapa[hoje] || "Segunda";
+    
+    const rotina = dadosAluno.rotinaTreino || [];
+    const treinoFiltrado = rotina.filter(ex => ex.dia === diaAtual);
+    
+    // Mapeia os checkins realizados
+    const marcados = {};
+    if (checkinsSnap) {
+        checkinsSnap.forEach(doc => marcados[doc.id] = true);
+    }
 
-                    <div class="bg-gray-900 p-4 rounded-xl border border-gray-800 space-y-2">
-                        <h3 class="text-yellow-500 font-bold uppercase text-xs">Dados do Aluno</h3>
-                        <p class="text-white text-sm"><strong>Nome:</strong> ${dadosAluno.alunoNome || 'Sem Nome'}</p>
-                        <p class="text-white text-sm"><strong>Apelido:</strong> ${dadosAluno.alunoApelido || 'Não definido'}</p>
-                        <p class="text-white text-sm"><strong>Graduação:</strong> ${dadosAluno.graduacaoAtual || 'Iniciante'}</p>
-                    </div>
-
-                    <div class="bg-gray-900 p-4 rounded-xl border border-gray-800">
-                         <h3 class="text-yellow-500 font-bold uppercase text-xs mb-4">Ficha Técnica</h3>
-                         <div class="text-xs text-gray-300 opacity-90">${config.campos}</div>
-                    </div>
-
-                    <button onclick="window.enviarRelatorioWhatsApp()" class="w-full bg-yellow-600 text-black font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-yellow-500 transition-all">
-                        Falar com Mestre via WhatsApp 📱
-                    </button>
+    document.getElementById('app').innerHTML = `
+        <div class="space-y-6">
+            <!-- HEADER DA CAPOEIRA COM ATUALIZAÇÃO DE FOTO -->
+            <div class="bg-gradient-to-r from-gray-900 to-[#1a1500] p-6 rounded-xl border border-yellow-600 shadow-xl flex items-center justify-between">
+                <div>
+                    <h1 class="text-white font-black text-xl uppercase tracking-tighter">Central de Capoeira</h1>
+                    <p class="text-yellow-500 text-[10px] font-bold uppercase tracking-widest">Treino de hoje: ${diaAtual}</p>
                 </div>
-            `;
-            // Preenche os campos da ficha injetada
-            Object.keys(dadosAluno).forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.value = dadosAluno[id];
-            });
-        };
+                <div class="relative">
+                    <img id="aluno-foto-display" src="${dadosAluno.alunoFoto || 'https://via.placeholder.com/150'}" class="w-12 h-12 rounded-full object-cover border border-yellow-500 cursor-pointer" onclick="document.getElementById('upload-foto-aluno').click()">
+                    <input type="file" id="upload-foto-aluno" accept="image/*" class="hidden" onchange="window.subirFoto(this)">
+                </div>
+            </div>
+
+            <!-- DADOS DO ALUNO -->
+            <div class="bg-gray-900 p-4 rounded-xl border border-gray-800 space-y-2 text-xs">
+                <h3 class="text-yellow-500 font-bold uppercase text-[10px]">Dados do Aluno</h3>
+                <p class="text-white"><strong>Nome:</strong> ${dadosAluno.alunoNome || 'Sem Nome'}</p>
+                <p class="text-white"><strong>Apelido:</strong> ${dadosAluno.alunoApelido || 'Não definido'}</p>
+                <p class="text-white"><strong>Graduação:</strong> ${dadosAluno.graduacaoAtual || 'Iniciante'}</p>
+            </div>
+
+            <!-- MOVIMENTOS / SEQUÊNCIAS DO DIA (PUXADO DO PAINEL DO MESTRE) -->
+            <div>
+                <h3 class="text-yellow-500 font-bold uppercase text-xs mb-4 tracking-widest text-center">🪘 Sequências de ${diaAtual}</h3>
+                ${treinoFiltrado.length > 0 ? treinoFiltrado.map(ex => {
+                    const videoId = ex.link ? (ex.link.includes('shorts/') ? ex.link.split('shorts/')[1].split('?')[0] : (ex.link.includes('youtu.be/') ? ex.link.split('/').pop() : ex.link.split('v=')[1]?.substring(0, 11))) : null;
+                    return `
+                    <div class="bg-gray-900 p-4 rounded-xl border border-gray-800 mb-4 shadow-lg text-xs">
+                        <div class="flex items-center gap-3 mb-2">
+                            <input type="checkbox" ${marcados[ex.titulo] ? 'checked' : ''} onchange="window.salvarCheck('${ex.titulo.replace(/'/g, "\\'")}', this.checked)" class="w-6 h-6 rounded border-gray-700 bg-black text-yellow-500 focus:ring-yellow-500 cursor-pointer">
+                            <h4 class="text-white font-black text-sm uppercase">${ex.titulo}</h4>
+                        </div>
+                        <p class="text-gray-400 text-[10px] mt-1 italic">Obs: ${ex.obs || 'Sem observações'}</p>
+                        ${videoId ? `<iframe class="w-full h-48 rounded-lg mt-3" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>` : ''}
+                    </div>`;
+                }).join('') : '<p class="text-center text-gray-500 text-xs py-4">Nenhuma sequência programada para hoje.</p>'}
+            </div>
+
+            <!-- FICHA TÉCNICA ENCOLHIDA (APENAS VISUALIZAÇÃO) -->
+            <div class="space-y-3 pt-4 border-t border-gray-800">
+                <details class="group bg-gray-900 p-4 rounded-lg border border-gray-800 cursor-pointer">
+                    <summary class="font-bold text-xs uppercase text-yellow-500">📂 Ver Minha Ficha Completa</summary>
+                    <div id="ficha-visual-container" class="mt-4 pt-4 border-t border-gray-800 opacity-80 text-xs pointer-events-none">
+                       ${config.campos || 'Sem ficha técnica cadastrada.'}
+                    </div>
+                </details>
+            </div>
+
+            <!-- BOTÃO CONTATO MESTRE -->
+            <button onclick="window.location.href='https://wa.me/55${dadosAluno.contato?.replace(/\D/g, "") || ''}'" class="w-full bg-yellow-600 text-black font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-yellow-500 transition-all">
+                Falar com Mestre via WhatsApp 📱
+            </button>
+        </div>
+    `;
+
+    // Preenche e desativa os inputs da Ficha Técnica para impedir edição externa
+    setTimeout(() => {
+        Object.keys(dadosAluno).forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.value = dadosAluno[id];
+                el.disabled = true;
+                el.classList.add('bg-gray-800/50', 'text-gray-400');
+            }
+        });
+    }, 300);
+};
 
             window.renderizarModuloServicos = (cid, aid, dadosAluno) => {
             document.getElementById('app').innerHTML = `
