@@ -507,24 +507,22 @@ window.location.reload();
     }, 300);
 };
 
-   // Exemplo de como deixar o botão "Serviços" 100% funcional
-window.renderizarServicos = async (cid) => {
-    const container = document.getElementById('container-servico-dinamico');
-    container.innerHTML = `
-        <div class="animate-in fade-in duration-300">
-            <h3 class="text-blue-400 font-bold uppercase text-[10px] mb-4">Selecione o Serviço</h3>
-            <div id="lista-servicos" class="space-y-2">
-                <!-- Aqui você puxa do banco os serviços ativos do cliente -->
-                <div class="bg-black p-4 rounded-xl border border-gray-800 flex justify-between items-center hover:border-blue-500 transition-all">
-                    <span class="text-white text-xs">Procedimento / Sessão</span>
-                    <button class="bg-blue-600 text-white px-3 py-1 rounded text-[9px] font-bold uppercase">Agendar</button>
+  // 1. Esta função monta a estrutura fixa da tela (O HUB)
+window.renderizarModuloServicos = (cid, aid, dadosAluno) => {
+    const nicho = window.dadosNicho || "Serviços";
+    
+    document.getElementById('app').innerHTML = `
+        <div class="space-y-6">
+            <!-- HEADER -->
+            <div class="bg-gradient-to-br from-gray-900 to-black p-8 rounded-3xl border border-gray-800 shadow-2xl text-center">
+                <h2 class="text-white font-black text-2xl uppercase tracking-tighter">${nicho}</h2>
+                <p class="text-blue-500 text-[10px] font-bold uppercase tracking-widest mt-2">${dadosAluno.alunoNome || 'Bem-vindo(a)'}</p>
+                <div class="mt-4 inline-block bg-blue-900/20 px-3 py-1 rounded-full border border-blue-500/30 text-[10px] text-blue-300 font-bold uppercase">
+                    ID: ${aid.substring(0, 8)}
                 </div>
             </div>
-        </div>
-    `;
-};
 
-            <!-- HUB DE AÇÕES DE ALTO NÍVEL -->
+            <!-- HUB DE AÇÕES -->
             <div class="grid grid-cols-2 gap-3">
                 <button onclick="window.renderizarAgenda('${cid}')" class="bg-gray-900 p-5 rounded-2xl border border-gray-800 text-white hover:border-blue-500 transition-all text-center">
                     <span class="block text-2xl mb-2">📅</span>
@@ -544,19 +542,17 @@ window.renderizarServicos = async (cid) => {
                 </button>
             </div>
 
-            <!-- CONTAINER DINÂMICO PARA OS MÓDULOS -->
+            <!-- O CONTAINER ONDE OS DADOS VÃO APARECER -->
             <div id="container-servico-dinamico" class="bg-gray-900/30 p-6 rounded-3xl border border-gray-800/50 min-h-[250px]">
                 <div class="text-center text-gray-500 py-10">
-                    <p class="text-xs uppercase tracking-widest">Selecione uma opção para gerenciar seu atendimento.</p>
+                    <p class="text-xs uppercase tracking-widest">Selecione uma opção acima para visualizar.</p>
                 </div>
             </div>
         </div>
     `;
 };
 
-// --- MÓDULOS INJETADOS (O QUE VOCÊ PEDIU) ---
-
-// 1. FINANCEIRO (Exibe Status e faturas)
+// 2. Funções de Injeção de Conteúdo (Elas preenchem o container acima)
 window.renderizarFinanceiro = async (cid, aid) => {
     const docSnap = await getDoc(doc(db, "clients", cid, "dados", aid));
     const d = docSnap.data();
@@ -570,15 +566,14 @@ window.renderizarFinanceiro = async (cid, aid) => {
     `;
 };
 
-// 2. HISTÓRICO DE ATENDIMENTOS (Igual ao do Personal, mas para Serviços)
 window.renderizarHistorico = async (cid, aid) => {
     const docSnap = await getDoc(doc(db, "clients", cid, "dados", aid));
     const d = docSnap.data();
-    const hist = d.historicoAtendimentos || []; // Assumindo essa estrutura
+    const hist = d.historicoAtendimentos || [];
     document.getElementById('container-servico-dinamico').innerHTML = `
         <h3 class="text-purple-500 font-bold uppercase text-[10px] mb-4">📜 Histórico de Procedimentos</h3>
         <div class="space-y-2">
-            ${hist.length ? hist.map(h => `<div class="bg-black p-3 rounded border border-gray-800 text-[10px] text-gray-300">${h.data}: ${h.servico}</div>`).join('') : '<p class="text-gray-600 text-[10px]">Nenhum histórico.</p>'}
+            ${hist.length ? hist.map(h => `<div class="bg-black p-3 rounded border border-gray-800 text-[10px] text-gray-300">${h.data}: ${h.servico}</div>`).join('') : '<p class="text-gray-600 text-[10px]">Nenhum histórico encontrado.</p>'}
         </div>
     `;
 };
